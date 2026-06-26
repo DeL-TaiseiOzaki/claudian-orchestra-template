@@ -20,22 +20,9 @@ Zenn 記事「**続：AI 時代のタスク管理を考える．Claudian orchest
 
 ## アーキテクチャ概要
 
-```
-┌──────────────────────── Obsidian Workspace ────────────────────────┐
-│                                                                     │
-│  ┌──────────────── MY_MEMORY Vault (this template) ───────────────┐ │
-│  │  Markdown notes / Daily / Inbox / Projects / Maps              │ │
-│  └────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│  ┌──────── Agents that share the vault as common memory ──────────┐ │
-│  │  Claude Code  ─ orchestrator / curate（対話・整理）             │ │
-│  │  Codex        ─ implementer（設計・実装・デバッグ）             │ │
-│  │  Hermes       ─ ingestion（Slack / Calendar / Tasks / GitHub） │ │
-│  └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-            ↑ capture
-[ External Sources ] Slack / GCal / GTasks / Notion / Web / GitHub
-```
+![Claudian Orchestra architecture — Obsidian Workspace (MY_MEMORY Vault) + Claude Code Orchestra (Claude Code / Codex / Hermes) + External Sources](assets/architecture.png)
+
+*Vault そのものを共有メモリに、3 エージェント（Claude Code / Codex / Hermes）がその上で協調する。左＝Obsidian Workspace、中央＝Claude Code Orchestra、右＝External Sources。*
 
 情報の流れは **capture → Daily ハブ → Main DB** の 3 段：
 
