@@ -1,0 +1,26 @@
+filters:
+  and:
+    - 'status == "completed"'
+    - 'type != "log"'
+    - 'file.ext == "md"'
+    - not:
+        - file.inFolder("Templates")
+        - file.inFolder("Others/your-submodule")
+        - file.inFolder("Archive")
+        - file.inFolder("Inbox")
+
+properties:
+  file.folder:
+    displayName: Folder
+
+views:
+  - type: table
+    name: "Evergreen (distilled)"
+    groupBy:
+      property: file.folder
+      direction: ASC
+    order:
+      - file.name
+      - type
+      - tags
+      - updated

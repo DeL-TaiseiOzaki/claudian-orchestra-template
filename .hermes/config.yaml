@@ -1,0 +1,67 @@
+# .hermes/config.yaml — Hermes Agent configuration (vault-specific deltas)
+#
+# Hermes (https://github.com/NousResearch/Hermes-Agent) ships its own default config.
+# This file is intentionally a **minimal delta** — only the keys this vault overrides.
+# Merge it with the upstream defaults when you first set up Hermes here.
+#
+# Common keys to consider:
+#   - `mcp_servers`: which MCP servers Hermes exposes (this template enables github + notion)
+#   - `plugins.enabled`: Hermes plugins (this template enables obsidian-context-bridge)
+#   - `model`: pick the LLM backend Hermes should use as its driver
+#
+# Secrets (PATs, OAuth tokens) NEVER go in this file — read them from env vars or
+# the `.hermes/.env` file (gitignored). See `.gitignore` for the full secret-pattern list.
+
+model:
+  # Pick whatever Hermes backend you prefer. Examples:
+  #   default: gpt-5.4-mini
+  #   provider: openai-codex
+  default: gpt-5.4-mini
+  provider: openai-codex
+
+mcp_servers:
+  # GitHub MCP — Hermes is the sole owner of this connection in the Claudian Orchestra design.
+  # The PAT must be available as $GITHUB_PERSONAL_ACCESS_TOKEN in the shell that starts Hermes.
+  github:
+    command: npx
+    args:
+      - -y
+      - '@modelcontextprotocol/server-github'
+    env:
+      GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN}
+
+  # Notion MCP — used for one-way publish from this vault to Notion.
+  notion:
+    url: https://mcp.notion.com/mcp
+    auth: oauth
+    enabled: true
+
+plugins:
+  # obsidian-context-bridge enables Hermes to read the active Obsidian note as context.
+  # Remove this if you don't run Hermes alongside Obsidian.
+  enabled:
+    - obsidian-context-bridge
+  disabled: []
+
+# Approval gate — destructive ops (file deletes / cron mutations) require user OK.
+approvals:
+  mode: manual
+  cron_mode: deny
+  destructive_slash_confirm: true
+
+# ============================================================================
+# Connections owned by Hermes (NOT directly by Claude Code / Codex)
+# ============================================================================
+#
+# - Slack (your-org Slack app) — configure via `hermes slack add-workspace`
+# - Google Workspace (Calendar + Tasks) — via the bundled `gws` CLI
+#   (alternatively the `gsk` CLI for accounts that don't have GWS provisioned)
+# - Web fetch / clipper — `firecrawl` backend (see `web.backend` upstream default)
+#
+# Set up:
+#   1. Copy `.hermes/config.yaml` into your `${HERMES_HOME}` (default `~/.hermes/`).
+#   2. Run `hermes auth` for each external integration.
+#   3. Verify with `hermes chat -q "list my Google Tasks"` — that exercises the pull path.
+#
+# Capture skills (push path: external → Inbox/{date}/{source}/) live under
+# `.hermes/skills/mymemory/` and are tracked in git.

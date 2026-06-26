@@ -1,0 +1,30 @@
+filters:
+  and:
+    - 'file.ext == "md"'
+    - 'status == "inbox" || file.inFolder("Inbox")'
+    - 'file.basename != "README"'
+    - not:
+        - file.inFolder("Templates")
+
+formulas:
+  days_in_inbox: '(now() - file.ctime).days.round(0)'
+  stale: 'if((now() - file.ctime).days >= 3, "⚠️", "")'
+
+properties:
+  formula.days_in_inbox:
+    displayName: "Days in queue"
+  formula.stale:
+    displayName: ""
+
+views:
+  - type: table
+    name: "Curation queue (Step 6)"
+    groupBy:
+      property: file.folder
+      direction: ASC
+    order:
+      - file.name
+      - formula.stale
+      - formula.days_in_inbox
+      - source
+      - created

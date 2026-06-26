@@ -1,0 +1,49 @@
+# Codex CLI Project Configuration
+# This file enables project-specific Codex settings
+
+# Default model configuration
+model = "gpt-5.5"
+model_reasoning_effort = "high"
+model_reasoning_summary = "detailed"
+
+# Web search
+web_search = "live"
+
+# Approval policy
+approval_policy = "never"
+
+# Feature toggles
+[features]
+skills = true
+
+# Skills configuration - enable project skills
+[[skills.config]]
+enabled = true
+path = ".codex/skills/context-loader/SKILL.md"
+
+# Obsidian skills (vendored from kepano/obsidian-skills)
+# Physical copies under .codex/skills/ — Codex discovers skills there (same as context-loader).
+# Mirror copies live under .claude/skills/ for Claude Code; keep both in sync when updating upstream.
+[[skills.config]]
+enabled = true
+path = ".codex/skills/obsidian-markdown/SKILL.md"
+
+[[skills.config]]
+enabled = true
+path = ".codex/skills/obsidian-bases/SKILL.md"
+
+[[skills.config]]
+enabled = true
+path = ".codex/skills/json-canvas/SKILL.md"
+
+[[skills.config]]
+enabled = true
+path = ".codex/skills/defuddle/SKILL.md"
+
+# Response style
+verbosity = "medium"
+
+sandbox_mode = "workspace-write"
+
+[windows]
+sandbox = "unelevated"

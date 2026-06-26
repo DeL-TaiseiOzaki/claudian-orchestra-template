@@ -1,0 +1,44 @@
+filters:
+  and:
+    - 'type == "note" || type == "reference" || type == "paper"'
+    - 'status != "archived"'
+    - 'file.ext == "md"'
+    - not:
+        - file.inFolder("Templates")
+        - file.inFolder("Others/your-submodule")
+        - file.inFolder("Archive")
+
+properties:
+  file.folder:
+    displayName: Folder
+  status:
+    displayName: Status
+
+views:
+  - type: table
+    name: "All knowledge"
+    groupBy:
+      property: type
+      direction: ASC
+    sort:
+      - property: file.mtime
+        direction: DESC
+    order:
+      - file.name
+      - file.folder
+      - status
+      - tags
+      - updated
+  - type: table
+    name: "Learning"
+    filters:
+      and:
+        - file.inFolder("Others/Learning")
+    sort:
+      - property: file.mtime
+        direction: DESC
+    order:
+      - file.name
+      - status
+      - tags
+      - updated

@@ -1,0 +1,55 @@
+filters:
+  and:
+    - 'type == "log"'
+    - 'file.ext == "md"'
+    - not:
+        - file.inFolder("Templates")
+        - file.inFolder("Others/your-submodule")
+
+properties:
+  status:
+    displayName: Status
+  file.folder:
+    displayName: Folder
+  projects:
+    displayName: Projects
+
+views:
+  - type: table
+    name: "All logs (newest first)"
+    limit: 100
+    sort:
+      - property: file.mtime
+        direction: DESC
+    order:
+      - file.name
+      - file.folder
+      - status
+      - projects
+      - updated
+  - type: table
+    name: "Daily / Weekly"
+    filters:
+      and:
+        - file.inFolder("Daily")
+    sort:
+      - property: file.name
+        direction: DESC
+    order:
+      - file.name
+      - status
+      - projects
+      - updated
+  - type: table
+    name: "Work logs"
+    filters:
+      and:
+        - file.inFolder("Work")
+    sort:
+      - property: file.mtime
+        direction: DESC
+    order:
+      - file.name
+      - project
+      - status
+      - updated

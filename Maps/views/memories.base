@@ -1,0 +1,36 @@
+filters:
+  and:
+    - 'file.ext == "md"'
+    - 'type == "log" || file.folder.contains("meetings")'
+    - not:
+        - file.inFolder("Templates")
+        - file.inFolder("Others/your-submodule")
+
+properties:
+  file.folder:
+    displayName: Folder
+
+views:
+  - type: table
+    name: "Timeline (newest first)"
+    limit: 200
+    sort:
+      - property: file.mtime
+        direction: DESC
+    order:
+      - file.name
+      - file.folder
+      - type
+      - updated
+  - type: table
+    name: "Meetings"
+    filters:
+      and:
+        - 'file.folder.contains("meetings")'
+    sort:
+      - property: file.name
+        direction: DESC
+    order:
+      - file.name
+      - file.folder
+      - updated

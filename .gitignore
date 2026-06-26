@@ -1,0 +1,163 @@
+# Obsidian
+.obsidian/plugins/
+.obsidian/snippets/
+.obsidian/appearance.json
+cache.db
+cache.db-wal
+*.tmp
+
+# Credentials & Secrets
+Work/*/credentials/
+Work/*/secrets/
+Work/*/.env
+Work/*/.env.local
+
+# API tokens — common patterns. Bare patterns match at ANY depth (defense in depth).
+# If you store any token in-vault (NOT recommended; cloud sync may upload it), add the
+# explicit path here.
+kaggle.json
+access_token
+access_token.txt
+.kaggle/
+
+# Temporary files
+*.bak
+*.swp
+*~
+.DS_Store
+
+# Staging (apply to .claude then delete)
+_staging_claude/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Windows shortcuts (git on Windows fails to index .lnk via Drive mount)
+*.lnk
+
+# Example: exclude large regeneratable artifacts under specific subpaths.
+# (Add your own patterns here. GitHub rejects files > 100MB.)
+# Others/Activities/Conferences/{YOUR-EVENT}/program_*.pdf
+# Others/Activities/Conferences/{YOUR-EVENT}/_assets/chunks/
+
+# Claude Code harness runtime
+.claude/scheduled_tasks.lock
+.claude/scheduled_tasks.json
+
+# Hermes runtime state (additional)
+.hermes/kanban.db-shm
+.hermes/kanban.db-wal
+
+# ─────────────────────────────────────────────────────────────
+# Agent control-plane: version only DECLARATIVE config, never
+# secrets / runtime state / re-installable vendored assets.
+# (This vault controls Hermes / Claude Code / Codex; keep their
+#  contracts & config tracked, keep their runtime out of git.)
+# ─────────────────────────────────────────────────────────────
+
+# Secrets — never commit (defense in depth: file-pattern + specific paths)
+.env
+.env.*
+*_client_secret.json
+*_key.json
+*_token.json
+
+# Calendar iCal secret feeds (private bearer token in URL — never commit; rotate if exposed)
+# Migrated 2026-06-16: was under .claude/skills/daily-briefing/_assets/ — moved to hermes side per
+# external-access-must-go-through-hermes principle ([[.claude/rules/agent-boundaries.md]] §6).
+.hermes/skills/mymemory/inbox-daily-capture/scripts/calendars.local.json
+*.local.json
+.tmp_*.json
+.tmp_*.py
+
+# Hermes — secrets & auth (NEVER commit; rotate if already exposed)
+.hermes/.env
+.hermes/.env.*
+.hermes/auth.json
+.hermes/auth.lock
+.hermes/shared/
+.hermes/google_client_secret.json
+.hermes/google_token.json
+.hermes/gws_key.json
+.hermes/.hermes_history
+
+# Hermes — MCP OAuth tokens (Notion / etc. access+refresh tokens; rotate if exposed)
+.hermes/mcp-tokens/
+
+# Hermes — runtime state / databases / process artifacts
+.hermes/state.db
+.hermes/state.db-*
+.hermes/kanban.db
+.hermes/kanban.db.*
+.hermes/gateway.lock
+.hermes/gateway.pid
+.hermes/gateway_state.json
+.hermes/cron/
+.hermes/logs/
+.hermes/sessions/
+.hermes/channel_directory.json
+
+# Hermes — backups & state snapshots (regenerable; CONTAIN SECRETS — .env/auth.json/state.db/cron/jobs.json)
+.hermes/backups/
+.hermes/state-snapshots/
+.hermes/*.bak.*
+.hermes/*_cache.json
+
+# Hermes — caches & vendored framework skill library (re-installable, not
+# authored here). Custom skills under .hermes/skills/mymemory/ ARE tracked.
+.hermes/skills/*
+!.hermes/skills/mymemory/
+.hermes/.update_check
+.hermes/.skills_prompt_snapshot.json
+.hermes/context_length_cache.yaml
+.hermes/models_dev_cache.json
+
+# Hermes — runtime caches / logs (regenerable; may include transient pastes)
+.hermes/cache/
+.hermes/lsp/
+.hermes/pastes/
+.hermes/tmp/
+.hermes/interrupt_debug.log
+.hermes/processes.json
+
+# ─────────────────────────────────────────────────────────────
+# Obsidian — secondary vault profiles (.obsidian is the primary).
+# Mirror the .obsidian/* policy: installed plugins + per-machine
+# layout/runtime are re-installable, never the source of truth.
+# (Completes the 2026-06-08 cleanup that un-tracked these.)
+# ─────────────────────────────────────────────────────────────
+.obsidian_note/plugins/
+.obsidian_desktop/plugins/
+.obsidian_univ/plugins/
+
+# Per-profile runtime layout + embedded hermes console runtime
+.obsidian*/workspace.json
+.obsidian_note/hermes/
+.obsidian_desktop/hermes/
+.obsidian_univ/hermes/
+
+# Obsidian plugin churn — defense in depth across ALL profiles
+.obsidian*/plugins/*/node_modules/
+.obsidian*/plugins/*/main.js
+.obsidian*/plugins/*/data.json
+
+# Claudian desktop client — session blobs + per-machine settings (runtime)
+.claudian/sessions/
+.claudian/claudian-settings.json
+
+# Hermes memory lock (MEMORY.md content stays tracked; only the lock is runtime)
+.hermes/memories/*.lock

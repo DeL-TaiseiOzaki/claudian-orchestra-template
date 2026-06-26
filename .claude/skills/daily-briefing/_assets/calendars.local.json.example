@@ -1,0 +1,13 @@
+{
+  "timezone": "Asia/Tokyo",
+  "calendars": [
+    {
+      "label": "Private",
+      "url": "https://calendar.google.com/calendar/ical/YOUR_CALENDAR_ID/private-YOUR_PRIVATE_TOKEN/basic.ics"
+    },
+    {
+      "label": "Research",
+      "url": "https://calendar.google.com/calendar/ical/YOUR_RESEARCH_CALENDAR_ID/private-YOUR_RESEARCH_PRIVATE_TOKEN/basic.ics"
+    }
+  ]
+}
