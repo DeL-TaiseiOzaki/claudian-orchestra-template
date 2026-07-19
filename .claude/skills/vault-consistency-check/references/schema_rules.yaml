@@ -22,23 +22,12 @@ type_enum:
   - reference
   - idea
   - exploration
-  - activity
 
 status_enum:
   - draft
   - in-progress
   - completed
   - archived
-
-work_required:
-  - project
-  - client
-
-work_project_enum:
-  - PROJ_A
-  - PROJ_B
-  - PROJ_C
-  - PROJ_X  # archived example (→ Archive/Work/PROJ_X/); kept valid so archived notes' project: PROJ_X pass validation
 
 daily_required:
   type: log
@@ -61,17 +50,6 @@ experiment_required:
   - hypothesis
   - reproducible
 
-work_required_paths:
-  - '^Work/(PROJ_A|PROJ_B|PROJ_C|PROJ_X)/logs/[^/]+\.md$'
-  - '^Work/(PROJ_A|PROJ_B|PROJ_C|PROJ_X)/meetings/[^/]+\.md$'
-  - '^Work/(PROJ_A|PROJ_B|PROJ_C|PROJ_X)/deliverables/[^/]+\.md$'
-  - '^Work/(PROJ_A|PROJ_B|PROJ_C|PROJ_X)/(project|team|status)\.md$'
-
-work_excluded_paths:
-  - '^Work/(PROJ_A|PROJ_B|PROJ_C|PROJ_X)/references/'
-  - '^Work/(PROJ_A|PROJ_B|PROJ_C|PROJ_X)/sources/'
-  - '^Work/(PROJ_A|PROJ_B|PROJ_C|PROJ_X)/code/'
-
 # --- Inbox-source 拡張 (path-based override, #34) ---
 # Inbox/** 配下の raw capture file は curated と別ライフサイクル。
 # vault-metadata.md の "Inbox-source 拡張" セクションを正本とする。
@@ -86,7 +64,7 @@ inbox_status_enum:
 
 # Inbox-source は capture skills の出力 spec に従い、curated の required field を強制しない。
 # Required common fields は title / type / status / tags / created / updated のみ。
-# work_required / archive_required / paper_required / experiment_required は適用しない。
+# archive_required / paper_required / experiment_required は適用しない。
 inbox_common_required:
   - title
   - type
@@ -103,15 +81,12 @@ inbox_common_required:
 structure_expected_root_dirs:
   - Inbox
   - Daily
-  - Work
-  - Research
-  - Others
+  - Wiki
   - Maps
   - Persona
   - Meta
   - Archive
   - Templates
-  - docs
 
 # (a) Root registry: 構造検査から常に除外する system dir。完全一致 or prefix 一致で照合する。
 # '.obsidian*' のように末尾 '*' を付けたものは prefix 一致（.obsidian / .obsidian_desktop / .obsidian_note 等）。
@@ -127,18 +102,8 @@ structure_system_root_prefixes:
   - .obsidian*
 
 # (b) Required dirs exist: 物理存在を必須とする dir（rules が前提とする落とし先）
-# テンプレは PROJ_A のみ雛形を同梱。新案件は work-kickoff で追加し、ここにも登録する。
 structure_required_dirs:
-  - Work/PROJ_A/meetings
-  - Work/PROJ_A/docs
-  - Work/PROJ_A/code
-  - Work/PROJ_A/deliverables
-  - Work/PROJ_A/logs
-  - Work/PROJ_A/sources
-  - Work/PROJ_A/references
-  - Others/Ideas
-  - Others/Activities
-  - Others/Learning
+  - Wiki
   - Maps/views
   - Daily
   - Meta
@@ -149,15 +114,13 @@ structure_required_dirs:
 structure_scan_roots:
   - Inbox
   - Daily
-  - Work
-  - Others
+  - Wiki
   - Maps
   - Meta
   - Archive
 
 # (c)/(d) submodule excludes: .gitmodules から読めない場合の fallback。実装は .gitmodules を優先する。
-structure_submodule_excludes:
-  - Research
+structure_submodule_excludes: []
 
 # (c) Non-md placement: .md 以外で許容するファイルの判定材料
 structure_nonmd_allowed:

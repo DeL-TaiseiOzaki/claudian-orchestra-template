@@ -41,10 +41,10 @@ Inbox/{YYYY-MM-DD}/{daily,slack,discord,code,mtgs,clippings,chat-logs,mail,attac
 Inbox/{date}/{source}/{file}.md      ← ここ
    │ (2) aggregate — Claude が当日中に Daily へ集約
    ▼
-Daily/{date}.md                       ← 唯一のハブ
+Daily/{date}.md                       ← 唯一のハブ＝人間の監査点
    │ (3) distribute — EOD distill で Main DB へ蒸留・配分
    ▼
-Work / Research / Others              → Evergreen
+Wiki                                  → Evergreen
 ```
 
 詳細は [[.claude/rules/inbox-routing.md]] / [[.claude/rules/daily-operations.md]] / [[.claude/rules/agent-boundaries.md]]。

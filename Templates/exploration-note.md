@@ -10,7 +10,7 @@ updated: {{DATE:YYYY-MM-DD}}
 
 # 🧪 Exploration - シード名
 
-研究本流とは別シードの仮説検証・PoC・初期構想（`Others/Ideas/` 配下に配置。`type: exploration` は Ideas 内の PoC/検証 flavor）。
+仮説検証・PoC・初期構想（`Wiki/` 配下に配置。`type: exploration` は Wiki 内の PoC/検証 flavor）。
 
 ## 📌 概要
 
@@ -37,17 +37,15 @@ updated: {{DATE:YYYY-MM-DD}}
 
 ## 🔗 関連
 
-- 関連研究: [[ ]]
-- 関連案件: [[ ]]
+- 関連ノート: [[ ]]
 
 ## 🚦 判定（昇格 / 継続 / アーカイブ）
 
-- [ ] Research へ昇格（テーマ化）
-- [ ] Work へ昇格（受託・事業化）
+- [ ] Wiki 内で独立ノート群に昇格（本格化）
 - [ ] 継続検証
 - [ ] アーカイブ
 
 ---
 
 *status: in-progress → completed / archived（成熟度はタグ #exploring で表現）*  
-*配置は [[Others/Ideas]]（着想と検証/PoC を内包）。昇格時は Research/Work へ移し、ここに wiki-link を残す*
+*配置は `Wiki/`（着想と検証/PoC を内包）。本格化したら Wiki 内で独立ノート群に育て、ここに wiki-link を残す*

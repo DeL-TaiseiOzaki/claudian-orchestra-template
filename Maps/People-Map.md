@@ -22,8 +22,8 @@ vault 横断で参照される **人物の名寄せ表**。Genspark などの AI
 
 - 正準名：山田 太郎
 - alias：やまだ / Taro Yamada / @yamada（Slack）
-- ロール：Client A の窓口
-- 関連：[[Work/PROJ_A/team.md]] / [[Work/PROJ_A/meetings/]]
+- ロール：〇〇コミュニティの窓口
+- 関連：[[Wiki/meetings/]]
 - 備考：transcript で「ヤマダ」→「山田田」に化けるケースあり。要正準化。
 ```
 

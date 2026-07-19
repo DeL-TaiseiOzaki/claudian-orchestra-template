@@ -502,6 +502,6 @@ formulas:
 
 このスキルは kepano/obsidian-skills から導入。本 Vault では以下を併用する。
 
-- Base ファイル（`.base`）は対象フォルダ直下に置く（例 `Work/`, `Research/reference/`）。
-- フィルタ・グルーピングに使うプロパティ名は [[.claude/rules/vault-metadata.md]] のスキーマ（`status` / `type` / `project` / `theme` 等）と一致させる。
+- Base ファイル（`.base`）は対象フォルダ直下に置く（例 `Wiki/`, `Maps/`）。
+- フィルタ・グルーピングに使うプロパティ名は [[.claude/rules/vault-metadata.md]] のスキーマ（`status` / `type` / `theme` 等）と一致させる。
 - パスは Vault ルートからの相対で記述する。

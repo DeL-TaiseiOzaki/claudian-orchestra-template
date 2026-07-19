@@ -36,9 +36,7 @@ git status --short
 | グループ | 対象パス |
 |----------|---------|
 | Daily / Weekly | `Daily/` |
-| Work 案件 | `Work/{PROJ_A,PROJ_B,PROJ_C}/` |
-| Research（submodule pointer） | `Research`（実体は別リポジトリ。下記参照） |
-| Others | `Others/` |
+| Wiki | `Wiki/` |
 | メタ（rules/skills/templates） | `.claude/`, `Templates/` |
 
 ### Step 3: コミット & push
@@ -53,43 +51,21 @@ git push
 | prefix | 用途 |
 |--------|------|
 | `daily:` | Daily / Weekly |
-| `work(proj-a):`, `work(proj-b):`, `work(proj-c):` | 案件作業 |
-| `research:` | 論文ノート、実験ログ |
-| `others:` | Ideas / Ecosystem / Activities / Learning |
+| `wiki:` | 汎用ナレッジ（アイデア / 学習ノート / 文献ノート / 実験ログ / 活動記録） |
 | `meta:` | rules / skills / templates / settings |
 
 ## 節目push（即時）
 
 以下イベント発生時はすぐ push：
 
-- Work 案件の **納品物** 完成（`Work/{XXX}/deliverables/`）
-- Research **論文ノート / 実験レポート** が `status: completed` 化
+- Wiki の **文献ノート / 実験ノート** が `status: completed` 化
 - Vault 構造や rules を変更
 
 ```bash
-git add Work/PROJ_A/deliverables/
-git commit -m "work(proj-a): deliver vX.Y - <概要>"
+git add Wiki/
+git commit -m "wiki: complete experiment note - <概要>"
 git push
 ```
-
-## Research サブモジュールとの関係
-
-研究の実体は git サブモジュール `Research`（remote: `https://github.com/your-org/your-research`）にある。
-Vault とは**別リポジトリ**なので、研究内容の変更は次の2段階で同期する：
-
-1. サブモジュール内でコミット & push
-   ```bash
-   cd Research
-   git add -A && git commit -m "research: <要約>" && git push
-   cd ..
-   ```
-2. 親 Vault でサブモジュールのポインタ更新をコミット & push
-   ```bash
-   git add Research
-   git commit -m "research: bump Research" && git push
-   ```
-
-最新を取り込むときは `git submodule update --remote Research`。
 
 ## .gitignore
 
@@ -97,7 +73,6 @@ Vault とは**別リポジトリ**なので、研究内容の変更は次の2段
 
 主な除外（参考）:
 - `.obsidian/plugins/`, `.obsidian/snippets/`, `.obsidian/appearance.json`
-- `Work/*/credentials/`, `Work/*/secrets/`, `Work/*/.env*`
 - `*.tmp`, `*.bak`, `*.swp`, `.DS_Store`, `Thumbs.db`
 - Python キャッシュ、IDE 設定
 
@@ -129,5 +104,4 @@ git credential-manager erase
 ## 関連
 
 - [[.claude/rules/daily-operations.md]]
-- [[.claude/rules/work-management.md]]
-- [[.claude/rules/research-management.md]]
+- [[.claude/rules/wiki-management.md]]

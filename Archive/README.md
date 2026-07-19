@@ -13,12 +13,12 @@ updated: 2026-01-01
 
 ## ルール
 
-- 元パスをミラー：例えば `Work/PROJ_X/` を archived するなら `Archive/Work/PROJ_X/` に移す
+- 元パスをミラー：例えば `Wiki/old-topic.md` を archived するなら `Archive/Wiki/old-topic.md` に移す
 - frontmatter に以下を追加：
   ```yaml
   status: "archived"
   archived: 2026-XX-XX                  # 退避した日
-  archived_from: "Work/PROJ_X/..."      # 元パス（provenance）
+  archived_from: "Wiki/old-topic.md"    # 元パス（provenance）
   ```
 - 履歴は git に任せる（古いコピーを別ファイルで残さない）
 

@@ -1,6 +1,6 @@
 ---
 name: connection-setup
-description: Interactive onboarding wizard for external connections. Use when the user says 「セットアップして」「接続セットアップ」「初期設定」「どのツールを繋ぐか選びたい」, when GETTING-STARTED Level 3 is reached, or when connection-doctor finds everything unconfigured. Interviews the user by USE CASE (not tool name) to decide which of the catalog connections (GitHub / Google Calendar / Google Tasks / Gmail / Google Drive / Slack / Discord / RSS / web clippings / AI meeting notes / Zotero / Notion) they actually use, records the selection in .claude/connections.yaml, then walks through setup of ONLY the selected ones — one connection at a time, following docs/connections/{guide}.md, verifying each before moving on. Non-catalog tools get the alternatives table (docs/connections/README.md); non-Gmail mail is unified by forwarding to Gmail. Re-runnable: also used to add or drop a connection later.
+description: Interactive onboarding wizard for external connections. Use when the user says 「セットアップして」「接続セットアップ」「初期設定」「どのツールを繋ぐか選びたい」, when GETTING-STARTED Level 3 is reached, or when connection-doctor finds everything unconfigured. Interviews the user by USE CASE (not tool name) to decide which of the catalog connections (GitHub / Google Calendar / Google Tasks / Gmail / Google Drive / Slack / Discord / RSS / web clippings / AI meeting notes / Zotero / Notion) they actually use, records the selection in .claude/connections.yaml, then walks through setup of ONLY the selected ones — one connection at a time, following Meta/connections/{guide}.md, verifying each before moving on. Non-catalog tools get the alternatives table (Meta/connections/README.md); non-Gmail mail is unified by forwarding to Gmail. Re-runnable: also used to add or drop a connection later.
 ---
 
 # connection-setup — 対話式・接続セットアップウィザード
@@ -49,7 +49,7 @@ description: Interactive onboarding wizard for external connections. Use when th
 - **全部 No でも問題ない**ことを明言する(Level 0 の手動運用で PKB として完成している)
 
 **カタログ外ツール**(Teams / Todoist / Linear / Jira / Readwise 等)を使っていると答えた場合:
-- [[docs/connections/README.md]] の「カタログ外ツールの対応方針」対応表を案内する
+- [[Meta/connections/README.md]] の「カタログ外ツールの対応方針」対応表を案内する
 - 代替 2 択を提示:(a) 当面は手動で `Inbox/{date}/{source}/` に置く運用、(b) 自作 capture skill を作る(「{ツール名} 用の capture skill を設計して」と頼めば、既存 skill(§関連)をひな形に Claude+Codex で設計できる。着地先は必ず `Inbox/{date}/` 配下・capture only の原則に従う)
 
 ## Step 2: 選択を registry に記録
@@ -92,7 +92,7 @@ description: Interactive onboarding wizard for external connections. Use when th
 ## 関連
 
 - [[.claude/connections.yaml]] — 選択の記録先(single source of truth)
-- [[docs/connections/README.md]] — 接続別ガイド(Step 3 の台本)
+- [[Meta/connections/README.md]] — 接続別ガイド(Step 3 の台本)
 - [[.claude/skills/connection-doctor/SKILL.md]] — 診断(Step 3 の検証・Step 5)
 - [[.claude/skills/daily-briefing/SKILL.md]] — ジョブリストが registry を反映する側
 - [[GETTING-STARTED.md]] — Level 0〜3 の全体導線

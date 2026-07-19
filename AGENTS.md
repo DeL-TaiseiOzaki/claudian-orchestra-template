@@ -32,25 +32,22 @@ There is exactly **one core at a time**. The old two-headed model (Claude orches
 | Domain | Path | Content |
 |---|---|---|
 | **Inbox** | `Inbox/{YYYY-MM-DD}/{daily,slack,discord,code,mtgs,clippings,chat-logs,mail,attachments}/` | Capture-only receiving area (raw, unsorted, **date-first**). Writers: Hermes / browser extensions only (**no auto-route**). The core agent aggregates same-day content into Daily; curation is a later step. [[Inbox/README.md]] |
-| **Daily** | `Daily/` | The single hub per day (journal). Aggregates `Inbox/{date}/*` and distributes to Main DB. |
-| **Work** | `Work/{PROJ_A,…}/` | Client engagements, 4-layer standard ([[.claude/rules/work-management.md]]). |
-| **Research** | `Research/` (optional submodule) | Research work. A submodule's own contract takes precedence under it. |
-| **Others** | `Others/{Ideas,Activities,Learning}/` | Ideas / PoC, continuous activities, learning notes. |
+| **Daily** | `Daily/` | The single hub per day — **and the human audit surface**. Every agent action leaves a trace here (job-list state, aggregation bullets with wikilinks, distill proposals & destination links, consistency-check results); the user audits the whole system by reading the Daily note. Aggregates `Inbox/{date}/*` and distributes to the Main DB. |
+| **Wiki** | `Wiki/` | THE Main DB — ideas, learning/reading notes, literature & experiment notes, activity & project records, meeting summaries ([[.claude/rules/wiki-management.md]]). |
 | **Maps** | `Maps/` | Cross-cutting MOCs + Bases views. `Code-Map.md` = codebase-knowledge entry. |
 | **Persona** | `Persona/` | Single source of truth for the author's profile. |
-| **Meta** | `Meta/` | Self-referential projects about the vault itself. |
+| **Meta** | `Meta/` | Everything ABOUT the vault itself: self-referential projects, setup guides (`Meta/connections/` — per-connection setup / verification / troubleshooting), repo assets (`Meta/assets/`). Not distill targets. Entry: [[GETTING-STARTED.md]]. |
 | **Archive** | `Archive/` | Inactive-content sink (never deleted). `status: archived`. |
 | **Templates** | `Templates/` | Note templates. |
-| **docs** | `docs/` | Human-facing setup guides (`connections/`). Not vault content. Entry: [[GETTING-STARTED.md]]. |
 
-> Each domain ships its own `AGENTS.md` contract file directly under the folder (Work/, Work/PROJ_A/, Others/, Others/Activities/, Persona/, Research/) — Codex auto-loads nested AGENTS.md; a Claude-Code core must read the folder's AGENTS.md before touching files there.
+> Each domain ships its own `AGENTS.md` contract file directly under the folder (Wiki/, Persona/) — Codex auto-loads nested AGENTS.md; a Claude-Code core must read the folder's AGENTS.md before touching files there.
 
 ## 2. Note operation principles (highest priority)
 
 - Notes are Markdown. Non-md work-products live under `_assets/`; external one-shot resources under `sources/` (immutable).
 - Structural changes (new folders / renames / moves) must land in the same commit as the corresponding rules / README updates.
 - Always include frontmatter (`type` / `status` / `tags` / `created` / `updated`). Schema: [[.claude/rules/vault-metadata.md]]. Tags: [[.claude/rules/vault-tagging.md]].
-- Domain rules: [[.claude/rules/work-management.md]] / [[.claude/rules/research-management.md]] / [[.claude/rules/others-management.md]] / [[.claude/rules/daily-operations.md]].
+- Domain rules: [[.claude/rules/wiki-management.md]] / [[.claude/rules/daily-operations.md]].
 - Agent boundaries (Hermes / core — capture/curate split, single-writer): [[.claude/rules/agent-boundaries.md]].
 - Obsidian dialect (wikilinks, embeds, callouts, Bases) — preserve; don't reflow notes unnecessarily.
 
@@ -66,6 +63,7 @@ The core agent handles conversation, judgment, design AND implementation. There 
 
 - **All external connections go through Hermes** (push: capture → `Inbox/{date}/{source}/` / pull: `hermes chat -q` — follow [[.claude/skills/hermes-query/SKILL.md]]). The core never holds external OAuth/PAT. Exceptions listed in [[.claude/rules/agent-boundaries.md]] §6 (vault git via local `git`/`gh`; web research reads; Claude-core-only Drive connector).
 - **On-demand by default**: the Daily note's `## 🤖 ジョブリスト` is the operational checklist. The user says 「○○やって」; the core executes or delegates to Hermes. Cron is optional. [[.claude/rules/daily-operations.md]] §0.
+- **Daily is the audit surface**: whatever you do (capture, aggregate, distill, check), leave its trace in the Daily note — links to what landed where, proposals and their approvals. A human reading the Daily note must be able to audit everything the agents did that day. Never delete from Daily.
 - **Skills**: workflows live as `SKILL.md` instruction files under `.claude/skills/{name}/`. When a trigger phrase matches (「接続セットアップして」「EOD distill」…), **read that SKILL.md and follow it**. Claude Code discovers them natively; Codex reads the file on demand — same contract either way.
 - **Sub-work**: large research / analysis may use whatever parallel/sub-agent mechanism the core CLI offers. Findings go to `.claude/docs/research/` or `.claude/docs/libraries/`.
 - **Approvals**: destructive / low-reversibility operations (delete, multi-file rename, schema migration, external writes, Main DB distribution) require user approval — tiers in [[.claude/rules/agent-boundaries.md]] §5.
@@ -84,8 +82,7 @@ The core agent handles conversation, judgment, design AND implementation. There 
 | Path | Writer |
 |---|---|
 | `Inbox/{YYYY-MM-DD}/**` | Hermes + browser extensions only (capture). Core reads, then owns after aggregation |
-| `Daily/**`, `Work/**`, `Others/**`, `Maps/**`, `Persona/**`, `Templates/**` | Core agent + user |
-| `Research/**` (if submodule) | Per the submodule's own contract |
+| `Daily/**`, `Wiki/**`, `Maps/**`, `Persona/**`, `Templates/**` | Core agent + user |
 | `.claude/**` (control plane: rules / skills / registry / docs) | Core agent + user |
 | `.hermes/**` SKILL.md / references / config | Read-only for Hermes itself (observation notes go to `Inbox/{date}/clippings/`); core + user may edit |
 | External code repositories | **Read-only** (via Hermes GitHub MCP). Changes go through that repo's own PR flow |
@@ -98,7 +95,7 @@ The core agent handles conversation, judgment, design AND implementation. There 
 ### When the core is Codex
 
 - Sandbox: default `read-only`; promote to `workspace-write` for edits per the user's request. Never silently escalate. Even in `workspace-write`, §5 boundaries apply.
-- `claude.ai` connectors (e.g. Google Drive read) are unavailable — use the Hermes path instead ([[docs/connections/google-drive.md]] 経路 B).
+- `claude.ai` connectors (e.g. Google Drive read) are unavailable — use the Hermes path instead ([[Meta/connections/google-drive.md]] 経路 B).
 - Codex-side extras (vendored Obsidian skills, config): [[.codex/AGENTS.md]].
 
 ### When the core is Claude Code

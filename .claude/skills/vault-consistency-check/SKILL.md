@@ -1,6 +1,6 @@
 ---
 name: vault-consistency-check
-description: On-demand vault consistency reporting for the your-vault vault that writes or replaces only the `## 🔍 整合性チェック` section in today's root Daily note after running eight scoped checks in light or full mode; run from the Daily job list ('vault 整合性チェック') or manually, in light or full mode.
+description: On-demand vault consistency reporting for the your-vault vault that writes or replaces only the `## 🔍 整合性チェック` section in today's root Daily note after running seven scoped checks in light or full mode; run from the Daily job list ('vault 整合性チェック') or manually, in light or full mode.
 ---
 
 # Vault Consistency Check
@@ -10,7 +10,7 @@ description: On-demand vault consistency reporting for the your-vault vault that
 `vault-consistency-check` は、Daily の `## 🔍 整合性チェック` セクションだけを更新する夜間レポート用 skill である。
 single-writer 制約を守るため、対象は **当日 root Daily の 1 section のみ** に限定する。
 
-- `check_vault_consistency.py` は read-only で 8 checks を走らせ、Markdown か JSON を stdout に出す。
+- `check_vault_consistency.py` は read-only で 7 checks を走らせ、Markdown か JSON を stdout に出す。
 - `write_daily_section.py` はその Markdown section を受け取り、当日 Daily の該当 section だけを置換する。
 - auto-fix はしない。提案は出すが、変更は人間か別 skill が行う。
 
@@ -58,8 +58,8 @@ uv run python .claude/skills/vault-consistency-check/scripts/check_vault_consist
 
 | mode | 対象 | remote checks | 目標時間 |
 |---|---|---|---|
-| `light` | 当日 touched-today の note を中心に 1, 2, 6 を縮小実行。3, 7 は常時。4 は当日 Daily に Tasks 節と内容がある場合のみ。5 は `Maps/Code-Map.md` が touched-today の場合のみ。8 は (a) root registry + (b) required dirs のみ。 | 既定 off。必要時のみ `--enable-remote` | 30 秒以内 |
-| `full` | vault 全体の note ドメインを対象に 8 checks 全面実行。8 は (a)–(d) 全サブチェック（(c) 非 md 配置 / (d) 空 dir も走る）。 | 既定 off。必要時のみ `--enable-remote` | 制限なし |
+| `light` | 当日 touched-today の note を中心に 1, 2 を縮小実行。3, 6 は常時。4 は当日 Daily に Tasks 節と内容がある場合のみ。5 は `Maps/Code-Map.md` が touched-today の場合のみ。7 は (a) root registry + (b) required dirs のみ。 | 既定 off。必要時のみ `--enable-remote` | 30 秒以内 |
+| `full` | vault 全体の note ドメインを対象に 7 checks 全面実行。7 は (a)–(d) 全サブチェック（(c) 非 md 配置 / (d) 空 dir も走る）。 | 既定 off。必要時のみ `--enable-remote` | 制限なし |
 
 `touched-today` は次の union で決まる。
 
@@ -72,9 +72,9 @@ uv run python .claude/skills/vault-consistency-check/scripts/check_vault_consist
 出力形式の詳細は [[.claude/skills/vault-consistency-check/references/output-format.md]] を参照する。
 
 - 先頭見出しは必ず `## 🔍 整合性チェック`
-- summary 行は `WARN: N, ERROR: N, OK: N (checked: 8, mode: M, ran: HH:MM)`
+- summary 行は `WARN: N, ERROR: N, OK: N (checked: 7, mode: M, ran: HH:MM)`
 - findings は `ERROR > WARN > OK`、同一 tag 内は `check-name -> path`
-- tag と check 名は英語固定（次節の 8 個）、説明と提案は日本語
+- tag と check 名は英語固定（次節の 7 個）、説明と提案は日本語
 
 ## 境界
 
@@ -139,16 +139,15 @@ schtasks /create /tn "VaultConsistencyCheck_Full" `
 
 ## 実装メモ
 
-8 checks は次の固定名を使う。
+7 checks は次の固定名を使う。
 
 1. `Broken wikilinks`
 2. `Frontmatter schema violation`
 3. `Inbox stagnation`
 4. `Today Tasks drift`
 5. `Code-Map repo health`
-6. `Work logs project field`
-7. `Submodule dirty / commit drift`
-8. `Structure drift`
+6. `Submodule dirty / commit drift`
+7. `Structure drift`
 
 remote checks の既定は off である。
 
@@ -156,7 +155,7 @@ remote checks の既定は off である。
 - `Code-Map repo health` は Hermes で GitHub URL health を JSON 取得するときだけ remote
 - timeout や malformed JSON は check 単位で `WARN` に倒し、run 全体は継続する
 
-`Structure drift`（Check #8）はディレクトリ構造の drift を検査する（正本は [[AGENTS.md]] §1 のドメイン構成と `references/schema_rules.yaml`）。
+`Structure drift`（Check #7）はディレクトリ構造の drift を検査する（正本は [[AGENTS.md]] §1 のドメイン構成と `references/schema_rules.yaml`）。
 
 - (a) root registry 外の dir [WARN] と (b) 必須 dir の物理欠落 [ERROR] は light / full 両方で走る
 - (c) 非 md ファイルの配置違反 [WARN] と (d) 空 dir の `.gitkeep` 欠落 [WARN] は full のみ

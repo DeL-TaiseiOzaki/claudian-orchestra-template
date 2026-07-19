@@ -10,7 +10,7 @@
 ## Summary Line
 
 - 2 行目ではなく、見出しの 1 行下を空けた次の行に置く
-- 形式は `WARN: N, ERROR: N, OK: N (checked: 8, mode: M, ran: HH:MM)`
+- 形式は `WARN: N, ERROR: N, OK: N (checked: 7, mode: M, ran: HH:MM)`
 - `mode` は `light` か `full`
 - `ran` は実行時刻の 24 時間表記
 
@@ -27,7 +27,6 @@
   - `Inbox stagnation`
   - `Today Tasks drift`
   - `Code-Map repo health`
-  - `Work logs project field`
   - `Submodule dirty / commit drift`
   - `Structure drift`
 
@@ -48,9 +47,9 @@
 ```md
 ## 🔍 整合性チェック
 
-WARN: 3, ERROR: 1, OK: 4 (checked: 8, mode: full, ran: 21:57)
+WARN: 3, ERROR: 1, OK: 3 (checked: 7, mode: full, ran: 21:57)
 
-- ERROR [Broken wikilinks] Work/PROJ_A/project.md :: `[[Foo#Bar]]` の参照先が解決できません。提案: 対象ノート名または見出し表記を確認してください（提案のみ・auto-fix なし）。
+- ERROR [Broken wikilinks] Wiki/my-topic.md :: `[[Foo#Bar]]` の参照先が解決できません。提案: 対象ノート名または見出し表記を確認してください（提案のみ・auto-fix なし）。
 - WARN  [Code-Map repo health] Maps/Code-Map.md :: `https://github.com/owner/repo` は `deleted_or_renamed` と判定されました。提案: private 想定なら注記追加、移転済みなら URL を見直してください（提案のみ・auto-fix なし）。
 - WARN  [Structure drift] Inbox/oldsource :: `Inbox/oldsource/` は Inbox 直下の想定外フォルダです（日付ファースト: `Inbox/YYYY-MM-DD/`）。提案: date-first モデルに沿って整理するか、不要なら削除してください（提案のみ・auto-fix なし）。
 - WARN  [Today Tasks drift] Daily/2026-06-06.md :: Daily と Google Tasks の状態に 2 件の差分があります。提案: 完了状態とタスク名を見比べて手動で同期してください（提案のみ・auto-fix なし）。

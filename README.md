@@ -17,28 +17,9 @@
 
 ## アーキテクチャ概要
 
-```mermaid
-flowchart LR
-  user((You)) <--> core
-  subgraph orchestra[Agent Orchestra]
-    core["コアエージェント<br/>(Codex 既定 / Claude Code 可)"]
-    hermes["Hermes<br/>(ingestion・全外部接続を所有)"]
-  end
-  subgraph vault[Obsidian Vault = 共有メモリ]
-    inbox["Inbox/{date}/{source}/"]
-    daily["Daily/{date}.md(ハブ)"]
-    main["Work / Others / Research"]
-  end
-  subgraph ext[External Sources]
-    ex1[Slack / Discord]
-    ex2[Google Calendar / Tasks / Gmail / Drive]
-    ex3[GitHub / RSS / AI 議事録 / Web]
-  end
-  ext --> hermes --> inbox
-  core --> daily --> main
-  inbox -. aggregate .-> daily
-  core <--> hermes
-```
+![Architecture — Obsidian Vault (shared memory) + Agent Orchestra (core agent + Hermes) + External Sources](Meta/assets/architecture.png)
+
+*Vault そのものを共有メモリに、コアエージェント（Codex 既定 / Claude Code 可）と Hermes がその上で協調する。External Sources → Hermes（capture）→ Inbox → Daily → Main DB の一方向フロー。*
 
 情報の流れは **capture → Daily ハブ → Main DB** の 3 段：
 
@@ -49,10 +30,10 @@ External Source
 Inbox/{YYYY-MM-DD}/{source}/{file}.md     ← 日付ファースト・auto-route なし
    │ ② aggregate（コアエージェントが当日中に Daily へ集約）
    ▼
-Daily/{YYYY-MM-DD}.md                      ← その日の唯一のハブ
+Daily/{YYYY-MM-DD}.md                      ← 唯一のハブ＝人間の監査点
    │ ③ distribute（EOD に Main DB へ蒸留・配分）
    ▼
-Work / Research / Others                   → Evergreen
+Wiki                                       → Evergreen
 ```
 
 詳細は [`AGENTS.md`](./AGENTS.md)（コア契約） / [`.claude/rules/`](./.claude/rules/) を参照．
@@ -61,7 +42,7 @@ Work / Research / Others                   → Evergreen
 
 ## クイックスタート
 
-> **初めての人はまず [`GETTING-STARTED.md`](./GETTING-STARTED.md) を読んでください。** 全部を一度にセットアップする必要はなく、Obsidian + コアエージェント CLI だけ(15分)→ コア確定(core-setup)→ Hermes → 外部接続 1 本ずつ、という段階式で始められます。外部接続(Slack / Google / GitHub 等)の個別手順とトラブルシューティングは [`docs/connections/`](./docs/connections/README.md) にあります。
+> **初めての人はまず [`GETTING-STARTED.md`](./GETTING-STARTED.md) を読んでください。** 全部を一度にセットアップする必要はなく、Obsidian + コアエージェント CLI だけ(15分)→ コア確定(core-setup)→ Hermes → 外部接続 1 本ずつ、という段階式で始められます。外部接続(Slack / Google / GitHub 等)の個別手順とトラブルシューティングは [`Meta/connections/`](./Meta/connections/README.md) にあります。
 
 ### 1. clone してリネーム
 
@@ -87,12 +68,12 @@ Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わ
 
 - **対話式セットアップ（推奨）**：コアエージェントに「**接続セットアップして**」と言えば [`connection-setup`](./.claude/skills/connection-setup/SKILL.md) skill がユースケースを質問し，使うツールだけを [`connections.yaml`](./.claude/connections.yaml) に記録して 1 本ずつセットアップします．使わないツールはジョブリストからも消えます
 - 段階式セットアップ：[`GETTING-STARTED.md`](./GETTING-STARTED.md)（Level 0〜3）
-- 接続別ガイド：[`docs/connections/`](./docs/connections/README.md)（GitHub / Google カレンダー・Tasks / Gmail / Google Drive / Slack / Discord / RSS / クリッピング / AI 議事録 / Zotero / Notion。カタログ外ツールの対応表つき）
+- 接続別ガイド：[`Meta/connections/`](./Meta/connections/README.md)（GitHub / Google カレンダー・Tasks / Gmail / Google Drive / Slack / Discord / RSS / クリッピング / AI 議事録 / Zotero / Notion。カタログ外ツールの対応表つき）
 - 診断：コアエージェントに「**接続チェックして**」と言えば [`connection-doctor`](./.claude/skills/connection-doctor/SKILL.md) skill がどこが繋がっていてどこが切れているかを表で報告します
 
 ### 4. 自分用に整える
 
-- `Work/PROJ_A/` を実際の案件コード（例：`Work/MYCLIENT/`）にリネーム．`.claude/rules/work-management.md` の対応表も更新．
+- `Wiki/` に最初のノートを 1 枚書いてみる．
 - `Persona/AGENTS.md` に自分のプロフィールを書く（vault 全体から参照される identity の単一の正）．
 - `Maps/Home.md` に自分の vault の入口を書く．
 - 不要な skill は `.claude/skills/` から削除して構わない（特に `.hermes/skills/vault-capture/` 配下の外部接続は，使うものだけ残す）．
@@ -104,25 +85,23 @@ Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わ
 | パス | 中身 |
 |---|---|
 | [`GETTING-STARTED.md`](./GETTING-STARTED.md) | 段階式セットアップガイド（Level 0〜3・初めての人はここから） |
-| [`docs/connections/`](./docs/connections/) | 外部接続の個別セットアップガイド（GitHub / Google 系 / Slack / Discord / RSS / クリッピング / AI 議事録 / Zotero / Notion の 11 接続 + カタログ外対応表） |
+| [`Meta/connections/`](./Meta/connections/) | 外部接続の個別セットアップガイド（GitHub / Google 系 / Slack / Discord / RSS / クリッピング / AI 議事録 / Zotero / Notion の 11 接続 + カタログ外対応表） |
 | [`AGENTS.md`](./AGENTS.md) | **コア契約**（vault の最上位ルール。Codex が自動読込・Claude コアもここに従う） |
 | [`CLAUDE.md`](./CLAUDE.md) | Claude Code をコアにする場合のアダプタ（AGENTS.md を指す） |
-| [`.claude/rules/`](./.claude/rules/) | 運用ルール（frontmatter / tagging / Daily 運用 / Inbox routing / Work / Others 等） |
+| [`.claude/rules/`](./.claude/rules/) | 運用ルール（frontmatter / tagging / Daily 運用 / Inbox routing / Wiki 等） |
 | [`.claude/skills/`](./.claude/skills/) | コア用 skill 群（core-setup / connection-setup / daily-briefing / aggregate-* / eod-distill など。トリガー時に SKILL.md を読んで従う） |
 | [`.claude/agents/`](./.claude/agents/) | サブエージェント定義（general-purpose・Claude コア用） |
 | [`.claude/docs/knowledges/`](./.claude/docs/knowledges/) | 運用で得た学びの structured knowledge base（テンプレでは README のみ） |
 | [`.codex/`](./.codex/) | Codex 側の契約・skill 共有 |
 | [`.hermes/`](./.hermes/) | Hermes 宣言的設定の雛形（`config.yaml`） + vault 用 capture skill（vault-capture/） |
-| [`Templates/`](./Templates/) | ノートテンプレ（daily / weekly / work / idea / exploration / paper / experiment 等） |
+| [`Templates/`](./Templates/) | ノートテンプレ（daily / weekly / meeting / idea / exploration / paper / experiment / code-note 等） |
 | [`Maps/`](./Maps/) | 横断 MOC（Home / Code-Map / People-Map）＋ 5 ラベル Bases ビュー |
-| [`Work/PROJ_A/`](./Work/PROJ_A/) | クライアント案件の 4 層標準構造（sources / docs / meetings / code / deliverables / proposals / references / logs） |
-| [`Others/`](./Others/) | Ideas / Activities / Learning |
+| [`Wiki/`](./Wiki/) | 汎用ナレッジの Main DB（アイデア / 学習・読書 / 文献・実験ノート / 活動記録） |
 | [`Persona/`](./Persona/) | 著者プロフィールの単一の正（vault 全体から参照） |
 | [`Inbox/`](./Inbox/) | 外部 capture の受け口（日付ファースト） |
 | [`Daily/`](./Daily/) | デイリー / ウィークリージャーナル |
 | [`Archive/`](./Archive/) | 非活性退避先 |
 | [`Meta/`](./Meta/) | vault 自身についての作業（自己言及プロジェクト） |
-| [`Research/`](./Research/) | 研究用プレースホルダ（必要なら git submodule で外部リポを mount） |
 
 `.gitignore` は **secret は絶対に commit しない / runtime state は version しない** という方針で組まれています（特に `.hermes/skills/*` 配下は **vault-capture/ 以外を除外**するように設定済み）．
 
@@ -133,8 +112,8 @@ Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わ
 1. **Vault そのものがインターフェース**：人も AI も同じ Markdown を読み書きする．特定 SaaS にロックインされない．
 2. **正本（system of record）の所在を決め切る**：会話=Slack / ToDo=GTasks / 予定=GCal / コード=GitHub / 記憶=この vault．重複保有しない．
 3. **capture と curate を分ける**：Hermes は `Inbox/` に投げるだけ．判断と移動はコアエージェント＋人間．
-4. **書き手は時点ごとに 1 人**：split-brain を避けるため，同じファイルを 2 体が同時に触らない．
-5. **proposal → delivery を地続きに**：案件は `Work/{CODE}/` の中で提案フェーズもデリバリフェーズも 4 層標準で扱う．
+4. **Daily = 人間の監査点**：エージェントの全アクション（取り込み・集約・蒸留・チェック）は Daily に痕跡が残る．人はその日の Daily を読むだけで，何が入り・どこへ蒸留されたかを監査・承認できる．
+5. **書き手は時点ごとに 1 人**：split-brain を避けるため，同じファイルを 2 体が同時に触らない．
 6. **on-demand 既定**：Daily の `## 🤖 ジョブリスト` を見て人間が「これやって」と指示する．cron 多用しない．
 
 ---

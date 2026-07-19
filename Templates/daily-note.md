@@ -2,13 +2,14 @@
 title: "{{date:YYYY-MM-DD}} デイリー"
 type: "log"
 status: "in-progress"
-projects: []
 tags: []
 created: {{date:YYYY-MM-DD}}
 updated: {{date:YYYY-MM-DD}}
 ---
 
 # {{date:YYYY-MM-DD}} デイリー
+
+<!-- この Daily は唯一のハブ＝人間の監査点。エージェントの全アクション（取り込み・集約・蒸留・チェック）の痕跡がここに集まる。この 1 枚を読めばその日の全体を監査できる（だからここからは削除しない） -->
 
 ## 🌅 朝のbriefing
 
@@ -48,7 +49,7 @@ updated: {{date:YYYY-MM-DD}}
 ### 取り込み（capture → `Inbox/{date}/{source}/...`）
 - [ ] **Calendar + Tasks**（朝 briefing 用素材）→ `inbox-daily-capture` <!-- connection: google-calendar google-tasks -->
 - [ ] **Slack**（今日 ＋ 前日 catch-all）→ `slack-capture` <!-- connection: slack -->
-- [ ] **Discord**（bot 参加サーバの日次 digest → 自作 discord-capture・[[docs/connections/discord.md]]） <!-- connection: discord -->
+- [ ] **Discord**（bot 参加サーバの日次 digest → 自作 discord-capture・[[Meta/connections/discord.md]]） <!-- connection: discord -->
 - [ ] **GitHub EOD**（Code-Map 由来 repo の today 変化）→ `github-eod-capture` <!-- connection: github -->
 - [ ] **AI 議事録**（今日完了した MTG の transcript を取得。Genspark は `genspark-mtg` で一括／他サービスはエクスポート投入）→ `Inbox/{date}/mtgs/` <!-- connection: meeting-notes -->
 - [ ] **RSS 巡回**（購読フィードの新着 → clippings）→ hermes on-demand <!-- connection: rss -->
@@ -56,17 +57,17 @@ updated: {{date:YYYY-MM-DD}}
 
 ### 集約（aggregate → `Inbox/{date}/*` から Daily へ append）
 - [ ] **朝 briefing**（`Inbox/{date}/daily/daily.md` → root Daily ハブ・予定/タスク/ジョブ状態）→ `daily-briefing`（朝のみ）
-- [ ] **Slack 集約**（slack digests → Daily の Work / ミーティング・メモ section）→ `aggregate-slack` <!-- connection: slack -->
-- [ ] **MTG 集約**（mtgs/ の transcripts → Daily の Work / ミーティング section に要約 bullet）→ `aggregate-mtgs` <!-- connection: meeting-notes -->
-- [ ] **Code 集約**（github-eod code.md → Daily の Work / Research / Others section に per-repo 1-2 行）→ `aggregate-code` <!-- connection: github -->
-- [ ] **Clippings 集約**（web 記事 → Daily の Others / 該当 section）→ `aggregate-clippings` <!-- connection: web-clippings -->
-- [ ] **Chat logs 集約**（ChatGPT/Claude 会話 → Daily の Others / 該当 section）→ `aggregate-chat-logs` <!-- connection: web-clippings -->
+- [ ] **Slack 集約**（slack digests → Daily の ミーティング・メモ section）→ `aggregate-slack` <!-- connection: slack -->
+- [ ] **MTG 集約**（mtgs/ の transcripts → Daily の ミーティング section に要約 bullet）→ `aggregate-mtgs` <!-- connection: meeting-notes -->
+- [ ] **Code 集約**（github-eod code.md → Daily の Wiki section に per-repo 1-2 行）→ `aggregate-code` <!-- connection: github -->
+- [ ] **Clippings 集約**（web 記事 → Daily の Wiki / 該当 section）→ `aggregate-clippings` <!-- connection: web-clippings -->
+- [ ] **Chat logs 集約**（ChatGPT/Claude 会話 → Daily の Wiki / 該当 section）→ `aggregate-chat-logs` <!-- connection: web-clippings -->
 
 ### MTG 準備（pre-meeting → 各 `meetings/` に議事録の叩き台）
 - [ ] **MTG 準備**（今日参加する MTG の議事録叩き台作成＋Daily リンク・目的等はヒアリング。Genspark 利用時は bot 準備ガイドも）→ `mtg-prep` <!-- connection: meeting-notes -->
 
 ### 配分（distill → Daily から Main DB へ蒸留）
-- [ ] **EOD distill**（Daily ログから durable な内容を Work/Others/Research/knowledges/ へ。話者名は [[Maps/People-Map.md]] で名寄せ。raw Inbox は `{area}/sources/` へ）→ `eod-distill`（夜 1 回・直列）
+- [ ] **EOD distill**（Daily ログから durable な内容を Wiki / knowledges/ へ。話者名は [[Maps/People-Map.md]] で名寄せ。raw Inbox は `{area}/sources/` へ）→ `eod-distill`（夜 1 回・直列）
 - [ ] **Tasks 反映**（完了・defer 提案 → ユーザー承認 → hermes 反映）→ `hermes-query` <!-- connection: google-tasks -->
 
 ### 検査・バックアップ（check / publish）
@@ -77,16 +78,7 @@ updated: {{date:YYYY-MM-DD}}
 
 ## 📝 ログ（日中の追記）
 
-### 🏢 Work
-<!-- 概要のみ。詳細は Work/{XXX}/logs/{{date:YYYY-MM-DD}}.md に書く。触らない案件の行は削除してよい -->
-- **PROJ_A**: 
-- **PROJ_B**: 
-- **PROJ_C**: 
-
-### 🔬 Research
-- 
-
-### 💡 Others / Insights
+### 📚 Wiki
 - 
 
 ### 🗒️ ミーティング・連絡メモ

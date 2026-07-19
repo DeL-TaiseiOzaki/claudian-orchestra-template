@@ -16,7 +16,7 @@ metadata:
 Web の壁打ち（ChatGPT / Claude）や記事を **生のまま** `Inbox/{YYYY-MM-DD}/clippings/`（日付つき親フォルダ配下）に取り込む capture 係。
 
 > **役割境界**：書き込みは **`Inbox/{YYYY-MM-DD}/clippings/` のみ**（single-writer）。root `Daily/` や
-> curated（Work / Research / Others）には触れない。整理（蒸留・リンク・昇華）は Claude Code
+> curated（Wiki）には触れない。整理（蒸留・リンク・昇華）は Claude Code
 > 側の別工程（[[Inbox/README.md]] の処理フロー）。
 
 ## 取り込み経路（Chrome 拡張 → Hermes）
@@ -97,7 +97,7 @@ hermes chat -q "Load the clippings-capture skill and process the pending clippin
 
 ## curate（この後の工程・Claude Code 側）
 
-- `Inbox/{YYYY-MM-DD}/clippings/` に溜まったものは、判断・蒸留して Work / Research / Others の evergreen へ
+- `Inbox/{YYYY-MM-DD}/clippings/` に溜まったものは、判断・蒸留して Wiki の evergreen へ
   移送・リンク（移動元にリンクを残す）。処理済みは削除し、Inbox を空に近づける。
 - 規約：[[.claude/rules/agent-boundaries.md]] / [[Inbox/README.md]]。
 

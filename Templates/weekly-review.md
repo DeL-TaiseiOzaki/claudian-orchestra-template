@@ -3,7 +3,6 @@ title: "Weekly Review - W{{DATE:WXX}}"
 type: "log"
 status: "completed"
 period: "week"
-projects: ["PROJ_A", "PROJ_B"]
 tags: ["weekly-review"]
 created: {{DATE:YYYY-MM-DD}}
 updated: {{DATE:YYYY-MM-DD}}
@@ -16,59 +15,26 @@ updated: {{DATE:YYYY-MM-DD}}
 
 ---
 
-## 📊 Work Summary（前週）
+## 📚 Wiki Summary（前週）
 
-### PROJ_A (Client A)
-- **完了**:
-  - 
-- **進行中**:
-  - 
-- **ブロッカー / 懸念**:
-  - 
-- **詳細ログ**: `Work/PROJ_A/logs/` 参照
-
-### PROJ_B (Client B)
-- **完了**:
-  - 
-- **進行中**:
-  - 
-- **ブロッカー / 懸念**:
-  - 
-- **詳細ログ**: `Work/PROJ_B/logs/` 参照
-
----
-
-## 🔬 Research Summary（前週）
-
-### LLM/VLM Understanding
-- **読んだ論文**:
+- **読んだ論文 / 文献ノート**:
   - 
 - **完了した実験**:
   - 
+- **Ideas / Exploration の追記**:
+  - 
+- **学習・読書の進捗**:
+  - 
+- **活動記録（#activity）**:
+  - 
 - **主要な発見 / 洞察**:
-  - 
-- **次に読むべき論文 / やるべき実験**:
-  - 
-
----
-
-## 🌱 Others Summary（前週）
-
-- **Ideas / Exploration / Ecosystem の追記**:
-  - 
-- **Learning の進捗**:
-  - 
-- **Activities**:
   - 
 
 ---
 
 ## 🎯 今週の目標
 
-- [ ] PROJ_A: 
-- [ ] PROJ_B: 
-- [ ] Research: 
-- [ ] Others: 
+- [ ] Wiki: 
 
 ---
 

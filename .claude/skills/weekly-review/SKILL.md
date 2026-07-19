@@ -1,6 +1,6 @@
 ---
 name: weekly-review
-description: Generate the weekly review note (Daily/Weekly-{YYYY-WXX}.md) on Monday morning, scanning the previous week's Daily notes and Work/{XXX}/logs/ to summarize Work / Research / Others progress and extract next-week tasks. Use for weekly retrospectives and planning.
+description: Generate the weekly review note (Daily/Weekly-{YYYY-WXX}.md) on Monday morning, scanning the previous week's Daily notes and Wiki updates to summarize Wiki progress and extract next-week tasks. Use for weekly retrospectives and planning.
 ---
 
 # Weekly Review Skill
@@ -8,7 +8,7 @@ description: Generate the weekly review note (Daily/Weekly-{YYYY-WXX}.md) on Mon
 ## 目的
 
 毎週月曜朝に **前週（月〜日）** の振り返りノート `Daily/Weekly-{YYYY-WXX}.md` を生成。
-Daily ノートと `Work/{XXX}/logs/` を走査して、Work / Research / Others それぞれの進捗をまとめ、今週やるべきタスクを抽出する。
+Daily ノートと `Wiki/` の期間内更新を走査して進捗をまとめ、今週やるべきタスクを抽出する。
 
 ## 使用場面
 
@@ -29,9 +29,7 @@ Daily ノートと `Work/{XXX}/logs/` を走査して、Work / Research / Others
 | 領域 | 対象 |
 |------|------|
 | Daily | `Daily/{YYYY-MM-DD}.md`（対象期間7日分） |
-| Work | `Work/PROJ_A/logs/`, `Work/PROJ_B/logs/` のうち期間内のファイル |
-| Research | `Research/status.md`（サブモジュール）の更新内容と直近コミット |
-| Others | `Others/{Ideas,Activities,Learning}/`（Ecosystem は Activities 配下）のうち期間内更新ファイル |
+| Wiki | `Wiki/` のうち期間内更新ファイル |
 
 存在しないファイルはスキップ（エラーにしない）。
 
@@ -39,9 +37,7 @@ Daily ノートと `Work/{XXX}/logs/` を走査して、Work / Research / Others
 
 `Templates/weekly-review.md` をベースに以下を埋める：
 
-- **Work Summary**: 案件ごとに 完了 / 進行中 / ブロッカー / 詳細ログへのリンク
-- **Research Summary**: 読んだ論文、完了実験、Key findings
-- **Others Summary**: Ideas / Ecosystem / Activities / Learning の主だった追記
+- **Wiki Summary**: 読んだ論文・完了実験・アイデア・学習・活動記録の主だった追記（完了 / 進行中 / ブロッカーを含む）
 - **今週の目標**: 各領域の今週ゴール（ユーザに確認）
 - **振り返り**: うまくいったこと / 改善点 / 学び
 
@@ -58,7 +54,6 @@ title: "Weekly Review - W{ISO週番号}"
 type: "log"
 status: "completed"
 period: "week"
-projects: ["PROJ_A", "PROJ_B"]
 tags: ["weekly-review"]
 created: {当日YYYY-MM-DD}
 updated: {当日YYYY-MM-DD}
@@ -69,14 +64,13 @@ updated: {当日YYYY-MM-DD}
 
 ## 注意
 
-- 対象期間内に Daily / logs ファイルが1つも存在しない領域は「記録なし」と明記してスペースは確保
+- 対象期間内に Daily / Wiki ファイルが1つも存在しない領域は「記録なし」と明記してスペースは確保
 - frontmatter `updated` が無いノートは `created` で代用
 - 既存の Weekly ファイルがある場合は上書きせず、ユーザに上書き / 追記 / 別名保存を確認
 
 ## 関連ルール
 
 - [[.claude/rules/daily-operations.md]]
-- [[.claude/rules/work-management.md]]
-- [[.claude/rules/research-management.md]]
+- [[.claude/rules/wiki-management.md]]
 - [[.claude/rules/vault-metadata.md]]
 - [[Templates/weekly-review.md]]

@@ -1,6 +1,6 @@
 # Inbox ルーティングルール
 
-外部ソース → **hermes** → **`Inbox/{YYYY-MM-DD}/{source}/`** → **Claude が当日分を Daily に集約** → EOD に Main DB（Work / Others / Research）へ配分、という <your-vault> 唯一の取り込み導線を定義する。
+外部ソース → **hermes** → **`Inbox/{YYYY-MM-DD}/{source}/`** → **Claude が当日分を Daily に集約** → EOD に Main DB（Wiki）へ配分、という <your-vault> 唯一の取り込み導線を定義する。
 このファイルは routing の **single source of truth**。Hermes-side capture skills（[[.hermes/skills/vault-capture/]]）はここを実装する。
 
 > 設計原則（2026-06-15 **日付ファースト＋Daily ハブ**へ再アーキ）：
@@ -22,14 +22,14 @@ Inbox/{YYYY-MM-DD}/{source}/{file}.md      ← 日付ファースト・ソース
 Daily/{YYYY-MM-DD}.md                       ← 唯一のハブ＝その日の完全な記録
        │ (3) distribute — EOD に蒸留・配分（Claude + ユーザー）
        ▼
-Main DB（Work / Others / Research）          → Evergreen
+Main DB（Wiki）                              → Evergreen
 ```
 
 | Step | 担い手 | 触る範囲 | 詳細 |
 |---|---|---|---|
 | (1) capture | hermes（**user instruction**） | `Inbox/{date}/**` への新規作成 | 各 source から生データ取得＋frontmatter 正規化のみ。**auto-route しない**。**on-demand 既定**＝the user (reads the Daily note's `## 🤖 ジョブリスト` を見て指示 → Claude が hermes に CLI 委譲。cron は任意（過渡期維持） |
 | (2) aggregate | Claude | `Daily/{date}.md` | **朝の Calendar+Tasks** は [[.claude/skills/daily-briefing/SKILL.md]]（`Inbox/{date}/daily/` のみ）。**日中の per-source on-demand** は [[.claude/skills/aggregate-slack/SKILL.md]] / [[.claude/skills/aggregate-mtgs/SKILL.md]] / [[.claude/skills/aggregate-code/SKILL.md]] / [[.claude/skills/aggregate-clippings/SKILL.md]] / [[.claude/skills/aggregate-chat-logs/SKILL.md]] が分担 |
-| (3) distribute | Claude + ユーザー | Main DB | **EOD に [[.claude/skills/eod-distill/SKILL.md]] が**：Daily から durable な知見を Work / Others / Research / `.claude/docs/knowledges/` へ蒸留・配分（移動元にリンク。raw Inbox は `{area}/sources/` へ。承認前提・1 日 1 回・直列） |
+| (3) distribute | Claude + ユーザー | Main DB | **EOD に [[.claude/skills/eod-distill/SKILL.md]] が**：Daily から durable な知見を Wiki / `.claude/docs/knowledges/` へ蒸留・配分（移動元にリンク。raw Inbox は `Wiki/sources/` へ。承認前提・1 日 1 回・直列） |
 
 > **例外（直接配置）**：Main DB の保存先が**完全に見えている**場合は、ユーザー／Claude が Inbox を経ず**直接 Main DB に置いてよい**。**その際は Daily ノートに「○○を△△へ直接配置」と必ず記載**し、Daily がその日の完全な記録であり続けるようにする。
 
@@ -75,19 +75,19 @@ Daily に集約した内容から、durable なものを Main DB へ蒸留・配
 | Inbox 元（`Inbox/{date}/…`） | EOD の配分先 | 備考 |
 |---|---|---|
 | `daily/daily.md` | `Daily/{date}.md` | briefing として集約（compose） |
-| `slack/{channel}.md` | `Work/*/sources/`・`Others/*/sources/` 等（raw のまま） | 宛先は Claude/ユーザーが判断。蒸留ノートは `docs/`・`notes/` へ別途 |
-| `discord/{channel}.md` | `Others/Activities/{NAME}/sources/` 等（raw のまま） | コミュニティ会話が典型。扱いは slack と同じ |
-| `code/code.md` | raw を `Work/*/sources/`、必要分を `logs/{date}.md` へ蒸留 | per-repo セクションで分かれている |
-| `mtgs/genspark-*.md` | **要約して `{project}/meetings/{date}-{name}.md`（compiled）へ** | raw transcript は git 履歴に残す（§3.3 例外）。**話者名は [[Maps/People-Map.md]] で名寄せ**（AI 文字起こしは同音異字を誤記する。例：「ヤマダ」→「山田田」→ 実際は「山田 太郎」） |
-| `clippings/{slug}.md` | raw を `{area}/sources/`、蒸留は `notes/`・`Others/Ideas/` | 信号なし＝判断は Claude/ユーザー |
-| `chat-logs/{provider}-{slug}.md` | raw を `{area}/sources/`、または蒸留して `Others/Ideas/`・`notes/` | 〃 |
-| `mail/{slug}.md` | raw を `{area}/sources/`、要点は `docs/`・`notes/` へ蒸留 | on-demand capture のみ（Gmail は pull 既定） |
-| `attachments/…` | `Work/*/sources/`（先方資料）・`references/`（サーベイ資料）等へ raw のまま | 〃 |
+| `slack/{channel}.md` | `Wiki/sources/`（raw のまま） | 宛先は Claude/ユーザーが判断。蒸留ノートは `Wiki/` へ別途 |
+| `discord/{channel}.md` | `Wiki/sources/` 等（raw のまま） | コミュニティ会話が典型。扱いは slack と同じ |
+| `code/code.md` | raw を `Wiki/sources/`、要点は Wiki ノートへ蒸留 | per-repo セクションで分かれている |
+| `mtgs/genspark-*.md` | **要約して `Wiki/meetings/{date}-{name}.md`（compiled）へ** | raw transcript は git 履歴に残す（§3.3 例外）。**話者名は [[Maps/People-Map.md]] で名寄せ**（AI 文字起こしは同音異字を誤記する。例：「ヤマダ」→「山田田」→ 実際は「山田 太郎」） |
+| `clippings/{slug}.md` | raw を `Wiki/sources/`、蒸留は `Wiki/{slug}.md`（type: idea / note） | 信号なし＝判断は Claude/ユーザー |
+| `chat-logs/{provider}-{slug}.md` | raw を `Wiki/sources/`、または蒸留して `Wiki/{slug}.md` | 〃 |
+| `mail/{slug}.md` | raw を `Wiki/sources/`、要点は Wiki ノートへ蒸留 | on-demand capture のみ（Gmail は pull 既定） |
+| `attachments/…` | `Wiki/sources/` へ raw のまま | 〃 |
 
 ### 3.3 curate 着地の原則
 
-> Inbox 由来データは hermes capture（chat-logs のみ手動）の**生データ**。作業ディレクトリへ移すときは原則 **`{area}/sources/`（① Raw・immutable・frontmatter は `type: capture` のまま）**。`meetings/`・`docs/`・`notes/` は sources/ から**蒸留した compiled** を別途書く層。
-> **唯一の例外：genspark MTG（`Inbox/{date}/mtgs/`）は curate 時に要約し、`{project}/meetings/{date}-{name}.md`（③ Compiled・標準 enum）として置く**（raw transcript は sources/ に残さず git 履歴に委ねる）。
+> Inbox 由来データは hermes capture（chat-logs のみ手動）の**生データ**。作業ディレクトリへ移すときは原則 **`Wiki/sources/`（① Raw・immutable・frontmatter は `type: capture` のまま）**。`Wiki/meetings/` や Wiki ノートは sources/ から**蒸留した compiled** を別途書く層。
+> **唯一の例外：genspark MTG（`Inbox/{date}/mtgs/`）は curate 時に要約し、`Wiki/meetings/{date}-{name}.md`（③ Compiled・標準 enum）として置く**（raw transcript は sources/ に残さず git 履歴に委ねる）。
 
 ---
 
@@ -150,8 +150,7 @@ frontmatter は §2 の slack 行を参照。
 | パス | Hermes 書き込み |
 |---|---|
 | `Inbox/{YYYY-MM-DD}/**` | ✅ capture & frontmatter 正規化（**唯一の書込先**） |
-| curated パス（`Work/`・`Others/`・`Daily/`・`Maps/` 等） | ❌ **書かない**（auto-route 廃止。集約・配分は Claude + ユーザー） |
-| `Research/**` | ❌（サブモジュール側の AGENTS.md に従う） |
+| curated パス（`Wiki/`・`Daily/`・`Maps/` 等） | ❌ **書かない**（auto-route 廃止。集約・配分は Claude + ユーザー） |
 | `Archive/**` / `Templates/**` | ❌ |
 
 **Single-writer**：`Inbox/{date}/` の capture ファイルも、Claude が Daily へ集約した後は Claude + ユーザー所有。hermes は同じ file を二度触らない。

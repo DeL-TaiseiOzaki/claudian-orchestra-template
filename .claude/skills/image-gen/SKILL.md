@@ -43,12 +43,12 @@ description: Generate images via Codex CLI's built-in `$imagegen` skill (gpt-ima
 ## 3. 手順
 
 ### Step A — 保存先とファイル名を決める
-- 配置先は **対象ノートのフォルダ直下 `_assets/`**（既定方針）。例：ノートが `Work/PROJ_A/project.md` なら `Work/PROJ_A/_assets/`。
+- 配置先は **対象ノートのフォルダ直下 `_assets/`**（既定方針）。例：ノートが `Wiki/WebWorld/intro.md` なら `Wiki/WebWorld/_assets/`。
 - 対象ノートが不明なら**ユーザーに確認**（勝手に `Inbox/` には置かない＝capture 専用領域）。
 - `slug` は description から英小文字ハイフンで作る。filename = `<slug>.png`（衝突時は `-2`, `-3`）。
 
 ```bash
-ASSETS="<target-note-folder>/_assets"        # 例: Work/PROJ_A/_assets
+ASSETS="<target-note-folder>/_assets"        # 例: Wiki/WebWorld/_assets
 mkdir -p "$ASSETS"
 ```
 

@@ -52,8 +52,8 @@ hermes との情報のやり取りは 2 方向ある。**両方とも user-instr
 | Stage | 担い手 | 内容 | 触る範囲 |
 |---|---|---|---|
 | **capture** | Hermes | 外部ソースから生 md を取得 | `Inbox/{YYYY-MM-DD}/{source}/` に新規ファイル（frontmatter 正規化のみ） |
-| **aggregate** | Claude Code | 当日分の `Inbox/{date}/*` を Daily に集約 | `Daily/{date}.md`（ハブ） |
-| **curate** | Claude Code + ユーザー | Daily から Main DB へ蒸留・配分・リンク・evergreen 化 | Main DB（Work/Others/Research）の本文編集 |
+| **aggregate** | Claude Code | 当日分の `Inbox/{date}/*` を Daily に集約 | `Daily/{date}.md`（ハブ＝人間の監査点） |
+| **curate** | Claude Code + ユーザー | Daily から Main DB へ蒸留・配分・リンク・evergreen 化 | Main DB（Wiki）の本文編集 |
 
 ルーティング詳細は [[.claude/rules/inbox-routing.md]]。**全ソースが `Inbox/{date}/` に残り、Daily 集約と EOD 配分を待つ**（hermes は判定・移動をしない）。
 
@@ -81,22 +81,22 @@ hermes との情報のやり取りは 2 方向ある。**両方とも user-instr
 
 | 接続 | 所有者 | 経路 | 備考 |
 |---|---|---|---|
-| Slack（業務 IF） | Hermes | Slack app（双方向） | **仕事の会話はすべて Slack で進む** |
-| Discord（コミュニティ・任意） | Hermes | bot token（`DISCORD_BOT_TOKEN`・read 専用） | **bot を追加できるサーバのみ**（self-bot は規約違反）。capture skill は slack-capture をひな形に自作（[[docs/connections/discord.md]]） |
+| Slack（業務 IF） | Hermes | Slack app（双方向） | **会話の正本は Slack** |
+| Discord（コミュニティ・任意） | Hermes | bot token（`DISCORD_BOT_TOKEN`・read 専用） | **bot を追加できるサーバのみ**（self-bot は規約違反）。capture skill は slack-capture をひな形に自作（[[Meta/connections/discord.md]]） |
 | RSS / ニュースレター（任意） | Hermes | HTTP fetch（認証なし・`feeds.local.yaml`） | 新着 → `Inbox/{date}/clippings/`。ニュースレターは Gmail 転送受けも可 |
-| Zotero（研究者・任意） | Hermes | Zotero Web API（`ZOTERO_API_KEY`・read-only） | pull 既定。文献の正本は Zotero、vault は文献ノート + `resource:` ポインタ（[[docs/connections/zotero.md]]） |
-| Google Calendar（個人・複数可） | Hermes | **ics 直 fetch**（限定公開 URL、`.hermes/skills/vault-capture/inbox-daily-capture/scripts/fetch_calendar_ics.py`） | OAuth 不要・URL に token 内包。Claude は読まない。セットアップ → [[docs/connections/google-calendar-tasks.md]] |
+| Zotero（研究者・任意） | Hermes | Zotero Web API（`ZOTERO_API_KEY`・read-only） | pull 既定。文献の正本は Zotero、vault は文献ノート + `resource:` ポインタ（[[Meta/connections/zotero.md]]） |
+| Google Calendar（個人・複数可） | Hermes | **ics 直 fetch**（限定公開 URL、`.hermes/skills/vault-capture/inbox-daily-capture/scripts/fetch_calendar_ics.py`） | OAuth 不要・URL に token 内包。Claude は読まない。セットアップ → [[Meta/connections/google-calendar-tasks.md]] |
 | Google Calendar（追加アカウント・任意） | Hermes | **gws（GWS CLI）`gws calendar events list`**（アカウント別 config dir `GOOGLE_WORKSPACE_CLI_CONFIG_DIR=~/.config/gws-<name>`・readonly） | ics の限定公開 URL を出せない組織アカウント用。要：consent screen の test user 追加。Testing 公開のままだと token 約7日失効。**capture 実行 PC のローカルに該当 config dir の資格情報が必要** |
 | Google Tasks | Hermes | `list_tasks.py`（library 直叩き・`${HERMES_HOME}/google_token.json`） | 共有 OAuth トークン。**`gws` には依存しない**（library が自前で OAuth refresh） |
-| Gmail | Hermes | bundled `google-workspace`（共有 OAuth token・`gmail.*` scopes） | **pull 既定**（検索・参照）。定常 capture なし。残すときだけ on-demand で `Inbox/{date}/mail/` へ。下書き作成は承認制・自動送信なし（[[docs/connections/gmail.md]]） |
+| Gmail | Hermes | bundled `google-workspace`（共有 OAuth token・`gmail.*` scopes） | **pull 既定**（検索・参照）。定常 capture なし。残すときだけ on-demand で `Inbox/{date}/mail/` へ。下書き作成は承認制・自動送信なし（[[Meta/connections/gmail.md]]） |
 | Notion | Hermes | Notion MCP | 取り込みなし。Vault → Notion publish のみ |
 | Web（調査・検証 read） | Claude Code（read）／ Hermes（capture） | Claude: WebFetch / WebSearch・subagent ／ Hermes: 拡張・on-demand（Web Clipper・AI Exporter） | **Web の調査・検証 read は Claude Code から直接可**（[[AGENTS.md]] §4 operating model と整合）。**Inbox へ残すクリッピング capture は hermes** 経由（ブラウザ拡張） |
-| **Google Drive / Docs**（共有ドライブ資料の read） | **Claude Code**（特殊対応・2026-06-16 承認） | claude.ai **Google Drive コネクタ** `read_file_content`（fileId 指定） | **hermes 経由不要**の明示的例外。Claude コアの利便経路（コネクタ）。Codex コア / headless は hermes 経由（[[docs/connections/google-drive.md]] 経路 B）。**read 専用** |
+| **Google Drive / Docs**（共有ドライブ資料の read） | **Claude Code**（特殊対応・2026-06-16 承認） | claude.ai **Google Drive コネクタ** `read_file_content`（fileId 指定） | **hermes 経由不要**の明示的例外。Claude コアの利便経路（コネクタ）。Codex コア / headless は hermes 経由（[[Meta/connections/google-drive.md]] 経路 B）。**read 専用** |
 | **GitHub MCP**（他リポのコード context） | **Hermes** | **GitHub MCP**（PAT は hermes のみ保持） | CC / CX は hermes 経由で読み取り（push: on-demand `github-eod-capture`→`Inbox/{date}/code/`・既存 cron は過渡期維持 ／ pull: `hermes chat -q`） |
 | Git（vault 自身） | Claude Code | ローカル `gh` / `git` CLI | バックアップ + 履歴管理（GitHub MCP とは別経路） |
 
 > 外向き統合の **write / capture**（Slack / Notion / GWS / **GitHub MCP**）は Hermes が OAuth / PAT + MCP を一元保持する（失効も一括）。
-> **コアエージェント直接の例外（hermes を経由しない）**：① vault 自身の git（バックアップ・履歴）／② **共有ドライブの Google Docs/Sheets read**（claude.ai Drive コネクタ・**コアが Claude Code の場合のみ**。Codex コアは hermes 経由 [[docs/connections/google-drive.md]] 経路 B）／③ **Web の調査・検証 read**（WebFetch / WebSearch・subagent）。いずれも **read / backup 主体**で、**durable な外部取り込み（capture→Inbox）と外部システムへの write は従来どおり hermes**。
+> **コアエージェント直接の例外（hermes を経由しない）**：① vault 自身の git（バックアップ・履歴）／② **共有ドライブの Google Docs/Sheets read**（claude.ai Drive コネクタ・**コアが Claude Code の場合のみ**。Codex コアは hermes 経由 [[Meta/connections/google-drive.md]] 経路 B）／③ **Web の調査・検証 read**（WebFetch / WebSearch・subagent）。いずれも **read / backup 主体**で、**durable な外部取り込み（capture→Inbox）と外部システムへの write は従来どおり hermes**。
 > GitHub MCP は **hermes が所有**する（PAT は `.hermes/config.yaml` の github MCP に passthrough、#38）。CC / CX は他リポのコード context を hermes 経由で読む（pull = `hermes chat -q` ／ push = on-demand `github-eod-capture`・ジョブリスト指示 → `Inbox/{date}/code/`。既存 cron は過渡期維持）。vault 自身の git 操作（バックアップ・履歴）だけは Claude のローカル `gh`/`git`。
 
 ## ヒューリスティック（新タスクの振り分け）

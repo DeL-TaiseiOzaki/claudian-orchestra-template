@@ -21,7 +21,7 @@ Load the context that actually exists.
 ### Step 1: Load the contract
 
 Read `AGENTS.md` (vault root) — the single core contract:
-core configuration & terminology (§0), domains (Work / Research / Others / Daily),
+core configuration & terminology (§0), domains (Wiki / Daily),
 note-operation principles, routing, language protocol, repository conventions.
 
 ### Step 2: Load vault rules
@@ -35,9 +35,7 @@ cross-cutting four, then domain rules on demand:
 ├── vault-tagging.md        # tag taxonomy                                           ← always
 ├── language.md             # think in English, respond in Japanese                  ← always
 ├── agent-boundaries.md     # core / Hermes boundaries, system of record             ← always
-├── work-management.md      # Work projects (PROJ_A/PROJ_B/PROJ_C/...)               ← on demand
-├── research-management.md  # Research submodule pointer                             ← on demand
-├── others-management.md    # Ideas/Ecosystem/Activities/Learning                    ← on demand
+├── wiki-management.md      # Wiki (ideas/learning/paper/experiment/activity notes)  ← on demand
 ├── inbox-routing.md        # Inbox → Daily → Main DB routing                        ← on demand
 └── daily-operations.md     # Daily / Weekly operations                              ← on demand
 ```

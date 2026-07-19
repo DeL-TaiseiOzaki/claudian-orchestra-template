@@ -11,7 +11,7 @@ This file only adds what is Claude-specific.
 - **Sub-work**: large investigations go to your subagents (`general-purpose` — [[.claude/agents/general-purpose.md]]); findings land in `.claude/docs/research/` / `.claude/docs/libraries/`.
 - **Claude-core-only exception**: shared-drive Google Docs/Sheets **read** via the claude.ai Drive connector ([[.claude/rules/agent-boundaries.md]] §6). Codex cores use the Hermes path instead.
 - **External connections**: never directly — always via Hermes ([[.claude/skills/hermes-query/SKILL.md]]), except vault git (local `git`/`gh`) and web research reads.
-- **Domain contracts**: each domain folder ships an `AGENTS.md` (e.g. [[Work/AGENTS.md]], [[Work/PROJ_A/AGENTS.md]], [[Others/AGENTS.md]], [[Persona/AGENTS.md]]). Claude Code does NOT auto-load nested AGENTS.md — read the folder's AGENTS.md before working in that domain.
+- **Domain contracts**: each domain folder ships an `AGENTS.md` ([[Wiki/AGENTS.md]], [[Persona/AGENTS.md]]). Claude Code does NOT auto-load nested AGENTS.md — read the folder's AGENTS.md before working in that domain.
 - **Language**: think in English, respond in Japanese ([[.claude/rules/language.md]]).
 
 ## Configuration
@@ -23,4 +23,4 @@ This file only adds what is Claude-specific.
 
 - Architecture: [[README.md]] / staged setup: [[GETTING-STARTED.md]]
 - Rules index: `.claude/rules/` (metadata / tagging / language / daily-operations / inbox-routing / agent-boundaries / work / research / others)
-- Connection guides: [[docs/connections/README.md]]
+- Connection guides: [[Meta/connections/README.md]]

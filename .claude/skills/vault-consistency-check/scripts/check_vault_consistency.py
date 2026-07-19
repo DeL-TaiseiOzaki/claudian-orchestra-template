@@ -25,7 +25,7 @@ except ImportError:  # pragma: no cover
 
 
 HEADING = "## 🔍 整合性チェック"
-CHECKED_COUNT = 8
+CHECKED_COUNT = 7
 SECTION_RE = re.compile(r"(?ms)^## 🔍 整合性チェック\s*\n.*?(?=^##\s|\Z)")
 WIKILINK_RE = re.compile(
     r"""
@@ -52,22 +52,19 @@ CHECK_NAMES = (
     "Inbox stagnation",
     "Today Tasks drift",
     "Code-Map repo health",
-    "Work logs project field",
     "Submodule dirty / commit drift",
     "Structure drift",
 )
 NOTE_ROOTS = (
     "Daily",
     "Inbox",
-    "Work",
-    "Research",
-    "Others",
+    "Wiki",
     "Maps",
     "Meta",
     "Archive",
 )
 SCAN_EXCLUDED_FILENAMES = {"README.md", "CLAUDE.md", "AGENTS.md"}
-SCAN_EXCLUDED_PREFIXES = ("Research/",)
+SCAN_EXCLUDED_PREFIXES = ()
 # Wikilink resolution walks the WHOLE vault (broader than the content-scan scope)
 # so links to README/CLAUDE/root files/non-md assets are not false-flagged.
 RESOLUTION_EXCLUDED_DIRS = {".git", ".trash", ".tmp", ".uv-cache"}
@@ -92,26 +89,12 @@ DEFAULT_SCHEMA_RULES: dict[str, Any] = {
         "reference",
         "idea",
         "exploration",
-        "activity",
     ],
     "status_enum": ["draft", "in-progress", "completed", "archived"],
-    "work_required": ["project", "client"],
-    "work_project_enum": ["PROJ_A", "PROJ_B", "PROJ_C", "PROJ_X"],  # PROJ_X=archived example (kept valid for Archive/Work/PROJ_X notes)
     "daily_required": {"type": "log"},
     "archive_required": ["archived", "archived_from"],
     "paper_required": ["theme", "arxiv_id", "paper_authors", "paper_date", "paper_url"],
     "experiment_required": ["theme", "experiment_id", "objective", "hypothesis", "reproducible"],
-    "work_required_paths": [
-        r"^Work/(PROJ_A|PROJ_B|PROJ_C|PROJ_X)/logs/[^/]+\.md$",
-        r"^Work/(PROJ_A|PROJ_B|PROJ_C|PROJ_X)/meetings/[^/]+\.md$",
-        r"^Work/(PROJ_A|PROJ_B|PROJ_C|PROJ_X)/deliverables/[^/]+\.md$",
-        r"^Work/(PROJ_A|PROJ_B|PROJ_C|PROJ_X)/(project|team|status)\.md$",
-    ],
-    "work_excluded_paths": [
-        r"^Work/(PROJ_A|PROJ_B|PROJ_C|PROJ_X)/references/",
-        r"^Work/(PROJ_A|PROJ_B|PROJ_C|PROJ_X)/sources/",
-        r"^Work/(PROJ_A|PROJ_B|PROJ_C|PROJ_X)/code/",
-    ],
     "inbox_source_paths": [r"^Inbox/\d{4}-\d{2}-\d{2}/.*\.md$"],
     "inbox_type_enum": ["capture"],
     "inbox_status_enum": ["inbox"],
@@ -119,15 +102,12 @@ DEFAULT_SCHEMA_RULES: dict[str, Any] = {
     "structure_expected_root_dirs": [
         "Inbox",
         "Daily",
-        "Work",
-        "Research",
-        "Others",
+        "Wiki",
         "Maps",
         "Persona",
         "Meta",
         "Archive",
         "Templates",
-        "docs",
     ],
     "structure_system_root_prefixes": [
         ".git",
@@ -140,18 +120,8 @@ DEFAULT_SCHEMA_RULES: dict[str, Any] = {
         ".uv-cache",
         ".obsidian*",
     ],
-    # テンプレは PROJ_A のみ雛形を同梱。新案件は work-kickoff で追加し、ここにも登録する。
     "structure_required_dirs": [
-        "Work/PROJ_A/meetings",
-        "Work/PROJ_A/docs",
-        "Work/PROJ_A/code",
-        "Work/PROJ_A/deliverables",
-        "Work/PROJ_A/logs",
-        "Work/PROJ_A/sources",
-        "Work/PROJ_A/references",
-        "Others/Ideas",
-        "Others/Activities",
-        "Others/Learning",
+        "Wiki",
         "Maps/views",
         "Daily",
         "Meta",
@@ -161,13 +131,12 @@ DEFAULT_SCHEMA_RULES: dict[str, Any] = {
     "structure_scan_roots": [
         "Inbox",
         "Daily",
-        "Work",
-        "Others",
+        "Wiki",
         "Maps",
         "Meta",
         "Archive",
     ],
-    "structure_submodule_excludes": ["Research"],
+    "structure_submodule_excludes": [],
     "structure_nonmd_allowed": {
         "allowed_path_prefixes": [],
         "allowed_dir_names": ["_assets", "sources", "attachments"],
@@ -601,15 +570,6 @@ def validate_frontmatter(rel_path: str, meta: dict[str, Any], rules: dict[str, A
         for key in rules["experiment_required"]:
             if key not in meta:
                 errors.append(f"experiment field missing: {key}")
-    if rel_path.startswith("Work/"):
-        if path_matches_any(rel_path, rules["work_excluded_paths"]):
-            return errors
-        if path_matches_any(rel_path, rules["work_required_paths"]):
-            for key in rules["work_required"]:
-                if key not in meta:
-                    errors.append(f"work field missing: {key}")
-            if meta.get("project") not in rules["work_project_enum"]:
-                errors.append(f"invalid work project: {meta.get('project')}")
     return errors
 
 
@@ -928,48 +888,6 @@ def check_codemap_repo_health(vault_root: Path, mode: str, touched: set[str], en
     ]
 
 
-def check_work_logs_project(vault_root: Path, mode: str, touched: set[str]) -> list[Finding]:
-    """Check that Work log/project notes declare the matching project code."""
-
-    findings: list[Finding] = []
-    candidates: list[Path] = []
-    if mode == "full":
-        for code in ("PROJ_A", "PROJ_B", "PROJ_X"):
-            base = vault_root / "Work" / code / "logs"
-            if base.exists():
-                candidates.extend(sorted(base.glob("*.md")))
-    else:
-        for rel in touched:
-            if re.match(r"^Work/(PROJ_A|PROJ_B|PROJ_X)/logs/[^/]+\.md$", rel):
-                path = vault_root / rel
-                if path.is_file():
-                    candidates.append(path)
-    for path in sorted(set(candidates)):
-        rel = normalize_rel(path, vault_root)
-        expected = rel.split("/")[1]
-        meta, _body = load_frontmatter_and_body(path)
-        if meta.get("project") == expected:
-            continue
-        findings.append(
-            Finding(
-                "WARN",
-                "Work logs project field",
-                rel,
-                finding_message(
-                    f"`project` が `{expected}` と一致していません（現在値: `{meta.get('project')}`）。",
-                    "frontmatter の `project` を親ディレクトリの案件コードに合わせてください",
-                ),
-            )
-        )
-    if findings:
-        return findings
-    if mode == "light" and not candidates:
-        message = finding_message("本日更新された Work logs はないため確認をスキップしました。", "追加対応は不要です")
-    else:
-        message = finding_message("対象 Work logs の `project` は親案件コードと一致しています。", "追加対応は不要です")
-    return [Finding("OK", "Work logs project field", None, message)]
-
-
 def check_submodule_drift(vault_root: Path) -> list[Finding]:
     """Check submodule dirty state and pending pointer bumps."""
 
@@ -994,11 +912,12 @@ def check_submodule_drift(vault_root: Path) -> list[Finding]:
             findings.append(Finding("WARN", "Submodule dirty / commit drift", rel, finding_message("submodule が未初期化です。", "submodule を初期化して状態を確認してください")))
         elif prefix == "U":
             findings.append(Finding("ERROR", "Submodule dirty / commit drift", rel, finding_message("submodule で merge conflict が発生しています。", "競合を解消してから再実行してください")))
+    submodule_paths = set(parse_gitmodules_paths(vault_root))
     for line in porcelain.stdout.splitlines():
-        match = re.match(r"^[ MARCUD?!]{2}\s+(Research)$", line)
-        if not match:
+        match = re.match(r"^[ MARCUD?!]{2}\s+(.+?)/?$", line)
+        if not match or match.group(1).strip() not in submodule_paths:
             continue
-        findings.append(Finding("WARN", "Submodule dirty / commit drift", match.group(1), finding_message("親 vault に submodule pointer の未コミット変更があります。", "意図した pointer bump か確認して必要なら commit してください")))
+        findings.append(Finding("WARN", "Submodule dirty / commit drift", match.group(1).strip(), finding_message("親 vault に submodule pointer の未コミット変更があります。", "意図した pointer bump か確認して必要なら commit してください")))
     if findings:
         return findings
     return [Finding("OK", "Submodule dirty / commit drift", None, finding_message("submodule の dirty 状態や pointer drift は検出されませんでした。", "追加対応は不要です"))]
@@ -1277,7 +1196,7 @@ def render_json(findings: list[Finding], mode: str, ran_at: str) -> str:
 
 
 def collect_findings(vault_root: Path, mode: str, target_date: date, enable_remote: bool) -> list[Finding]:
-    """Run all eight checks and return findings."""
+    """Run all seven checks and return findings."""
 
     touched = touched_today_paths(vault_root)
     rules = load_schema_rules(vault_root)
@@ -1287,7 +1206,6 @@ def collect_findings(vault_root: Path, mode: str, target_date: date, enable_remo
     findings.extend(check_inbox_stagnation(vault_root))
     findings.extend(check_today_tasks_drift(vault_root, target_date, mode, enable_remote))
     findings.extend(check_codemap_repo_health(vault_root, mode, touched, enable_remote))
-    findings.extend(check_work_logs_project(vault_root, mode, touched))
     findings.extend(check_submodule_drift(vault_root))
     findings.extend(check_structure_drift(vault_root, mode, rules))
     return findings

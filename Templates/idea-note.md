@@ -29,7 +29,7 @@ updated: {{DATE:YYYY-MM-DD}}
 
 ## 🔗 関連
 
-- 関連研究/案件: [[ ]]
+- 関連ノート: [[ ]]
 - 参考: 
 
 ## 🚀 次の一歩（育てるなら）
@@ -40,4 +40,4 @@ updated: {{DATE:YYYY-MM-DD}}
 ---
 
 *status: draft → in-progress → completed / archived（成熟度はタグ #seed → #exploring で表現）*  
-*Ideas は着想と検証/PoC（`type: exploration`）を内包。昇格時は Research/Work へ移し、ここに wiki-link を残す*
+*配置は `Wiki/`（着想と検証/PoC `type: exploration` を内包）。育ったら Wiki 内で exploration / 独立ノートに昇格させ、ここに wiki-link を残す*

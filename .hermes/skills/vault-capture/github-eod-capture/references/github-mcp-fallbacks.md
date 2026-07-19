@@ -44,10 +44,10 @@ skill は **「操作 = capability」だけを宣言**し、具体的な MCP too
 
 ```
 # PR
-repo:your-org/proj-a-repo is:pr updated:>=2026-06-06T00:00:00+09:00
+repo:your-org/your-repo is:pr updated:>=2026-06-06T00:00:00+09:00
 
 # Issue
-repo:your-org/proj-a-repo is:issue updated:>=2026-06-06T00:00:00+09:00
+repo:your-org/your-repo is:issue updated:>=2026-06-06T00:00:00+09:00
 ```
 
 ## 関連

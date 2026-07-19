@@ -1,7 +1,7 @@
 # AGENTS.md — Persona（著者プロフィールの単一の正）
 
 vault 全体から参照される **identity SoT**（single source of truth）。
-Work 提案・Others 活動・Research 応募が、ここの内容を再利用する。
+Wiki の提案・活動・応募ノートが、ここの内容を再利用する。
 
 ## 構成（推奨）
 

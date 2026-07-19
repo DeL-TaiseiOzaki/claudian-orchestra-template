@@ -31,7 +31,7 @@ Phrasing for proactive hint (always offer "skip" option):
 
 ### Do NOT invoke for
 - Daily journaling (`Daily/`)
-- Project-specific notes (`Work/{PROJ_A,PROJ_B,PROJ_C}/`)
+- Human-facing topic notes — learning / literature / idea notes (`Wiki/`; knowledges/ は agent 運用知のみ)
 - Raw investigation results (use `.claude/docs/research/`)
 - Decision log entries that belong in `status.md`
 - One-off task tracking

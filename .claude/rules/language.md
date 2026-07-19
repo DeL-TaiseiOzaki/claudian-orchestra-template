@@ -20,9 +20,7 @@ Default conventions:
 | Context | Preferred Language |
 |---------|--------------------|
 | Daily notes (`Daily/`) | Japanese (quick logging) |
-| Work project notes (`Work/`) | Japanese (client-facing context) |
-| Research notes (`Research/`) | English (paper notes, experiment logs) |
-| Others (`Others/`) | Either, user's choice |
+| Wiki notes (`Wiki/`) | Either, user's choice (literature / experiment notes: English recommended) |
 | Frontmatter values (status, type, tags) | English (machine-readable) |
 | Frontmatter `title` | Match note language |
 
@@ -34,7 +32,7 @@ Default conventions:
 
 ## Tags
 
-- Tag names: lowercase English with hyphens (e.g., `#fine-tuning`, `#proj-a`)
+- Tag names: lowercase English with hyphens (e.g., `#fine-tuning`, `#book-note`)
 - See [[.claude/rules/vault-tagging.md]] for the full taxonomy
 
 ## 関連

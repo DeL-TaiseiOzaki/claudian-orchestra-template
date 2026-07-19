@@ -29,10 +29,10 @@ views:
       - tags
       - updated
   - type: table
-    name: "Learning"
+    name: "Wiki"
     filters:
       and:
-        - file.inFolder("Others/Learning")
+        - file.inFolder("Wiki")
     sort:
       - property: file.mtime
         direction: DESC

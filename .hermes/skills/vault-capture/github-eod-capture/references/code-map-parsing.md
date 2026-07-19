@@ -43,32 +43,26 @@
 
 ## 除外対象
 
-- `[[Work/...]]` 形式の Wiki-link（Markdown link ではないので URL regex に当たらない）
+- `[[Wiki/...]]` 形式の Wiki-link（Markdown link ではないので URL regex に当たらない）
 - `https://github.com/owner/repo/issues/123` のような sub-path
 - `https://github.com/orgs/owner` のような organisation URL
 - query string / fragment / trailing slash 付き
 - 全角括弧 `（...）` の branch suffix
 
-## Canonical fixture（2026-06-06 時点）
+## Fixture 例
 
-[[Maps/Code-Map.md]] の現状を parse すると以下 12 tuple が出るのが期待値：
+例えば [[Maps/Code-Map.md]] に以下の repo が列挙されている場合、parse 結果は次の 6 tuple になるのが期待値：
 
 | # | owner | repo | branch |
 |---|---|---|---|
-| 1 | your-org | proj-a-api | main |
-| 2 | your-org | proj-a-web | main |
-| 3 | your-org | proj-a-worker | main |
-| 4 | your-org | proj-a-infra | main |
-| 5 | your-org | proj-a-docs | main |
-| 6 | your-org | proj-b-api | main |
-| 7 | your-org | proj-b-web | main |
-| 8 | your-org | proj-b-core | main |
-| 9 | your-org | proj_b_legacy | main |
-| 10 | your-org | proj-c-app | main |
-| 11 | your-org | proj-c-lib | main |
-| 12 | your-research-org | your-research-repo | main |
+| 1 | your-org | your-tool | main |
+| 2 | your-org | your-app-api | main |
+| 3 | your-org | your-app-web | main |
+| 4 | your-org | your_legacy_lib | main |
+| 5 | your-org | your-app-api | develop |
+| 6 | your-research-org | your-research-repo | main |
 
-> PROJ_X は repo 未登録、Research は submodule 経由のため除外。
+> Code-Map に載っていない repo は巡回対象外。
 
 ## E2E parser verification
 

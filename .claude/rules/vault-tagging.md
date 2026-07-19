@@ -8,55 +8,7 @@
 
 ---
 
-## Work タグ
-
-### プロジェクトタグ（例）
-
-実案件のコードに合わせて差し替える：
-
-```
-#proj-a              # Client A
-#proj-b              # Client B
-#proj-c              # Client C
-#proj-x              # Client X (archived / lost)
-```
-
-### フェーズ・ステータスタグ
-
-```
-#proposal         # 提案（受注前：サーベイ→提案→見積）
-#requirements     # 要件定義
-#design           # 設計
-#development      # 開発
-#validation       # 検証
-#deployment       # デプロイ
-#maintenance      # 保守
-```
-
-### タスクタイプタグ
-
-```
-#data-preparation # データ前処理
-#model-training   # モデル学習
-#evaluation       # 評価
-#bug-fix          # バグ修正
-#documentation    # ドキュメント
-#meeting          # ミーティング
-#client-feedback  # クライアント対応
-```
-
-### 優先度・進捗タグ
-
-```
-#urgent           # 急ぎ
-#blocker          # ブロッカー
-#in-review        # レビュー待ち
-#ready-for-deploy # デプロイ準備完了
-```
-
----
-
-## Research タグ
+## Wiki タグ
 
 ### テーマ・分野タグ
 
@@ -98,9 +50,22 @@
 #confirmed        # 確認済み
 ```
 
----
+### 進行管理タグ
 
-## Others タグ
+```
+#meeting          # ミーティング
+#documentation    # ドキュメント
+#urgent           # 急ぎ
+#blocker          # ブロッカー
+#in-review        # レビュー待ち
+```
+
+### 活動タグ
+
+```
+#activity         # 継続的活動の記録（type: note と併用）
+#community        # コミュニティ・委員・WG
+```
 
 ### 個人学習・スキルアップ
 
@@ -124,19 +89,14 @@
 
 ## タグの使用例
 
-### Work ノート例
-```markdown
-tags: ["proj-a", "model-training", "data-preparation", "in-review"]
-```
-
-### Research ノート例
+### Wiki ノート例（文献）
 ```markdown
 tags: ["llm", "fine-tuning", "in-context-learning", "key-paper", "to-read"]
 ```
 
 ### Daily ログ例
 ```markdown
-tags: ["proj-a", "proj-b", "model-training", "meeting"]
+tags: ["llm", "learning", "meeting"]
 ```
 
 ---
@@ -146,10 +106,8 @@ tags: ["proj-a", "proj-b", "model-training", "meeting"]
 Obsidian では `tag/subtag` の形式で階層化できます：
 
 ```
-#work/data-prep
-#work/model-training
-#research/llm/fine-tuning
-#research/vlm/vision-encoder
+#wiki/llm/fine-tuning
+#wiki/vlm/vision-encoder
 ```
 
 ただし、シンプルさを優先する場合は**フラット構造**を推奨します。
@@ -157,4 +115,4 @@ Obsidian では `tag/subtag` の形式で階層化できます：
 ## 関連
 
 - [[.claude/rules/vault-metadata.md]]（frontmatter スキーマの単一の正）
-- [[.claude/rules/language.md]] / [[.claude/rules/work-management.md]] / [[.claude/rules/research-management.md]] / [[.claude/rules/others-management.md]]
+- [[.claude/rules/language.md]] / [[.claude/rules/wiki-management.md]]

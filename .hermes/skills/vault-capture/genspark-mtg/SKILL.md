@@ -1,6 +1,6 @@
 ---
 name: genspark-mtg
-description: Use to capture Genspark AI meeting transcripts into the vault. Hermes lists recent meetings via `gsk meeting list`, keeps only COMPLETED ones inside a short recency window (today + yesterday JST), fetches each full transcript via `gsk meeting get`, and writes RAW transcript markdown to `Inbox/{YYYY-MM-DD}/mtgs/genspark-{slug}.md` without any summarization, body edits, or destination judgment. Always lands in Inbox; allocation to Work/Others/Research meetings/ etc. is done later by Claude Code + user (curate). Idempotency is filename-only — no sidecar state file, so frequent polling is safe. Intended to be invoked on-demand when the user issues a 取り込み instruction (typically from the Daily-note ジョブリスト). May also run from a cron if registered (daytime polling + evening safety-net), but on-demand is the primary mode. Single-meeting fetch via `--task_id` is handled by the same skill (Claude invokes it via `hermes chat -q`).
+description: Use to capture Genspark AI meeting transcripts into the vault. Hermes lists recent meetings via `gsk meeting list`, keeps only COMPLETED ones inside a short recency window (today + yesterday JST), fetches each full transcript via `gsk meeting get`, and writes RAW transcript markdown to `Inbox/{YYYY-MM-DD}/mtgs/genspark-{slug}.md` without any summarization, body edits, or destination judgment. Always lands in Inbox; allocation to Wiki/meetings/ is done later by Claude Code + user (curate). Idempotency is filename-only — no sidecar state file, so frequent polling is safe. Intended to be invoked on-demand when the user issues a 取り込み instruction (typically from the Daily-note ジョブリスト). May also run from a cron if registered (daytime polling + evening safety-net), but on-demand is the primary mode. Single-meeting fetch via `--task_id` is handled by the same skill (Claude invokes it via `hermes chat -q`).
 version: 3.0.0
 author: your-org
 license: MIT
@@ -25,7 +25,7 @@ MTG 終了＆Genspark 側の整理が済んだ会議を**できるだけ早く**
 > **on-demand での 2 モード**：本 skill は (a) **直近窓（today + yesterday）の一括取り込み**（既定）と (b) **`--task_id` での単一会議手動取得** の両方を担う。どちらも Claude が hermes-query 経由で kick する。
 
 > **役割境界（重要）**：このスキルは **`Inbox/{YYYY-MM-DD}/mtgs/` にのみ書き込む**。
-> `Work/` / `Daily/` / `Research/` / `Templates/` / `Archive/` / 既存 curated ノート本文は触らない（single-writer）。
+> `Daily/` / `Wiki/` / `Templates/` / `Archive/` / 既存 curated ノート本文は触らない（single-writer）。
 >
 > **no-LLM-judgment**：本 skill は [[.claude/rules/inbox-routing.md]] §7 の
 > no-LLM-judgment 原則に完全準拠する。宛先は固定（`Inbox/{YYYY-MM-DD}/mtgs/`）であり、判定そのものが存在しない
@@ -111,15 +111,14 @@ gsk meeting get --task_id "<task_id>" --detail_level full --output json
 宛先は**固定**：`Inbox/{YYYY-MM-DD}/mtgs/genspark-{slug}.md`（日付つき親フォルダが日付を持ち、ファイル名に日付 prefix は付けない）。判定は行わない。
 
 - **日付**：会議メタデータを Asia/Tokyo に正規化して `YYYY-MM-DD`（＝親フォルダ名）。
-- **slug**（meeting title から生成）：
+- **slug**（meeting title から生成・タイトルはそのまま slug 化する）：
   1. 元タイトルを取る
-  2. 先頭の `[PROJ_A]` / `[PROJ_B]` / `[PROJ_X]` 等の角括弧 prefix は**取り除かない**（後段 curate の割り振りヒントとして filename に残す。slug 化で `proj-a-` 等の先頭要素になる）
-  3. 小文字化
-  4. 空白・記号（`[]()/\|:;,.!?@#$%^&*+={}<>~`等）を `-` に置換
-  5. 連続 `-` を 1 個に畳む
-  6. 先頭末尾の `-` を落とす
-  7. 50 文字超なら 50 で切る
-  8. 空になったら `meeting-{task_id_short}`（`task_id` 先頭 8 文字）
+  2. 小文字化
+  3. 空白・記号（`[]()/\|:;,.!?@#$%^&*+={}<>~`等）を `-` に置換
+  4. 連続 `-` を 1 個に畳む
+  5. 先頭末尾の `-` を落とす
+  6. 50 文字超なら 50 で切る
+  7. 空になったら `meeting-{task_id_short}`（`task_id` 先頭 8 文字）
 
 ### 4. 冪等性
 
@@ -156,7 +155,7 @@ genspark_user_notes_present: {true|false}
 ---
 ```
 
-- `project` / `client` / project tag は**付けない**（curate 時に Claude + ユーザーが `Work/{X}/meetings/` へ移す際、標準 enum への書き換えと同時に付与する）。
+- `type` / `status` は Inbox-source 拡張のまま（curate 時に Claude + ユーザーが `Wiki/meetings/` へ移す際、標準 enum へ書き換える）。
 - `created` / `updated` は **capture 実行日**。`meeting_date` は **会議日**（別物）。
 - `participants` は表示名の配列。空なら `[]`。
 
@@ -190,8 +189,8 @@ meeting 単位の失敗は集計して続行（partial success OK）。
 ## あとからの割り振り（curate — Hermes の仕事ではない）
 
 `Inbox/{YYYY-MM-DD}/mtgs/` は未割り振りキュー。Step 6（夜の振り返り）や随時の curate で、
-Claude Code + ユーザーが内容を見て `Daily/{YYYY-MM-DD}.md` に集約しつつ `Work/{XXX}/meetings/{YYYY-MM-DD}-{slug}.md` 等へ移動し、
-その際に frontmatter を標準 enum（`type: note` / `status: draft` / `project` / `client` / project tag）へ書き換える
+Claude Code + ユーザーが内容を見て `Daily/{YYYY-MM-DD}.md` に集約しつつ `Wiki/meetings/{YYYY-MM-DD}-{slug}.md` へ移動し、
+その際に frontmatter を標準 enum（`type: note` / `status: draft` 等）へ書き換える
 （[[.claude/rules/vault-metadata.md]] 移行ルール）。
 
 ## 起動方法（on-demand 既定 / cron は任意）
@@ -240,7 +239,7 @@ hermes cron create "0 21 * * *" "Load genspark-mtg and run it for the vault as t
 - [[.claude/rules/agent-boundaries.md]] — エージェント分担・single-writer 原則
 - [[.claude/rules/vault-metadata.md]] — frontmatter schema 単一の正（Inbox-source 拡張・移行ルール）
 - [[.claude/rules/vault-tagging.md]] — tag 体系（`genspark` vendor tag は本 skill で初登場）
-- [[.claude/rules/work-management.md]] — 割り振り先 `Work/{XXX}/meetings/` の標準命名
+- [[.claude/rules/wiki-management.md]] — 割り振り先 `Wiki/meetings/` の標準命名
 - [[.claude/rules/language.md]] — 言語規約
 - [[.hermes/skills/vault-capture/genspark-slide/SKILL.md]] — `gsk` CLI リファレンス
 - [[.hermes/skills/vault-capture/slack-capture/SKILL.md]] — capture skill の structural 参照

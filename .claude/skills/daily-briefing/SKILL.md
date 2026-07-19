@@ -76,7 +76,7 @@ ls "Inbox/${TODAY}/daily/daily.md"
 
 ### Step 4: Today's Focus を確認
 
-予定・タスク・Work 進行中項目を踏まえ、ユーザに `Today's Focus`（3項目程度）の入力を促す。未入力なら空チェックボックスのまま残す。
+予定・タスク・進行中項目を踏まえ、ユーザに `Today's Focus`（3項目程度）の入力を促す。未入力なら空チェックボックスのまま残す。
 
 ### Step 4.5: 🤖 ジョブリストを動的更新（on-demand 状態反映）
 
@@ -121,7 +121,6 @@ EOD distill / 今日の振り返り / Main DB に蒸留
 title: "{YYYY-MM-DD} デイリー"
 type: "log"
 status: "in-progress"
-projects: []   # その日関わる案件コード（PROJ_A/PROJ_B）を入れる
 tags: []
 created: {YYYY-MM-DD}
 updated: {YYYY-MM-DD}
@@ -138,7 +137,6 @@ updated: {YYYY-MM-DD}
 
 - 月曜朝の実行時は、まず [[.claude/skills/weekly-review/SKILL.md]] を提案
 - 今日参加する MTG があれば [[.claude/skills/mtg-prep/SKILL.md]] を案内（議事録の叩き台作成＋Genspark bot 準備ガイド＋Daily リンク。目的等はヒアリング）
-- Work 進行中タスクがあれば [[.claude/skills/work-project-writer/SKILL.md]] で `Work/{XXX}/logs/{YYYY-MM-DD}.md` 作成を案内
 - 夜/EOD の distill（Daily + Inbox → evergreen）は [[.claude/rules/daily-operations.md]] の集約フローに従う
 
 ## 関連ルール

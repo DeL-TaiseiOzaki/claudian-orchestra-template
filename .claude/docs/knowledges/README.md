@@ -47,7 +47,7 @@ Entry point for **reusable learnings** (root causes / gotchas / patterns) discov
 ## What NOT to put here
 
 - Daily content → `Daily/`
-- Per-project work logs → `Work/`
+- 人間向けの汎用ナレッジ（学習・文献・アイデア）→ `Wiki/`（ここは agent 運用知のみ）
 - Raw investigation results → `.claude/docs/research/`
 - A learning that only matters to one skill → that skill's `SKILL.md` `## Pitfalls` section
 

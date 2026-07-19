@@ -22,9 +22,7 @@ vault 全体の入口（MOC）。アーキテクチャ全景は [[README.md]]、
 |---|---|
 | Inbox（capture） | [[Inbox/README.md]] |
 | Daily（ジャーナル） | [[.claude/rules/daily-operations.md]] |
-| Work（受託案件） | [[Work/AGENTS.md]]（PROJ_A / PROJ_B / … — 各 `Work/{CODE}/project.md`） |
-| Research（研究） | [[Research/AGENTS.md]]（submodule で外部リポをマウントする場合は別契約） |
-| Others（活動・学習・アイデア） | [[Others/AGENTS.md]] |
+| Wiki（汎用ナレッジ — アイデア / 学習・読書 / 文献・実験 / 活動記録） | [[Wiki/AGENTS.md]] |
 | Persona（著者プロフィール・全体共通） | [[Persona/AGENTS.md]] |
 | Maps（横断 MOC） | [[Maps/Code-Map.md]]（コード知識） / [[Maps/People-Map.md]]（関わる人・名寄せ） |
 | Meta（vault 自己言及） | [[Meta/README.md]] |
@@ -36,7 +34,7 @@ Vault を別角度から見るラベル（[[README.md]] §2）。フォルダで
 
 | ラベル | ビュー | 何が見えるか |
 |---|---|---|
-| Logs | [[Maps/views/logs.base\|logs.base]] | 時系列の記録（Daily / Weekly / Work logs） |
+| Logs | [[Maps/views/logs.base\|logs.base]] | 時系列の記録（Daily / Weekly） |
 | Knowledge | [[Maps/views/knowledge.base\|knowledge.base]] | 蓄積された知識（note / reference / paper） |
 | Memories | [[Maps/views/memories.base\|memories.base]] | 経験・出来事（log + meetings の横断タイムライン） |
 | SPK | [[Maps/views/spk.base\|spk.base]] | 蒸留済み evergreen（`status: completed`） |

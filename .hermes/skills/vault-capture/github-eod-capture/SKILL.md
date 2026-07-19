@@ -17,7 +17,7 @@ Pipeline Step 5（[[.claude/rules/daily-operations.md]] §0）専用の Hermes c
 
 > [!important] 役割境界
 > - このスキルは Step 5 の **raw capture 専用**。LLM による要約・言い換え・タグ推定・本文再構成・auto-route は行わない。
-> - 書いてよいのは **`Inbox/{YYYY-MM-DD}/code/code.md` のみ**。`.claude/**`・`Daily/**`・`Research/**`・`Templates/**`・`Archive/**`・curated note body は変更しない（agent-boundaries.md §1 + inbox-routing.md §7）。
+> - 書いてよいのは **`Inbox/{YYYY-MM-DD}/code/code.md` のみ**。`.claude/**`・`Daily/**`・`Wiki/**`・`Templates/**`・`Archive/**`・curated note body は変更しない（agent-boundaries.md §1 + inbox-routing.md §7）。
 > - GitHub からの取得は **configured GitHub MCP のみ**。cron 実行中に `terminal` / `execute_code` / `gh` / `git` / Python subprocess は使わない（cron context BLOCK と、vault path に非 ASCII 文字が含まれる場合のシェル解決問題の両方を回避）。
 > - `Maps/Code-Map.md` の読み取りと `Inbox/{YYYY-MM-DD}/code/...` の書き込みは Hermes の通常 file I/O で行う。外部 repo 取得だけを GitHub MCP に限定する。
 
@@ -76,7 +76,7 @@ Pipeline Step 5（[[.claude/rules/daily-operations.md]] §0）専用の Hermes c
 
 **抽出規則**：
 
-- `[[Work/...]]` の wiki-link は無視（Markdown link ではない）
+- `[[Wiki/...]]` の wiki-link は無視（Markdown link ではない）
 - `https://github.com/owner/repo` 以外の path / query / fragment / trailing slash を含む URL は無視
 - label に branch suffix が無ければ branch は `main`（[[Maps/Code-Map.md]] の追跡ブランチ規則と整合）
 - 全角括弧 `（branch）` は branch override **しない**（半角のみ）

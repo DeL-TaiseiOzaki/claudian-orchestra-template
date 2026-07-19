@@ -16,7 +16,7 @@ gsk calendar list \
 
 # Keyword-filter upcoming events
 gsk calendar list \
-  --filter_query "PROJ_A" \
+  --filter_query "定例" \
   --time_min "YYYY-MM-DDT00:00:00+09:00" \
   --time_max "YYYY-MM-DDT23:59:59+09:00" \
   -a "<calendar-account-email>"

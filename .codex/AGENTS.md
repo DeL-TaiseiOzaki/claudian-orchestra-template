@@ -31,7 +31,7 @@ Vendored Obsidian file-format skills (physical copies under `.codex/skills/`, re
 ## 4) What Codex does NOT do
 
 - Hold external OAuth/PAT or call Slack / Google / Notion / GitHub MCP directly — **all external connections go through Hermes** (pull = `hermes chat -q`, push = capture skills → `Inbox/{date}/`). See [[.claude/rules/agent-boundaries.md]] §6.
-- Use claude.ai connectors (Drive read is a Claude-core-only exception — Codex cores use the Hermes path, [[docs/connections/google-drive.md]] 経路 B).
+- Use claude.ai connectors (Drive read is a Claude-core-only exception — Codex cores use the Hermes path, [[Meta/connections/google-drive.md]] 経路 B).
 - Write into `Inbox/{date}/**` (Hermes / extensions only).
 
 ## 5) References

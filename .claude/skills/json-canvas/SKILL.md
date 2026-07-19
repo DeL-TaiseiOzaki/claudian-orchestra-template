@@ -251,4 +251,4 @@ See [references/EXAMPLES.md](references/EXAMPLES.md) for full canvas examples in
 
 - Canvas（`.canvas`）の `file` ノードは Vault ルートからの相対パスで参照する。
 - リンク対象ノートには frontmatter を付ける（[[.claude/rules/vault-metadata.md]]）。
-- 構想・関係整理での利用を想定（例 `Others/Ideas/`, `Others/Exploration/`, `Research/` のノート相関図）。
+- 構想・関係整理での利用を想定（例 `Wiki/` のノート相関図・テーマ間の関係整理）。

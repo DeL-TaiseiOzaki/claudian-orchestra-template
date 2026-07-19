@@ -15,7 +15,7 @@ metadata:
 
 Use this when the user asks to retrieve Slack messages, capture daily Slack logs, or answer queries like "今日の私の発言を取得して".
 
-This is a **capture-only** skill: it writes RAW Slack material into `Inbox/{YYYY-MM-DD}/slack/{channel}.md` (one dated parent folder per day, one file per channel) or returns an ad-hoc report. There is **no routing, no channel→project mapping, and no DM-based sorting** — every relevant channel's daily digest lands in `Inbox/{date}/slack/`. Distilling/distributing these into Work/Others/Research is Claude Code's later curate step (via the `Daily/{date}.md` hub). Do not curate or rewrite note bodies here.
+This is a **capture-only** skill: it writes RAW Slack material into `Inbox/{YYYY-MM-DD}/slack/{channel}.md` (one dated parent folder per day, one file per channel) or returns an ad-hoc report. There is **no routing, no channel→destination mapping, and no DM-based sorting** — every relevant channel's daily digest lands in `Inbox/{date}/slack/`. Distilling/distributing these into Wiki is Claude Code's later curate step (via the `Daily/{date}.md` hub). Do not curate or rewrite note bodies here.
 
 ## Token modes
 
@@ -90,7 +90,7 @@ When this skill is invoked with wording like "run it for yesterday" (either by a
 1. Resolve the target date explicitly from the live clock and record it in output/logs.
 2. Use user-token search (`SLACK_USER_TOKEN`) for cross-channel authored messages and @mentions visible to the user.
 3. Use bot-token channel/DM history (`SLACK_BOT_TOKEN`) only as a supplement for channels/DMs the bot can read. `not_in_channel` is expected; rate limits are partial-coverage warnings, not a reason to rewrite good captures with poorer data.
-4. Dedupe by `channel.id + ts`, then group by channel and write one raw daily digest per channel to `Inbox/{YYYY-MM-DD}/slack/{channel}.md`. No routing, no channel→project lookup — every relevant channel lands in the day's `slack/` folder.
+4. Dedupe by `channel.id + ts`, then group by channel and write one raw daily digest per channel to `Inbox/{YYYY-MM-DD}/slack/{channel}.md`. No routing, no channel→destination lookup — every relevant channel lands in the day's `slack/` folder.
 5. If digest files for the target date already exist, verify counts/content before overwriting. Preserve richer existing fields such as attachments, original mention display text, thread permalinks, and valid `mentions: []` frontmatter. Do not replace a richer existing digest with a simplified ad-hoc reconstruction.
 6. If existing digest bodies are good but their frontmatter is stale (for example `source: "slack:daily:..."`, timestamp-valued `created`, or missing required fields), perform a **frontmatter-only repair** to the current Output spec. Preserve the message body byte-for-byte except for unavoidable newline normalization; do not re-fetch/rewrite content just to satisfy metadata.
 7. Before finalizing, check that no temporary scripts/files remain and that final filesystem changes are either intentional new/updated captures or none.
@@ -137,7 +137,7 @@ hermes cron create "0 7 * * *" "Load the slack-capture skill and run it for yest
 
 - Raw capture target: `Inbox/{YYYY-MM-DD}/slack/` (one dated parent folder per day; create it only on a day Slack actually produces messages).
 - One digest file per channel: `Inbox/{YYYY-MM-DD}/slack/{channel}.md`. No routing, no `slack-channel-map.yaml`, no `_unsorted/` — capture only.
-- Do not write curated Work/Others/Daily notes from this skill. Distilling/distributing digests is Claude Code's later curate step.
+- Do not write curated Wiki/Daily notes from this skill. Distilling/distributing digests is Claude Code's later curate step.
 - Do not edit Slack note bodies; this skill only writes/repairs digest files inside `Inbox/{date}/slack/`.
 
 ## Output spec (REQUIRED — single source of truth for digest files)

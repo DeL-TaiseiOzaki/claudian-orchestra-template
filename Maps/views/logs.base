@@ -10,8 +10,6 @@ properties:
     displayName: Status
   file.folder:
     displayName: Folder
-  projects:
-    displayName: Projects
 
 views:
   - type: table
@@ -24,7 +22,6 @@ views:
       - file.name
       - file.folder
       - status
-      - projects
       - updated
   - type: table
     name: "Daily / Weekly"
@@ -36,19 +33,5 @@ views:
         direction: DESC
     order:
       - file.name
-      - status
-      - projects
-      - updated
-  - type: table
-    name: "Work logs"
-    filters:
-      and:
-        - file.inFolder("Work")
-    sort:
-      - property: file.mtime
-        direction: DESC
-    order:
-      - file.name
-      - project
       - status
       - updated
