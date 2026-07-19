@@ -36,7 +36,7 @@ updated: {{date:YYYY-MM-DD}}
 
 <!--
   cron は廃止。ユーザーがこのセクションを見て「○○やって」「全部回して」と指示
-  → Claude が hermes に CLI 委譲（[[.claude/skills/hermes-query/SKILL.md]]）または直接実行。
+  → コアエージェントが hermes に CLI 委譲（[[.claude/skills/hermes-query/SKILL.md]]）または直接実行。
   チェックは daily-briefing が `Inbox/{date}/{source}/...` の存在を見て自動付与（取得済→[x]）。手動チェックも可。
   詳細は [[.claude/rules/daily-operations.md]] §0 / 各 SKILL.md 「起動方法」節。
 

@@ -1,6 +1,6 @@
 # Claudian Orchestra — Vault Template
 
-> An Obsidian vault scaffold for running **three AI agents (Claude Code / Codex / Hermes) as a knowledge-base orchestra** on top of your second brain.
+> An Obsidian vault scaffold for running a **core AI agent (Codex by default, Claude Code selectable) + Hermes as a knowledge-base orchestra** on top of your second brain.
 >
 > プレーン Markdown の知識ベースを「人と AI の共有メモリ」にする — 設計と運用契約一式のテンプレート．
 
@@ -8,7 +8,7 @@
 
 ## これは何
 
-**personal knowledge base（PKB）を 3 つの AI エージェントと一緒に運用するための vault テンプレート**です．**Markdown のフォルダ構造**・**3 エージェントの契約（`CLAUDE.md` / `AGENTS.md` / `.hermes/`）**・**運用ルール（`.claude/rules/`）**・**スキル群（`.claude/skills/`）**・**ノートテンプレ（`Templates/`）** で構成されています．clone してそのまま Obsidian で開けば，自分の PKB として使い始められます．
+**personal knowledge base（PKB）を「コアエージェント 1 体 + Hermes」で運用するための vault テンプレート**です．コアエージェントは **Codex（既定）または Claude Code**（使い始めに選択・併用も可）．**Markdown のフォルダ構造**・**エージェント契約（`AGENTS.md` = コア契約 / `CLAUDE.md` = Claude コア用アダプタ / `.hermes/`）**・**運用ルール（`.claude/rules/`）**・**スキル群（`.claude/skills/`）**・**ノートテンプレ（`Templates/`）** で構成されています．clone してそのまま Obsidian で開けば，自分の PKB として使い始められます．
 
 - 設計思想: Karpathy の "LLM wiki"・Google の Open Knowledge Format（OKF）・PKM の Zettelkasten 伝統と整合
 - フォーマット: **Just markdown / Just files / Just YAML frontmatter**（OKF 整合）．プラットフォーム非依存．
@@ -17,9 +17,9 @@
 
 ## アーキテクチャ概要
 
-![Architecture — Obsidian Workspace (your vault) + Agent Orchestra (Claude Code / Codex / Hermes) + External Sources](assets/architecture.png)
+![Architecture — Obsidian Workspace (your vault) + Agent Orchestra (core agent + Hermes) + External Sources](assets/architecture.png)
 
-*Vault そのものを共有メモリに、3 エージェント（Claude Code / Codex / Hermes）がその上で協調する。左＝Obsidian Workspace、中央＝Claude Code Orchestra、右＝External Sources。*
+*Vault そのものを共有メモリに、コアエージェント（Codex 既定 / Claude Code 可）と Hermes がその上で協調する。左＝Obsidian Workspace、中央＝Agent Orchestra、右＝External Sources。*
 
 情報の流れは **capture → Daily ハブ → Main DB** の 3 段：
 
@@ -28,7 +28,7 @@ External Source
    │ ① capture（Hermes・拡張 only）
    ▼
 Inbox/{YYYY-MM-DD}/{source}/{file}.md     ← 日付ファースト・auto-route なし
-   │ ② aggregate（Claude が当日中に Daily へ集約）
+   │ ② aggregate（コアエージェントが当日中に Daily へ集約）
    ▼
 Daily/{YYYY-MM-DD}.md                      ← その日の唯一のハブ
    │ ③ distribute（EOD に Main DB へ蒸留・配分）
@@ -36,13 +36,13 @@ Daily/{YYYY-MM-DD}.md                      ← その日の唯一のハブ
 Work / Research / Others                   → Evergreen
 ```
 
-詳細は [`CLAUDE.md`](./CLAUDE.md) / [`AGENTS.md`](./AGENTS.md) / [`.claude/rules/`](./.claude/rules/) を参照．
+詳細は [`AGENTS.md`](./AGENTS.md)（コア契約） / [`.claude/rules/`](./.claude/rules/) を参照．
 
 ---
 
 ## クイックスタート
 
-> **初めての人はまず [`GETTING-STARTED.md`](./GETTING-STARTED.md) を読んでください。** 全部を一度にセットアップする必要はなく、Obsidian + Claude Code だけ(15分)→ Codex → Hermes → 外部接続 1 本ずつ、という段階式で始められます。外部接続(Slack / Google / GitHub 等)の個別手順とトラブルシューティングは [`docs/connections/`](./docs/connections/README.md) にあります。
+> **初めての人はまず [`GETTING-STARTED.md`](./GETTING-STARTED.md) を読んでください。** 全部を一度にセットアップする必要はなく、Obsidian + コアエージェント CLI だけ(15分)→ コア確定(core-setup)→ Hermes → 外部接続 1 本ずつ、という段階式で始められます。外部接続(Slack / Google / GitHub 等)の個別手順とトラブルシューティングは [`docs/connections/`](./docs/connections/README.md) にあります。
 
 ### 1. clone してリネーム
 
@@ -59,18 +59,17 @@ cd my-vault
 
 | Agent | 役割 | 必要なもの |
 |---|---|---|
-| **Claude Code** | orchestrator | [Claude Code CLI](https://docs.claude.com/claude-code) ＋ Anthropic アカウント |
-| **Codex** | implementer | [Codex CLI](https://github.com/openai/codex)（ChatGPT サブスクリプション） |
-| **Hermes** | ingestion | [Hermes Agent](https://github.com/NousResearch/Hermes-Agent)（Slack / Google / GitHub の認証） |
+| **コアエージェント** | 対話・判断・実装・ノート編集のすべて | **Codex（既定）**：[Codex CLI](https://github.com/openai/codex)（ChatGPT サブスクリプション）／ **または Claude Code**：[Claude Code CLI](https://docs.claude.com/claude-code)（Anthropic アカウント）。使い始めに `core-setup` で選択（併用も可・[`AGENTS.md`](./AGENTS.md) §0） |
+| **Hermes** | ingestion（全外部接続の所有） | [Hermes Agent](https://github.com/NousResearch/Hermes-Agent)（Slack / Google / GitHub の認証） |
 
-Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わないなら **Claude Code + Codex だけ**で十分動きます．その場合は `Inbox/` への投入を全部手動でやることになります．
+Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わないなら **コアエージェントだけ**で十分動きます．その場合は `Inbox/` への投入を全部手動でやることになります．
 
 外部接続の繋ぎ込みは PKM 最大の躓きポイントなので，**自分の使うツールを選んで，選んだものだけ**をガイド付きで繋げる仕組みを用意しています：
 
-- **対話式セットアップ（推奨）**：Claude Code に「**接続セットアップして**」と言えば [`connection-setup`](./.claude/skills/connection-setup/SKILL.md) skill がユースケースを質問し，使うツールだけを [`connections.yaml`](./.claude/connections.yaml) に記録して 1 本ずつセットアップします．使わないツールはジョブリストからも消えます
+- **対話式セットアップ（推奨）**：コアエージェントに「**接続セットアップして**」と言えば [`connection-setup`](./.claude/skills/connection-setup/SKILL.md) skill がユースケースを質問し，使うツールだけを [`connections.yaml`](./.claude/connections.yaml) に記録して 1 本ずつセットアップします．使わないツールはジョブリストからも消えます
 - 段階式セットアップ：[`GETTING-STARTED.md`](./GETTING-STARTED.md)（Level 0〜3）
 - 接続別ガイド：[`docs/connections/`](./docs/connections/README.md)（GitHub / Google カレンダー・Tasks / Gmail / Google Drive / Slack / Discord / RSS / クリッピング / AI 議事録 / Zotero / Notion。カタログ外ツールの対応表つき）
-- 診断：Claude Code に「**接続チェックして**」と言えば [`connection-doctor`](./.claude/skills/connection-doctor/SKILL.md) skill がどこが繋がっていてどこが切れているかを表で報告します
+- 診断：コアエージェントに「**接続チェックして**」と言えば [`connection-doctor`](./.claude/skills/connection-doctor/SKILL.md) skill がどこが繋がっていてどこが切れているかを表で報告します
 
 ### 4. 自分用に整える
 
@@ -87,12 +86,11 @@ Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わ
 |---|---|
 | [`GETTING-STARTED.md`](./GETTING-STARTED.md) | 段階式セットアップガイド（Level 0〜3・初めての人はここから） |
 | [`docs/connections/`](./docs/connections/) | 外部接続の個別セットアップガイド（GitHub / Google / Slack / クリッピング / Genspark / Notion） |
-| [`CLAUDE.md`](./CLAUDE.md) | Claude Code 向けオーケストレーション契約（vault の最上位ルール） |
-| [`AGENTS.md`](./AGENTS.md) | Codex / 外部エージェント向け契約 |
+| [`AGENTS.md`](./AGENTS.md) | **コア契約**（vault の最上位ルール。Codex が自動読込・Claude コアもここに従う） |
+| [`CLAUDE.md`](./CLAUDE.md) | Claude Code をコアにする場合のアダプタ（AGENTS.md を指す） |
 | [`.claude/rules/`](./.claude/rules/) | 運用ルール（frontmatter / tagging / Daily 運用 / Inbox routing / Work / Others 等） |
-| [`.claude/skills/`](./.claude/skills/) | Claude Code skill 群（daily-briefing / aggregate-* / eod-distill / work-project-writer / vault-archive など） |
-| [`.claude/agents/`](./.claude/agents/) | サブエージェント定義（general-purpose） |
-| [`.claude/hooks/`](./.claude/hooks/) | Codex 委譲を強制する hook |
+| [`.claude/skills/`](./.claude/skills/) | コア用 skill 群（core-setup / connection-setup / daily-briefing / aggregate-* / eod-distill など。トリガー時に SKILL.md を読んで従う） |
+| [`.claude/agents/`](./.claude/agents/) | サブエージェント定義（general-purpose・Claude コア用） |
 | [`.claude/docs/knowledges/`](./.claude/docs/knowledges/) | 運用で得た学びの structured knowledge base（テンプレでは README のみ） |
 | [`.codex/`](./.codex/) | Codex 側の契約・skill 共有 |
 | [`.hermes/`](./.hermes/) | Hermes 宣言的設定の雛形（`config.yaml`） + vault 用 capture skill（vault-capture/） |
@@ -115,7 +113,7 @@ Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わ
 
 1. **Vault そのものがインターフェース**：人も AI も同じ Markdown を読み書きする．特定 SaaS にロックインされない．
 2. **正本（system of record）の所在を決め切る**：会話=Slack / ToDo=GTasks / 予定=GCal / コード=GitHub / 記憶=この vault．重複保有しない．
-3. **capture と curate を分ける**：Hermes は `Inbox/` に投げるだけ．判断と移動は Claude＋人間．
+3. **capture と curate を分ける**：Hermes は `Inbox/` に投げるだけ．判断と移動はコアエージェント＋人間．
 4. **書き手は時点ごとに 1 人**：split-brain を避けるため，同じファイルを 2 体が同時に触らない．
 5. **proposal → delivery を地続きに**：案件は `Work/{CODE}/` の中で提案フェーズもデリバリフェーズも 4 層標準で扱う．
 6. **on-demand 既定**：Daily の `## 🤖 ジョブリスト` を見て人間が「これやって」と指示する．cron 多用しない．

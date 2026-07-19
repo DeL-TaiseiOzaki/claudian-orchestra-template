@@ -36,7 +36,7 @@ updated: 2026-07-19
    DISCORD_BOT_TOKEN=xxxx
    ```
 
-5. **capture skill を生成**:Claude Code に
+5. **capture skill を生成**:コアエージェントに
 
    ```text
    slack-capture をひな形に discord-capture skill を作って

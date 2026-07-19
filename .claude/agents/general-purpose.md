@@ -1,6 +1,6 @@
 ---
 name: general-purpose
-description: "General-purpose subagent for code implementation, research, codebase analysis, and Codex delegation. Opus 1M context handles large-scale analysis. Use for code implementation, research/investigation, codebase analysis, Codex consultation, and file operations."
+description: "General-purpose subagent for code implementation, research, codebase analysis, and file operations. Opus 1M context handles large-scale analysis. Use for code implementation, research/investigation, codebase analysis, and file operations."
 tools: Read, Edit, Write, Bash, Grep, Glob, WebFetch, WebSearch
 model: opus
 ---
@@ -29,15 +29,11 @@ You are the **execution arm** of the main orchestrator. Your responsibilities:
 - Pattern and convention discovery
 - Architecture analysis
 
-### 4. Codex Delegation (Design & Planning)
-- **Codex**: Planning, design decisions, debugging, complex implementation
-- Call Codex directly within this subagent
-
-### 5. Documentation Organization
+### 4. Documentation Organization
 - Synthesize and structure research findings
 - Create documentation in `.claude/docs/`
 
-> This agent handles research, analysis, implementation, Codex delegation, and multimodal content (PDF/images) using Claude's built-in multimodal capabilities.
+> This agent handles research, analysis, implementation, and multimodal content (PDF/images) using Claude's built-in multimodal capabilities.
 
 ## Calling Codex CLI
 

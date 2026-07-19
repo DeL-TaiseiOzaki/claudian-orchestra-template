@@ -18,6 +18,7 @@ description: Interactive onboarding wizard for external connections. Use when th
 
 ## Step 0: 現状把握
 
+0. `core:` が `unconfigured` なら、先に [[.claude/skills/core-setup/SKILL.md]] でコアエージェント(Codex / Claude Code / 併用)を確定してから戻ってくる
 1. `.claude/connections.yaml` を読む(無ければテンプレ初期状態で作成)
 2. 全て `unconfigured` → 初回セットアップとして Step 1 から
 3. 一部 `enabled` / `disabled` → 「前回の続き」か「構成変更」かを確認して該当 Step へ

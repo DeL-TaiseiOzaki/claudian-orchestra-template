@@ -17,6 +17,10 @@
 
 version: 1
 
+# コアエージェント(core-setup skill が記録・AGENTS.md §0):
+#   unconfigured — 未選択 / codex — Codex のみ(既定) / claude — Claude Code のみ / both — 併用
+core: unconfigured
+
 connections:
   github:
     status: unconfigured

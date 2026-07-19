@@ -10,7 +10,7 @@ status: "active"
 tags: ["<category>", "<subdomain>", "<tool-name>"]
 created: 2026-MM-DD
 updated: 2026-MM-DD
-source: "incident:#NN"            # or "session:YYYY-MM-DD" or "codex-consult:<topic>"
+source: "incident:#NN"            # or "session:YYYY-MM-DD" or "consult:<topic>"
 applies_to: ["<component>/<area>"]  # e.g. ["hermes/cron", "mcp/stdio"]
 related_commit: "<short-hash>"     # optional
 severity: medium                    # low | medium | high

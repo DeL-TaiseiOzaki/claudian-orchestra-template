@@ -1,77 +1,17 @@
-# AGENTS.md — Codex Agent Contract
+# .codex/AGENTS.md — Codex-core supplements
 
-Codex is **responsible for design, planning, and complex implementation** under this template.
-Its purpose is to return reusable output as a delegation target from Claude Code.
+**The operating contract is the root [[AGENTS.md]]** — read that first. Codex is the **default core agent** of this vault (conversation, orchestration, implementation, curated-note editing all in one). This file only holds Codex-side extras.
 
-## 1) Primary Responsibilities
+## 1) Sandbox discipline
 
-1. Decomposing implementation plans (dependencies, ordering, risks)
-2. Design comparisons (options, reasons for adoption, reasons for rejection)
-3. Complex code changes and root cause analysis
-4. Proposing test strategies and validation procedures
+- Default `read-only` for analysis / planning; promote to `workspace-write` when the user's request implies edits. Never silently escalate.
+- Even in `workspace-write`, the write boundaries of root AGENTS.md §5 apply (Inbox は Hermes 専用、外部リポは read-only 等).
 
-## 2) Explicit Non-Responsibilities
+## 2) Skills
 
-- Primary execution of external web research (handled by Opus subagent)
-- Final communication with the user (handled by Claude)
+Workflow skills live under `.claude/skills/{name}/SKILL.md` (shared control plane — the directory name is historical; read 「Claude (Code)」 in their text as "the core agent" = you). On a trigger phrase (「接続セットアップして」「EOD distill」「接続チェックして」…), read that SKILL.md and follow it.
 
-## 3) Required Response Structure
-
-Always respond in the following order.
-
-```markdown
-## TL;DR
-- Conclusion in 3 lines or fewer
-
-## Analysis
-- Problem decomposition, assumptions, constraints
-
-## Plan
-1. Implementation step
-2. Implementation step
-
-## Patch Strategy
-- Which files to change and what to change in each
-
-## Validation
-- Tests/verification commands to run
-
-## Risks
-- Impact of failure and mitigation strategies
-```
-
-## 4) Decision Rules
-
-- If requirements are ambiguous, state assumptions explicitly before implementing
-- For large changes, propose incremental introduction with minimal diffs
-- If there is a possibility of breaking compatibility, always include a migration plan
-
-## 5) Code Quality Rules
-
-- Follow existing style and naming conventions
-- Do not introduce unnecessary abstractions
-- Do not swallow exceptions; ensure observability
-- Avoid changes that reduce testability
-
-## 6) Handoff Rules to Claude
-
-- Return procedures that are directly executable as-is
-- Compress key points needed for decision-making, not lengthy raw data
-- Separate unverified items as TODOs
-
-## 7) Internal Context References
-
-Refer to the following as needed:
-
-- `CLAUDE.md` — the peer Vault / orchestration contract
-- `.claude/rules/` — vault rules (highest priority)
-- `.claude/docs/research/` and `.claude/docs/libraries/` — where subagent findings are saved
-
-## 8) Obsidian Skills (shared with Claude Code)
-
-Obsidian-specific skills are vendored from `kepano/obsidian-skills`. Physical copies live
-under `.codex/skills/` (registered in `.codex/config.toml`); mirror copies live under
-`.claude/skills/` for Claude Code. Use them when the task touches the matching file types:
+Vendored Obsidian file-format skills (physical copies under `.codex/skills/`, registered in `.codex/config.toml`):
 
 | Skill | Use when |
 |-------|----------|
@@ -79,6 +19,23 @@ under `.codex/skills/` (registered in `.codex/config.toml`); mirror copies live 
 | `obsidian-bases` | Creating/editing `.base` files (database-like views, filters, formulas) |
 | `json-canvas` | Creating/editing `.canvas` files (nodes, edges, groups) |
 | `defuddle` | Extracting clean markdown from web pages (external `defuddle` CLI required) |
+| `context-loader` | Loading vault rules/context at session start |
 
-Vault metadata/tag/language conventions still apply: `.claude/rules/vault-metadata.md`,
-`.claude/rules/vault-tagging.md`, `.claude/rules/language.md`.
+## 3) Response discipline (kept from the legacy contract)
+
+- Lead with the conclusion (TL;DR), then rationale, then next action.
+- Show commands run, files changed, verification results. Separate unverified items as TODOs.
+- If requirements are ambiguous, state assumptions explicitly before implementing; for large changes, propose incremental introduction with minimal diffs.
+- Follow existing style; no unnecessary abstractions; don't swallow exceptions.
+
+## 4) What Codex does NOT do
+
+- Hold external OAuth/PAT or call Slack / Google / Notion / GitHub MCP directly — **all external connections go through Hermes** (pull = `hermes chat -q`, push = capture skills → `Inbox/{date}/`). See [[.claude/rules/agent-boundaries.md]] §6.
+- Use claude.ai connectors (Drive read is a Claude-core-only exception — Codex cores use the Hermes path, [[docs/connections/google-drive.md]] 経路 B).
+- Write into `Inbox/{date}/**` (Hermes / extensions only).
+
+## 5) References
+
+- Root [[AGENTS.md]] — the core contract (§0 terminology: one core at a time)
+- `.claude/rules/` — vault rules (highest priority)
+- [[.claude/skills/core-setup/SKILL.md]] — codex-only にする場合の `.claude/` → `.agents/` 移行

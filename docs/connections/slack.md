@@ -74,7 +74,7 @@ Bot トークンで履歴を読めるのは **bot が参加しているチャン
 hermes chat -q "Slack で今日の自分の発言を探して" -Q
 ```
 
-**push(パイプライン全体)**:Claude Code に
+**push(パイプライン全体)**:コアエージェントに
 
 ```text
 Slack 取り込みやって

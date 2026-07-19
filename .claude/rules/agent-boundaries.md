@@ -1,20 +1,22 @@
-# エージェント分担ルール（Hermes / Claude Code / Codex）
+# エージェント分担ルール（Hermes / コアエージェント）
 
-この Vault（<your-vault>）は **Obsidian の中で動く 3 エージェント — Hermes・Claude Code・Codex — の共通制御プレーン**。
-3者の**宣言的な設定・契約・自作スキル**をここで版管理し、**ランタイム/秘密は git から除外**する（[[.gitignore]]）。
+この Vault は **Obsidian の中で動く 2 エージェント — Hermes と コアエージェント — の共通制御プレーン**。
+**コアエージェント = Codex（既定）または Claude Code**（[[AGENTS.md]] §0。`core-setup` で選択）。
+宣言的な設定・契約・自作スキルをここで版管理し、**ランタイム/秘密は git から除外**する（[[.gitignore]]）。
 分担の判断軸は「① トリガー（定期/対話）② 状態（共有可変/読み取り）③ 接続面（誰が認証を持つか）」。
 
+> **読み替え規約**：本ファイルを含む rules / skills の文中の「Claude (Code)」は**コアエージェント**を指す（歴史的経緯による表記。Codex コアでも同様に適用）。旧・二頭体制（Claude 指揮 + Codex 実装の委譲モデル）は**廃止**。
+>
 > 全体アーキテクチャは [[README.md]]、Inbox 取り込みフローは [[.claude/rules/inbox-routing.md]] を参照。
 
 ## 1. 役割分担
 
 | エージェント | 役割 | 典型タスク |
 |---|---|---|
-| **Hermes** | 常時稼働・**全外部接続の所有**・**capture 専用取り込み**・Slack 業務 IF・**`.hermes/**` 配下のデータ／学習ファイル更新のみ** | Slack 双方向 / 予定・タスク・Notion・Web の定期 capture を `Inbox/{date}/{source}/` へ（**auto-route なし**）、`.hermes/**` 配下の **データ／学習 file**（cron/state JSON 等）のみ自律更新、**SKILL.md / references / config の drift / spec 変更も `Inbox/{date}/clippings/` への observation/proposal note** で報告（自己領域でも spec/doc/config は read-only、#37） |
-| **Claude Code** | 対話・オーケストレーション・**`.claude/**` を含む control-plane**・curated ノートの編集 | `Inbox/{date}/*` の Daily ハブ集約・Main DB への配分蒸留、構造整理、frontmatter 統制、`.claude/rules/` / `.claude/skills/` / `CLAUDE.md` / `AGENTS.md` の更新、他リポ読解 |
-| **Codex** | 設計・計画・複雑実装・デバッグ・レビュー（Claude Code から委譲） | コード作業（[[.claude/skills/codex-consult/SKILL.md]] / [[AGENTS]]） |
+| **Hermes** | 常時稼働・**全外部接続の所有**・**capture 専用取り込み**・Slack 業務 IF・**`.hermes/**` 配下のデータ／学習ファイル更新のみ** | Slack 双方向 / 予定・タスク・Notion・Web の定期 capture を `Inbox/{date}/{source}/` へ（**auto-route なし**）、`.hermes/**` 配下の **データ／学習 file**（cron/state JSON 等）のみ自律更新、**SKILL.md / references / config の drift / spec 変更も `Inbox/{date}/clippings/` への observation/proposal note** で報告（自己領域でも spec/doc/config は read-only） |
+| **コアエージェント**（Codex 既定 / Claude Code 可） | 対話・オーケストレーション・**設計〜実装**・**control-plane を含む全 curated 領域の編集** | `Inbox/{date}/*` の Daily ハブ集約・Main DB への配分蒸留、構造整理、frontmatter 統制、rules / skills / `AGENTS.md` の更新、コード作業（設計・実装・デバッグ・レビュー）、他リポ読解（Hermes 経由） |
 
-### 1.1 Claude ⇄ hermes の 2 経路（push / pull）— 2026-06-16 から on-demand 既定
+### 1.1 コア ⇄ hermes の 2 経路（push / pull）— on-demand 既定
 
 hermes との情報のやり取りは 2 方向ある。**両方とも user-instruction-drivenの on-demand**（2026-06-16 切替・cron は廃止＝既存ジョブのみ過渡期維持・新規登録なし）。
 
@@ -23,7 +25,7 @@ hermes との情報のやり取りは 2 方向ある。**両方とも user-instr
 | **push**（capture） | hermes → `Inbox/{date}/` | **the user (per the Daily `## 🤖 ジョブリスト`) instructs** → Claude が hermes に CLI 委譲 | 定常取り込み（Calendar / Tasks / Slack / GitHub / Genspark 等） | [[.hermes/skills/vault-capture/]]（capture skills）|
 | **pull**（query） | Claude → hermes（CLI `hermes chat -q`） | Claude が必要時に同期呼び出し | ライブ確認・検索（今のタスク？ この件の Slack は？ Notion 参照） | [[.claude/skills/hermes-query/SKILL.md]] |
 
-- **なぜ pull が要るか**：外部接続の認証は hermes が一元所有（§6）。Claude は Slack/GWS/Notion を直接叩けないので、その場の参照は hermes に委譲する。Codex に**コード**を委譲するのと対の、**外部接続**の委譲。
+- **なぜ pull が要るか**：外部接続の認証は hermes が一元所有（§6）。コアエージェントは Slack/GWS/Notion を直接叩けないので、その場の参照は hermes に委譲する。
 - **境界**：pull は read/query 既定。durable な結果は hermes に **`Inbox/{date}/` へ書かせる**（curated 直書き禁止）。transient な確認は stdout で受けて会話に統合（永続化しない）。外部への書き込み・破壊操作は §5 の承認ティアに従う。
 - **cron は廃止（既定は on-demand）**：既存の cron job（slack-capture・genspark polling/evening・github-eod 等）が稼働中の環境では**触らず過渡期維持**で放置してよいが、**新規登録はしない**。**既定は on-demand**＝Daily ノート `## 🤖 ジョブリスト` から user instruction → Claude が hermes に CLI 委譲。
 - **push を pull で置き換えない**：定常 capture は hermes capture skill に通す（push）、pull は「今すぐ・特定の検索」用途に限る。
@@ -72,7 +74,7 @@ hermes との情報のやり取りは 2 方向ある。**両方とも user-instr
 |---|---|---|
 | **on-demand（既定・2026-06-16 以降）** | 取り込み（`Inbox/{date}/` capture）・同期・バックアップ・ダイジェスト | the user (per the Daily job list) instructs → Claude / Hermes が実行 |
 | 提案 → レビュー | Vault へのノート草稿、Notion 公開、Tasks 自動起票 | Hermes / Claude → user approval |
-| 承認前提（不可逆・要判断） | 構造改変・削除・スキーマ変更・コード・本文編集・Main DB への配分 | Claude Code + Codex + the user |
+| 承認前提（不可逆・要判断） | 構造改変・削除・スキーマ変更・コード・本文編集・Main DB への配分 | コアエージェント + ユーザー |
 | 全自動（**廃止＝過渡期維持のみ**） | 既存の cron job（slack-capture / genspark / github-eod 等） | Hermes cron — 触らない・**新規登録なし** |
 
 ## 6. 接続の所有（複製しない）
@@ -94,22 +96,20 @@ hermes との情報のやり取りは 2 方向ある。**両方とも user-instr
 | Git（vault 自身） | Claude Code | ローカル `gh` / `git` CLI | バックアップ + 履歴管理（GitHub MCP とは別経路） |
 
 > 外向き統合の **write / capture**（Slack / Notion / GWS / **GitHub MCP**）は Hermes が OAuth / PAT + MCP を一元保持する（失効も一括）。
-> **Claude Code 直接の例外（hermes を経由しない）**：① vault 自身の git（バックアップ・履歴）／② **共有ドライブの Google Docs/Sheets read**（claude.ai Drive コネクタ・2026-06-16 承認）／③ **Web の調査・検証 read**（WebFetch / WebSearch・subagent）。いずれも **read / backup 主体**で、**durable な外部取り込み（capture→Inbox）と外部システムへの write は従来どおり hermes**。
+> **コアエージェント直接の例外（hermes を経由しない）**：① vault 自身の git（バックアップ・履歴）／② **共有ドライブの Google Docs/Sheets read**（claude.ai Drive コネクタ・**コアが Claude Code の場合のみ**。Codex コアは hermes 経由 [[docs/connections/google-drive.md]] 経路 B）／③ **Web の調査・検証 read**（WebFetch / WebSearch・subagent）。いずれも **read / backup 主体**で、**durable な外部取り込み（capture→Inbox）と外部システムへの write は従来どおり hermes**。
 > GitHub MCP は **hermes が所有**する（PAT は `.hermes/config.yaml` の github MCP に passthrough、#38）。CC / CX は他リポのコード context を hermes 経由で読む（pull = `hermes chat -q` ／ push = on-demand `github-eod-capture`・ジョブリスト指示 → `Inbox/{date}/code/`。既存 cron は過渡期維持）。vault 自身の git 操作（バックアップ・履歴）だけは Claude のローカル `gh`/`git`。
 
 ## ヒューリスティック（新タスクの振り分け）
 
 > スケジュール / 外部イベントで外部 → `Inbox/{date}/` に capture するだけ（捕捉・同期・通知）→ **Hermes**。
-> 当日分を Daily に集約し、判断して蒸留・リンクし、正本（Main DB）を編集する → **Claude Code + Codex + ユーザー**。
-> コード設計・実装・デバッグ → **Codex**（Claude Code から委譲）。
+> 当日分を Daily に集約し、判断して蒸留・リンクし、正本（Main DB）を編集する → **コアエージェント + ユーザー**。
+> コード設計・実装・デバッグ → **コアエージェント**（Codex 既定 / Claude Code 可）。
 > **あらゆるシステム間フローは一方向、あらゆる file は書き手 1 人（時点ごと）。**
 
 ## 関連
 
 - [[README.md]]（アーキテクチャ全景）
-- [[CLAUDE.md]] §4 オーケストレーション契約
-- [[AGENTS]]（Codex / 外部エージェント契約）
+- [[AGENTS.md]]（コア契約の正本）
 - [[.claude/rules/inbox-routing.md]]（Inbox → Daily 集約 → Main DB 配分）
 - [[.claude/rules/daily-operations.md]]（capture / Daily / Weekly）
-- [[.claude/skills/codex-consult/SKILL.md]]（Codex 委譲）
 - [[.hermes/config.yaml]] / [[.hermes/SOUL.md]]（Hermes 宣言的設定）

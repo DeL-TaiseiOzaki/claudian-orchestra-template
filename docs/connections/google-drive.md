@@ -17,7 +17,7 @@ updated: 2026-07-19
 
 | 経路 | 実行者 | 難易度 | 特徴 |
 |---|---|---|---|
-| **A. claude.ai Drive コネクタ(推奨)** | Claude Code 直 | ★☆☆ | **Hermes 不要**。この vault で唯一「Claude が外部を直接読む」ことが設計上許された例外([[.claude/rules/agent-boundaries.md]] §6) |
+| **A. claude.ai Drive コネクタ** | Claude Code 直(**コアが Claude Code の場合のみ**) | ★☆☆ | **Hermes 不要**。コアが外部を直接読める唯一の設計上の例外([[.claude/rules/agent-boundaries.md]] §6) |
 | **B. Hermes 経由(OAuth)** | Hermes | ★★☆ | Google OAuth 基盤([google-calendar-tasks.md](./google-calendar-tasks.md) 経路 B)に相乗り。headless 運用向け |
 
 ## 1. 何ができるようになるか
@@ -28,7 +28,7 @@ updated: 2026-07-19
 ## 2. 経路 A:claude.ai Drive コネクタ
 
 1. claude.ai の設定 → コネクタ → **Google Drive** を接続(ブラウザで Google ログイン + 許可)
-2. Claude Code のセッションから Drive の検索・read ツールが使えるようになります
+2. Claude Code のセッションから Drive の検索・read ツールが使えるようになります(**Codex コアでは使えません** — 経路 B へ)
 3. 動作確認:Claude Code に「Drive で『◯◯』というファイルを探して内容を要約して」と頼む
 
 > read 専用のコネクタとして扱います。ファイルの作成・編集は依頼されても vault 側ノートで代替します(一方向原則)。

@@ -42,7 +42,7 @@ updated: 2026-07-19
 
 ## 4. 動作確認
 
-Claude Code に:
+コアエージェントに:
 
 ```text
 RSS 巡回して

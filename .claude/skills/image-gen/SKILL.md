@@ -7,7 +7,7 @@ description: Generate images via Codex CLI's built-in `$imagegen` skill (gpt-ima
 
 ユーザーの画像生成要求を **Codex CLI の組み込み `$imagegen`**（gpt-image-2）に委譲し、
 生成された PNG を **Claude が vault の `_assets/` に配置**して `![[...]]` 埋め込みまで行う手順書。
-判定・委譲方針は `CLAUDE.md` §4 と整合（外部生成＝Codex、vault への書き込み＝Claude）。
+コアが Codex の場合は `$imagegen` を直接使い、生成物を対象ノートの `_assets/` にコピーして埋め込むだけ（下記の分担は Claude コア + Codex CLI 併用構成向け）。Codex CLI が無い Claude-only 構成では本 skill は使えない（削除可）。
 
 ## 0. アーキテクチャ（なぜ「Codex 生成 → Claude コピー」なのか）
 
@@ -109,7 +109,6 @@ file "$ASSETS/<slug>.png"      # PNG であることを確認
 
 ## 関連
 
-- [[.claude/skills/codex-consult/SKILL.md]]（Codex 委譲の一般手順。本 skill は画像生成特化）
-- [[CLAUDE.md]] §4 Routing（画像生成＝Codex 委譲、vault 書込＝Claude）
+- [[AGENTS.md]] §4 Operating model（コア 1 体・外部生成ツールとしての Codex CLI 利用）
 - [[.claude/rules/language.md]]（応答は日本語、コマンド・識別子は英語）
 - [[.claude/rules/vault-metadata.md]]（`_assets/` ＝非 md 作業物の置き場）

@@ -23,7 +23,7 @@ updated: 2026-07-19
 ## 1. 何ができるようになるか
 
 - **push(朝 capture)**:今日+明日の Calendar 予定 + Google Tasks の未完了タスク → `Inbox/{date}/daily/daily.md`。`daily-briefing` が Daily ノートに Today's Focus・会議一覧付きの朝 briefing を構成
-- **pull**:「今の未完了タスクは?」「明日の予定は?」を Claude Code からその場で確認
+- **pull**:「今の未完了タスクは?」「明日の予定は?」をコアエージェントからその場で確認
 
 > **ToDo の正本は Google Tasks のまま**です。vault には読み取りの写しを置くだけで、vault 内に競合するタスクリストは作りません([[.claude/rules/agent-boundaries.md]] §2)。
 
@@ -96,7 +96,7 @@ hermes chat -q "list my Google Tasks" -Q
 hermes chat -q "明日の予定を教えて" -Q
 ```
 
-**push(パイプライン全体)**:Claude Code に
+**push(パイプライン全体)**:コアエージェントに
 
 ```text
 デイリー取り込みやって

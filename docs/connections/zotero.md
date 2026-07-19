@@ -15,7 +15,7 @@ updated: 2026-07-19
 
 ## 1. 何ができるようになるか
 
-- **pull**:「最近 Zotero に追加した論文リスト出して」「タグ `to-read` の文献一覧」を Claude Code から確認
+- **pull**:「最近 Zotero に追加した論文リスト出して」「タグ `to-read` の文献一覧」をコアエージェントから確認
 - **文献ノートの起票**:「この論文の文献ノート作って」→ Zotero のメタデータ(著者・年・DOI・URL)を引いて `Research/reference/`(または `Others/Learning/`)にノートを作成。`resource:` frontmatter に Zotero アイテムへのポインタを保持
 - 読書中のハイライト・PDF 注釈も API で参照可(取り込みは必要な分だけ手動判断)
 

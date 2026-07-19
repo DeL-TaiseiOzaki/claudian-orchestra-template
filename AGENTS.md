@@ -1,164 +1,119 @@
-# AGENTS.md — Vault Contract for Codex / External Agents
+# AGENTS.md — Claudian Orchestra Core Contract
 
-**This is an Obsidian vault.**
-The user works inside Obsidian, and **Codex is one of three co-resident agents**. Codex is typically invoked by Claude Code via the `codex-consult` skill.
+**This is an Obsidian vault** operated as a personal knowledge base by **two agents**:
 
-This file is the contract for Codex and other non-Claude agents. The Claude Code orchestration contract lives in [[CLAUDE.md]]. The architecture overview lives in [[README.md]]. **Do not duplicate them here.** This file tells the delegate agent:
+| Agent | Role | Default |
+|---|---|---|
+| **Core agent** | Conversation, orchestration, implementation, all curated-note editing | **Codex** (Claude Code selectable — see §0) |
+| **Hermes** | Always-on ingestion. Owns ALL external connections (Slack / Google / GitHub MCP / …) | [Hermes Agent](https://github.com/NousResearch/Hermes-Agent) (optional) |
 
-1. **What** the vault is (so notes are not mistaken for code).
-2. **Where** writes are permitted.
-3. **What tools** are available (GitHub MCP is **owned by Hermes** — Codex does NOT connect directly. Cross-repo code context is supplied in the brief or via Hermes).
-4. **How to return results** so Claude Code can integrate them.
+This file is the **single core contract**: whichever CLI you run as the core reads and follows it. Codex loads it natively; Claude Code is pointed here by [[CLAUDE.md]].
 
 ---
 
-## 1. Operating model — Codex is an implementer, not an orchestrator
+## 0. Core configurations & terminology
 
-- Claude Code decides **what / why**. Codex / sub-agents decide **how** and produce the change.
-- Tasks arrive as a self-contained brief (objective, constraints, target files, acceptance criteria). When ambiguous, **return a question — do not guess**.
-- Output is consumed by Claude Code, then delivered to the user. Optimize for **machine-readable diffs + concise summary**. Don't pad with prose.
+Pick ONE configuration at setup time (the `core-setup` flow — [[.claude/skills/core-setup/SKILL.md]] — asks this and records it in [[.claude/connections.yaml]] `core:`):
 
-### Tools available
-
-| Tool | Purpose | Use in Codex |
+| `core:` | Meaning | What stays in the repo |
 |---|---|---|
-| Genspark CLI | AI meeting transcripts / slide generation (separate contract) | Follow [[.hermes/skills/vault-capture/genspark-slide/SKILL.md]] |
-| GPT Image | Image generation | Codex native tool |
+| `codex` (default) | Codex CLI is the only core | `core-setup` migrates `.claude/` → `.agents/` (link rewrite included) and removes Claude-specific files (`CLAUDE.md`, hooks, settings) |
+| `claude` | Claude Code is the only core | Remove `.codex/` (this file stays — it is the core contract) |
+| `both` | Both CLIs are used interchangeably as the core | Keep everything |
 
-> **GitHub MCP is owned by Hermes** (PAT lives only on Hermes). Codex does NOT connect to GitHub MCP directly. When cross-repo context is needed, either get it in the brief, or have Claude Code fetch it via Hermes (pull = `hermes chat -q` / push = `Inbox/{date}/code/`). See [[.claude/rules/agent-boundaries.md]] §6.
-> Slack / Notion / GWS / GitHub MCP and other outbound integrations are **exclusively held by Hermes**. Codex does NOT connect to these directly.
+**Terminology rule (important):** the rules and skills under `.claude/` predate this contract and often say 「Claude (Code) が…」. **Read every such mention as "the core agent"** — the content is agent-neutral; only the directory name and wording are historical. Never interpret it as "delegate to a separate Claude".
 
-### Sandbox modes (default = `read-only`)
-
-Codex runs in one of two sandbox modes. **Default is `read-only`. Promote to `workspace-write` only when explicitly requested by the brief.**
-
-| Sandbox | Purpose | Writes? |
-|---|---|---|
-| `read-only` (default) | Analysis, design comparison, planning, debug hypotheses, code review | **No** — return text only |
-| `workspace-write` | Implementation per approved plan, minimal patch, test scaffolding | Yes (within workspace only) |
-
-Rules:
-
-- **Don't silently escalate sandbox**. If `workspace-write` feels necessary but isn't in the brief, stay `read-only` and return the plan with a request for write permission.
-- **Even in `workspace-write`, §3 write boundaries still apply on a separate axis**. Sandbox permission ≠ permission to touch any path.
-- **External repositories are always read-only** (use context Hermes supplied via GitHub MCP). Cross-repo changes go through that repo's own PR flow.
-
-### Output contract (every delegation)
-
-1. **TL;DR** — 3–5 bullets: what changed, why, risk level.
-2. **Changes** — list of touched files (path + 1-line purpose).
-3. **Diff / patch** — directly applicable. Don't paraphrase code as prose.
-4. **Verification** — commands run + pass/fail. If nothing ran, say so.
-5. **Open questions / assumptions** — what to check with the orchestrator before responding to the user.
-
-### Quality gates (before returning)
-
-- Diff matches stated intent — no incidental edits.
-- Self-reviewed (obvious bugs, dead code, broken imports).
-- At least one executable check passed (tests, type-check, lint, smoke run). If impossible, state why.
-- Failures are reported with cause + blast radius. Don't hide them.
+There is exactly **one core at a time**. The old two-headed model (Claude orchestrates, Codex implements via delegation) is retired; the core agent both decides and implements.
 
 ---
 
-## 2. Domain layout (read-only context for Codex)
+## 1. Domain layout
 
-| Domain | Path | What |
+| Domain | Path | Content |
 |---|---|---|
-| **Inbox** | `Inbox/{YYYY-MM-DD}/{daily,slack,code,mtgs,clippings,chat-logs,attachments}/` | Raw capture (date-first, no auto-route). **Writers: Hermes / extensions only**. Don't write here. |
-| **Daily** | `Daily/` | Daily / weekly journal. Writers: Claude Code + user. |
-| **Work** | `Work/{PROJ_A,PROJ_B,PROJ_C}/` | Client engagements. `code/` subtree is for code-reading notes. Code itself is on GitHub. |
-| **Research** | `Research/` (optional submodule) | If mounted as a submodule, follows its own `CLAUDE.md` / `AGENTS.md`. Use that contract when working inside. |
-| **Others** | `Others/{Ideas,Activities,Learning}/` | Ideas, separate-seed exploration / PoC, community / WG activities, learning notes. |
-| **Maps** | `Maps/` | Cross-cutting MOCs. `Code-Map.md` is the single entry for codebase knowledge. |
-| **Archive** | `Archive/` | Inactive content. Mirrors original paths. `status: archived`. Never deleted. |
+| **Inbox** | `Inbox/{YYYY-MM-DD}/{daily,slack,discord,code,mtgs,clippings,chat-logs,mail,attachments}/` | Capture-only receiving area (raw, unsorted, **date-first**). Writers: Hermes / browser extensions only (**no auto-route**). The core agent aggregates same-day content into Daily; curation is a later step. [[Inbox/README.md]] |
+| **Daily** | `Daily/` | The single hub per day (journal). Aggregates `Inbox/{date}/*` and distributes to Main DB. |
+| **Work** | `Work/{PROJ_A,…}/` | Client engagements, 4-layer standard ([[.claude/rules/work-management.md]]). |
+| **Research** | `Research/` (optional submodule) | Research work. A submodule's own contract takes precedence under it. |
+| **Others** | `Others/{Ideas,Activities,Learning}/` | Ideas / PoC, continuous activities, learning notes. |
+| **Maps** | `Maps/` | Cross-cutting MOCs + Bases views. `Code-Map.md` = codebase-knowledge entry. |
+| **Persona** | `Persona/` | Single source of truth for the author's profile. |
+| **Meta** | `Meta/` | Self-referential projects about the vault itself. |
+| **Archive** | `Archive/` | Inactive-content sink (never deleted). `status: archived`. |
 | **Templates** | `Templates/` | Note templates. |
+| **docs** | `docs/` | Human-facing setup guides (`connections/`). Not vault content. Entry: [[GETTING-STARTED.md]]. |
 
-> Each domain has its own `CLAUDE.md` + `.claude/rules/*-management.md`. **Read them before touching files in that domain.**
+> Each domain ships its own `CLAUDE.md` contract file directly under the folder — read it before touching files there (the filename is historical; it applies to whichever core).
 
----
+## 2. Note operation principles (highest priority)
 
-## 3. Write boundaries (single-writer principle)
+- Notes are Markdown. Non-md work-products live under `_assets/`; external one-shot resources under `sources/` (immutable).
+- Structural changes (new folders / renames / moves) must land in the same commit as the corresponding rules / README updates.
+- Always include frontmatter (`type` / `status` / `tags` / `created` / `updated`). Schema: [[.claude/rules/vault-metadata.md]]. Tags: [[.claude/rules/vault-tagging.md]].
+- Domain rules: [[.claude/rules/work-management.md]] / [[.claude/rules/research-management.md]] / [[.claude/rules/others-management.md]] / [[.claude/rules/daily-operations.md]].
+- Agent boundaries (Hermes / core — capture/curate split, single-writer): [[.claude/rules/agent-boundaries.md]].
+- Obsidian dialect (wikilinks, embeds, callouts, Bases) — preserve; don't reflow notes unnecessarily.
 
-The vault separates capture / curate strictly — see [[.claude/rules/agent-boundaries.md]].
+## 3. Language conventions
 
-| Path | Writer | Codex can write? |
-|---|---|---|
-| `Inbox/{YYYY-MM-DD}/**` | Hermes + browser extensions (capture only, no auto-route) | **No** |
-| `Daily/**`, `Work/**` notes, `Others/**` notes, `Maps/**` | Claude Code + user | **Yes — only with explicit, scoped delegation from Claude Code** |
-| `Work/*/code/**` (code-reading notes) | Claude Code + Codex | Yes |
-| `Research/**` (if submodule) | Per the submodule's own AGENTS.md | Per submodule rules |
-| `.claude/hooks/`, `.claude/skills/`, `.claude/rules/` configs / scripts | Claude Code + Codex | Yes |
-| External code repositories (context supplied via Hermes GitHub MCP) | n/a | **Read-only** |
-
-**Claude Code direct exceptions** (do NOT go through Hermes — see [[.claude/rules/agent-boundaries.md]] §6):
-
-1. **Vault git itself** (backup / history) — local `gh`/`git` CLI.
-2. **Read shared-drive Google Docs/Sheets/Slides** — claude.ai Drive connector (Hermes cannot read arbitrary Drive documents).
-3. **Web research / verification reads** — WebFetch / WebSearch / Opus subagent.
-
-Durable external capture (→ `Inbox/{date}/`) and writes to external systems still go through Hermes. Codex does NOT exercise these direct exceptions; ask Claude Code when needed.
-
-Heuristics:
-
-- **Path permission = sandbox AND the table above**. `read-only` can't write anywhere regardless of path. `workspace-write` can write only to paths marked "Yes" — and curated notes additionally need explicit instruction.
-- **Don't silently create / move curated `.md` notes**. Notes are user-owned; touching them requires explicit instruction.
-- **One auto-committer at a time**. Don't race with cloud sync / Obsidian Git / Hermes on the same file.
-- **External repos**: read via Hermes GitHub MCP, but changes go through that repo's own PR flow — never cross-edit from this vault.
-
----
-
-## 4. Note conventions (when instructed to edit notes)
-
-- Notes are Markdown. Preserve existing structure — don't reflow unnecessarily.
-- Frontmatter (`type` / `status` / `tags` / `created` / `updated`) is required. **Schema source of truth**: [[.claude/rules/vault-metadata.md]]. Tag taxonomy: [[.claude/rules/vault-tagging.md]].
-- Wikilinks (`[[note]]`), embeds (`![[image.png]]`), callouts, Dataview blocks are Obsidian dialect. **Don't break Dataview queries unless explicitly told to.**
-- Domain-specific rules:
-  - [[.claude/rules/work-management.md]]
-  - [[.claude/rules/research-management.md]]
-  - [[.claude/rules/others-management.md]]
-  - [[.claude/rules/daily-operations.md]]
-
----
-
-## 5. Language conventions
-
-- **Thinking / reasoning / commit messages / identifiers / frontmatter keys + enum values / tags**: English.
-- **Text delivered to the user via Claude Code**: Japanese (or the user's language). Claude Code can translate English replies, but pick the user-facing language up front.
-- Frontmatter free-text fields (`title`) match the note's language.
+- **Thinking / internal processing / commit messages / identifiers / frontmatter keys + enum values / tags**: English.
+- **User responses**: Japanese by default (adjust to the user's language).
 - Details: [[.claude/rules/language.md]].
 
----
+## 4. Operating model — one core, on-demand
 
-## 6. Repository conventions
+The core agent handles conversation, judgment, design AND implementation. There is no implementation delegation to another chat agent.
 
-- **Python**: use `uv` exclusively. Direct `pip` is forbidden.
-- **Existing `.claude/rules/` always take precedence over this file**. Surface conflicts rather than silently choosing one side.
-- Investigation artifacts:
-  - Code / library investigations → `.claude/docs/libraries/`.
-  - General research → `.claude/docs/research/`.
-  - Make them concise, dated, and link back from the calling task.
-- Backups:
-  - Vault → your own GitHub repo (configure in [[.claude/skills/vault-github-sync/SKILL.md]]).
-  - Research submodule (if used) → that repo's own remote. Update inside the submodule, then bump the pointer from the parent.
+- **All external connections go through Hermes** (push: capture → `Inbox/{date}/{source}/` / pull: `hermes chat -q` — follow [[.claude/skills/hermes-query/SKILL.md]]). The core never holds external OAuth/PAT. Exceptions listed in [[.claude/rules/agent-boundaries.md]] §6 (vault git via local `git`/`gh`; web research reads; Claude-core-only Drive connector).
+- **On-demand by default**: the Daily note's `## 🤖 ジョブリスト` is the operational checklist. The user says 「○○やって」; the core executes or delegates to Hermes. Cron is optional. [[.claude/rules/daily-operations.md]] §0.
+- **Skills**: workflows live as `SKILL.md` instruction files under `.claude/skills/{name}/`. When a trigger phrase matches (「接続セットアップして」「EOD distill」…), **read that SKILL.md and follow it**. Claude Code discovers them natively; Codex reads the file on demand — same contract either way.
+- **Sub-work**: large research / analysis may use whatever parallel/sub-agent mechanism the core CLI offers. Findings go to `.claude/docs/research/` or `.claude/docs/libraries/`.
+- **Approvals**: destructive / low-reversibility operations (delete, multi-file rename, schema migration, external writes, Main DB distribution) require user approval — tiers in [[.claude/rules/agent-boundaries.md]] §5.
 
----
+### Output contract
 
-## 7. Escalation
+- Order: conclusion → rationale → next action. Make uncertainty explicit (guess / unverified / needs-check).
+- Always show: commands run, files changed, test results. Failures reported with cause + blast radius — never hidden.
 
-Stop and return a question to the orchestrator when:
+### Quality gates (before final response)
 
-- A curated note path needs a write but the brief doesn't explicitly instruct it.
-- The change crosses domain boundaries (e.g. Work ↔ Research).
-- Schema / tag / rule conflicts exist without a documented precedence.
-- The operation is destructive or low-reversibility (delete, multi-file rename, force-push, schema migration).
+- Intent matches the user's request; diff self-reviewed; at least one executable check ran when feasible.
 
-When blast radius is unknown, **the default is to propose a plan, not to execute**.
+## 5. Write boundaries (single-writer principle)
 
----
+| Path | Writer |
+|---|---|
+| `Inbox/{YYYY-MM-DD}/**` | Hermes + browser extensions only (capture). Core reads, then owns after aggregation |
+| `Daily/**`, `Work/**`, `Others/**`, `Maps/**`, `Persona/**`, `Templates/**` | Core agent + user |
+| `Research/**` (if submodule) | Per the submodule's own contract |
+| `.claude/**` (control plane: rules / skills / registry / docs) | Core agent + user |
+| `.hermes/**` SKILL.md / references / config | Read-only for Hermes itself (observation notes go to `Inbox/{date}/clippings/`); core + user may edit |
+| External code repositories | **Read-only** (via Hermes GitHub MCP). Changes go through that repo's own PR flow |
+
+- One auto-committer at a time — don't race with cloud sync / Obsidian Git / Hermes on the same file.
+- Vault backup: your own GitHub repo via local `git`/`gh` ([[.claude/skills/vault-github-sync/SKILL.md]]).
+
+## 6. Core-specific notes
+
+### When the core is Codex
+
+- Sandbox: default `read-only`; promote to `workspace-write` for edits per the user's request. Never silently escalate. Even in `workspace-write`, §5 boundaries apply.
+- `claude.ai` connectors (e.g. Google Drive read) are unavailable — use the Hermes path instead ([[docs/connections/google-drive.md]] 経路 B).
+- Codex-side extras (vendored Obsidian skills, config): [[.codex/AGENTS.md]].
+
+### When the core is Claude Code
+
+- `CLAUDE.md` (thin adapter) points here; `.claude/skills/` are natively discoverable; sub-research via its subagents.
+- Claude-core-only exception: shared-drive Google Docs/Sheets **read** via the claude.ai Drive connector ([[.claude/rules/agent-boundaries.md]] §6).
+
+## 7. Repository conventions
+
+- **Python**: use `uv` exclusively (direct `pip` is forbidden).
+- `.claude/rules/` take precedence over this file — surface conflicts, don't silently pick.
+- Investigation artifacts → `.claude/docs/research/` / `.claude/docs/libraries/` (concise, dated, linked back).
 
 ## See also
 
-- [[CLAUDE.md]] — Claude Code's orchestration contract (the caller).
-- [[.claude/rules/agent-boundaries.md]] — Hermes / Claude Code / Codex division of labor.
-- [[.claude/skills/codex-consult/SKILL.md]] — How Claude Code calls Codex.
-- [[.claude/rules/vault-metadata.md]] / [[.claude/rules/vault-tagging.md]] / [[.claude/rules/language.md]]
+- [[README.md]] — architecture overview / [[GETTING-STARTED.md]] — staged setup (Level 0–3)
+- [[.claude/skills/core-setup/SKILL.md]] — core selection & migration / [[.claude/skills/connection-setup/SKILL.md]] — connection wizard
+- [[.claude/rules/agent-boundaries.md]] — Hermes / core division of labor

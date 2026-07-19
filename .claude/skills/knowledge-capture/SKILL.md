@@ -74,7 +74,7 @@ status: "active"       # active | superseded | deprecated
 tags: ["category", "subdomain", ...]
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
-source: "incident:#NN" or "session:YYYY-MM-DD" or "codex-consult:<topic>"
+source: "incident:#NN" or "session:YYYY-MM-DD" or "consult:<topic>"
 applies_to: ["hermes/cron", "mcp/stdio"]
 related_commit: "<short-hash>"   # optional
 severity: low | medium | high
@@ -111,5 +111,5 @@ Never delete a knowledge note. Even deprecated entries help future readers verif
 - 入口: [[.claude/docs/knowledges/README.md]]
 - テンプレート: [[.claude/skills/knowledge-capture/references/template.md]]
 - カテゴリ定義: [[.claude/skills/knowledge-capture/references/categories.md]]
-- 隣接 skill: [[.claude/skills/codex-consult/SKILL.md]]（諮問結果は research/、durable learning は knowledges/）、[[.claude/skills/vault-archive/SKILL.md]]（archived knowledge は deprecated に残し移動しない）
+- 隣接 skill: [[.claude/skills/vault-archive/SKILL.md]]（archived knowledge は deprecated に残し移動しない）。調査の生データは `.claude/docs/research/` へ、durable learning は knowledges/ へ
 - 親ルール: [[CLAUDE.md]] §4 オーケストレーション契約 / [[.claude/rules/agent-boundaries.md]]

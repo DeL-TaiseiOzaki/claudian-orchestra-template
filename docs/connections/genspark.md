@@ -38,7 +38,7 @@ Genspark の AI ミーティングノート(会議の自動文字起こし)を v
 
 ## 4. 動作確認
 
-会議を 1 件 Genspark に join させて完了させた後、Claude Code に:
+会議を 1 件 Genspark に join させて完了させた後、コアエージェントに:
 
 ```text
 Genspark 議事録取り込みやって
