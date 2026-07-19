@@ -43,7 +43,7 @@ There is exactly **one core at a time**. The old two-headed model (Claude orches
 | **Templates** | `Templates/` | Note templates. |
 | **docs** | `docs/` | Human-facing setup guides (`connections/`). Not vault content. Entry: [[GETTING-STARTED.md]]. |
 
-> Each domain ships its own `CLAUDE.md` contract file directly under the folder — read it before touching files there (the filename is historical; it applies to whichever core).
+> Each domain ships its own `AGENTS.md` contract file directly under the folder (Work/, Work/PROJ_A/, Others/, Others/Activities/, Persona/, Research/) — Codex auto-loads nested AGENTS.md; a Claude-Code core must read the folder's AGENTS.md before touching files there.
 
 ## 2. Note operation principles (highest priority)
 

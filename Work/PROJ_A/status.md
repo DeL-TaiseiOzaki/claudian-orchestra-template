@@ -11,7 +11,7 @@ updated: 2026-01-01
 
 # PROJ_A — Status
 
-[[Work/PROJ_A/project.md]] の現況 SoT（随時更新）。健全性・課題・次ステップだけ書く（概要は project.md、規約は CLAUDE.md）。
+[[Work/PROJ_A/project.md]] の現況 SoT（随時更新）。健全性・課題・次ステップだけ書く（概要は project.md、規約は AGENTS.md）。
 
 ## 全体フェーズ
 

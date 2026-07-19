@@ -1,7 +1,7 @@
 # Others 管理ルール
 
 Work（受託案件）・Research（LLM/VLM 研究本流）に属さない活動の運用ルール（詳細）。
-入口は [[Others/CLAUDE.md]]、全体像は [[Others/README.md]]。
+入口は [[Others/AGENTS.md]]、全体像は [[Others/README.md]]。
 
 ## フォルダ構造
 
@@ -9,7 +9,7 @@ Work（受託案件）・Research（LLM/VLM 研究本流）に属さない活動
 Others/
 ├── Ideas/        # アイデア帳（着想の種）＋ 別シードの検証・PoC・初期構想（旧 Exploration を統合・2026-06-13）
 ├── Activities/   # 継続的活動（社内外コミュニティ・学会委員・グループ・コンペ・エコシステム創発）
-│   ├── CLAUDE.md # サブエリア共通 Schema（4 層標準の定義）
+│   ├── AGENTS.md # サブエリア共通 Schema（4 層標準の定義）
 │   ├── Community-A/ Community-B/ WG-A/ WG-B/ Kaggle/ Conferences/
 │   └── Ecosystem/  # 教育→インターン→起業/活躍 の循環を創発する組織活動（2026-06-12 Activities 配下に正式化）
 └── Learning/     # 個人学習・読書ノート・技術メモ（1 トピック = 1 フォルダ：`Learning/{Topic}/` 配下に note 等をまとめる）
@@ -58,9 +58,9 @@ Ideas（着想・検証/PoC を含む） → Research / Work
 
 ### Activities
 - 活動（サブエリア）ごとにフォルダ化：`Activities/{NAME}/`。入口は `README.md`（`type: activity`）。
-- **標準構造（4 層・2026-06-12 確定）**：[[Others/Activities/CLAUDE.md]] がサブエリア共通 Schema。
+- **標準構造（4 層・2026-06-12 確定）**：[[Others/Activities/AGENTS.md]] がサブエリア共通 Schema。
   - ① Raw：`sources/`（もらった資料 ＋ **Inbox 由来の生データの curate 着地**・非 md 直置き可・immutable・frontmatter は `type: capture` のまま）
-  - ② Schema：`Activities/CLAUDE.md`（共通）。固有規約が育ったら `{NAME}/CLAUDE.md` を新設
+  - ② Schema：`Activities/AGENTS.md`（共通）。固有規約が育ったら `{NAME}/AGENTS.md` を新設
   - ③ Compiled：`notes/` + `meetings/{YYYY-MM-DD}-{topic}.md`（**genspark MTG は curate 時に要約してここへ**＝inbox-routing §3 例外。raw は git 履歴に残す）
   - ④ Log：`logs/` + `README.md`（入口 MOC・現況）
 - コンペ系は `Kaggle/{competition-name}/`、学会参加は `Conferences/{学会名年度}/`（例 `ConfX2026`）。単位フォルダ内の `sources/` は必要になったら作る（YAGNI）。自作の非 md（スクリプト・生成データ）は従来どおり `_assets/` へ。
@@ -87,5 +87,5 @@ Ideas（着想・検証/PoC を含む） → Research / Work
 
 ## 関連
 
-- [[Others/CLAUDE.md]] / [[Others/README.md]]
+- [[Others/AGENTS.md]] / [[Others/README.md]]
 - [[.claude/rules/vault-metadata.md]] / [[.claude/rules/vault-tagging.md]] / [[.claude/rules/language.md]]

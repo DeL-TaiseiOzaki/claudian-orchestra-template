@@ -27,7 +27,7 @@ updated: 2026-01-01
 
 submodule で外部研究リポをマウントしている場合はそちらの code-map を継承する：
 
-- [[Research/CLAUDE.md]]
+- [[Research/AGENTS.md]]
 
 ## Others / Tools
 

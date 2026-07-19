@@ -93,7 +93,7 @@ Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わ
 ### 4. 自分用に整える
 
 - `Work/PROJ_A/` を実際の案件コード（例：`Work/MYCLIENT/`）にリネーム．`.claude/rules/work-management.md` の対応表も更新．
-- `Persona/CLAUDE.md` に自分のプロフィールを書く（vault 全体から参照される identity の単一の正）．
+- `Persona/AGENTS.md` に自分のプロフィールを書く（vault 全体から参照される identity の単一の正）．
 - `Maps/Home.md` に自分の vault の入口を書く．
 - 不要な skill は `.claude/skills/` から削除して構わない（特に `.hermes/skills/vault-capture/` 配下の外部接続は，使うものだけ残す）．
 

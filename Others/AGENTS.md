@@ -1,4 +1,4 @@
-# CLAUDE.md — Others（Work / Research 以外）
+# AGENTS.md — Others（Work / Research 以外）
 
 受託案件（Work）・研究本流（Research）に属さない活動のホーム。
 ここは**作業の入口（道標）**。詳細ルールは [[.claude/rules/others-management.md]]。
@@ -17,7 +17,7 @@
 ```
 Activities/{NAME}/
 ├── README.md       # ④ Log：入口 MOC・現況
-├── CLAUDE.md       # ② Schema：固有規約（共通は Others/Activities/CLAUDE.md）
+├── AGENTS.md       # ② Schema：固有規約（共通は Others/Activities/AGENTS.md）
 ├── sources/        # ① Raw：もらった資料 + Inbox curate 着地
 ├── notes/          # ③ Compiled：蒸留ノート
 ├── meetings/       # ③ Compiled：会議メモ（genspark MTG は要約してここへ）

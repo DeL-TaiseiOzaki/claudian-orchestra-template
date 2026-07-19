@@ -1,4 +1,4 @@
-# CLAUDE.md — Work（受託案件）
+# AGENTS.md — Work（受託案件）
 
 クライアント案件のホーム。詳細ルールは [[.claude/rules/work-management.md]]、frontmatter スキーマは [[.claude/rules/vault-metadata.md]]、入口 MOC は [[Maps/Home.md]]。
 
@@ -17,7 +17,7 @@
 
 ```
 Work/{CODE}/
-├── CLAUDE.md        # ② Schema：案件固有の規約・定数
+├── AGENTS.md        # ② Schema：案件固有の規約・定数
 ├── project.md       # 入口 MOC（人間向け）
 ├── status.md        # ④ Log：現況
 ├── team.md          # ④ Log：チームメンバーのタスク状況

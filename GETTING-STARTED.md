@@ -53,7 +53,7 @@ Level 3 ── + 外部接続を 1 本ずつ(docs/connections/ 参照)
    `Daily/{今日の日付}.md` が作られ、`## 🤖 ジョブリスト` セクションが付きます。以降は Daily を見ながら「○○やって」と指示するのが基本の運用ループです。
 
 5. **自分用に最低限の書き換え**
-   - `Persona/CLAUDE.md` に自分のプロフィールを書く
+   - `Persona/AGENTS.md` に自分のプロフィールを書く
    - `Work/PROJ_A/` を実案件コードにリネーム(`.claude/rules/work-management.md` の対応表も更新 — コアエージェントに「PROJ_A を ACME にリネームして」と頼めば規約ごと直してくれます)
 
 ### 外部接続なしでの運用(手動 capture)

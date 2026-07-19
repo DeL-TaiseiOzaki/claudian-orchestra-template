@@ -49,7 +49,7 @@ MTG 終了＆Genspark 側の整理が済んだ会議を**できるだけ早く**
 - 実行日 / ファイル名の日付は **Asia/Tokyo** 基準（`TZ=Asia/Tokyo date +%Y-%m-%d`）。
 - vault ルート解決順：
   1. `OBSIDIAN_VAULT_PATH`
-  2. 未設定なら `HERMES_HOME` から親へ遡り、`CLAUDE.md` + `.obsidian*` + `Inbox/` を持つディレクトリを vault と認定。見つからなければ停止。
+  2. 未設定なら `HERMES_HOME` から親へ遡り、`AGENTS.md` + `.obsidian*` + `Inbox/` を持つディレクトリを vault と認定。見つからなければ停止。
 - `gsk` は PATH 上にある前提（CLI 仕様は [[.hermes/skills/vault-capture/genspark-slide/SKILL.md]]）。
 - Python を使う場合は `uv` を使う（`pip` 直接実行は禁止）。
 - Windows / WSL どちらでも forward slash 表記で OK。

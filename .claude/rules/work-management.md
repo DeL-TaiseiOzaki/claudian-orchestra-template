@@ -17,7 +17,7 @@
 
 ```
 Work/{CODE}/
-├── CLAUDE.md        # ② Schema：案件固有の規約・定数（エージェント向け・自動読込）
+├── AGENTS.md        # ② Schema：案件固有の規約・定数（エージェント向け・Codex は自動読込）
 ├── project.md       # 入口 MOC（人間向け：概要・主要リンク）
 ├── status.md        # ④ Log：非定常な全体ステータス（随時更新）
 ├── team.md          # ④ Log：チームメンバーのタスク状況
@@ -39,11 +39,11 @@ Work/{CODE}/
 > - **提案フェーズの成果物（提案書・スライド・見積・スコープ・体制案）→ `proposals/`（受注前。受注後の定常ドキュメントは `docs/`、納品物は `deliverables/`）**
 > - **例外：genspark MTG（`Inbox/{date}/mtgs/`）は curate 時に要約して `meetings/{YYYY-MM-DD}-{topic}.md`（compiled）へ。raw transcript は git 履歴に残す**
 
-### CLAUDE.md / project.md / status.md の役割分担（重複禁止）
+### AGENTS.md / project.md / status.md の役割分担（重複禁止）
 
 | ファイル | 役割 | 中身 |
 |---|---|---|
-| `CLAUDE.md` | **エージェント向け契約**（How / 定数） | クライアント・Slack channel・repos・命名・sources/ 運用規約（[[Templates/work-claude.md]]） |
+| `AGENTS.md` | **エージェント向け契約**（How / 定数） | クライアント・Slack channel・repos・命名・sources/ 運用規約（[[Templates/work-agents.md]]） |
 | `project.md` | **人間向け入口 MOC**（What） | 概要・目的・主要成果物・サブフォルダへのリンク |
 | `status.md` | **現在の状態**（Now） | フェーズ・健全性・課題・次ステップ（随時更新） |
 
@@ -61,7 +61,7 @@ Work/{CODE}/
 
 | 情報 | 置き場 | 形態 |
 |---|---|---|
-| 案件固有の規約・定数 | `CLAUDE.md` | 単一（[[Templates/work-claude.md]]） |
+| 案件固有の規約・定数 | `AGENTS.md` | 単一（[[Templates/work-agents.md]]） |
 | 先方からの生データ・資料 | `sources/` | 都度投入（非 md 可・immutable） |
 | 毎回のミーティング情報 | `meetings/{YYYY-MM-DD}-{topic}.md` | 都度追加（[[Templates/work-meeting-note.md]]） |
 | さまざまな定常ドキュメント | `docs/` | 標準ドキュメント（要件・仕様・設計・運用、[[Templates/work-doc.md]]） |

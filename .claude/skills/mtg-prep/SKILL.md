@@ -78,8 +78,8 @@ hermes chat -q "List today's calendar events via gsk. First run `gsk calendar ac
 | Research 関連 | `Research/`（サブモジュール側の規約に従う・本 skill は原則扱わない） |
 | `[External]` / prefix 無し / 判別不能 | **ユーザーに確認**（案件か活動か、新規エリアか） |
 
-- フォルダ／`meetings/` が無ければ作成（Activities は 4 層標準、[[Others/Activities/CLAUDE.md]]）。
-- クライアント機密の分離（[[Work/CLAUDE.md]]）。案件をまたいで情報を混ぜない。
+- フォルダ／`meetings/` が無ければ作成（Activities は 4 層標準、[[Others/Activities/AGENTS.md]]）。
+- クライアント機密の分離（[[Work/AGENTS.md]]）。案件をまたいで情報を混ぜない。
 
 ### Step 4: ヒアリング（各 MTG・ここがコア）
 
@@ -215,7 +215,7 @@ meeting_title: "{元のカレンダータイトル}"
 - **当日取得**：日付は `TZ=Asia/Tokyo date` で取得（推測禁止）。
 - **承認前提**：対象選択・フォルダ・叩き台内容・Daily 追記を提示してから適用。
 - **single-writer / append-only**：Daily は append のみ、既存は触らない。叩き台の同名上書きは確認必須。
-- **機密分離**：案件をまたいだ情報混在は厳禁（[[Work/CLAUDE.md]]）。
+- **機密分離**：案件をまたいだ情報混在は厳禁（[[Work/AGENTS.md]]）。
 - **外部接続は hermes 経由のみ**（予定取得）。Claude が gsk を直接叩かない。
 
 ## 他 skill との連携
@@ -231,8 +231,8 @@ meeting_title: "{元のカレンダータイトル}"
 
 - [[.claude/rules/daily-operations.md]]（pipeline 全体・Daily ハブ）
 - [[.claude/rules/inbox-routing.md]] §3（mtgs の curate 例外＝要約を `meetings/` へ）
-- [[.claude/rules/work-management.md]] / [[Work/CLAUDE.md]]（Work meetings/ 命名）
-- [[Others/Activities/CLAUDE.md]]（Activities 4 層・meetings/ 命名）
+- [[.claude/rules/work-management.md]] / [[Work/AGENTS.md]]（Work meetings/ 命名）
+- [[Others/Activities/AGENTS.md]]（Activities 4 層・meetings/ 命名）
 - [[.claude/rules/vault-metadata.md]] / [[.claude/rules/vault-tagging.md]] / [[.claude/rules/language.md]]
 - [[Maps/People-Map.md]]（話者名 canonical mapping）
 - [[Templates/work-meeting-note.md]]（叩き台のベース）

@@ -22,10 +22,10 @@ vault 全体の入口（MOC）。アーキテクチャ全景は [[README.md]]、
 |---|---|
 | Inbox（capture） | [[Inbox/README.md]] |
 | Daily（ジャーナル） | [[.claude/rules/daily-operations.md]] |
-| Work（受託案件） | [[Work/CLAUDE.md]]（PROJ_A / PROJ_B / … — 各 `Work/{CODE}/project.md`） |
-| Research（研究） | [[Research/CLAUDE.md]]（submodule で外部リポをマウントする場合は別契約） |
-| Others（活動・学習・アイデア） | [[Others/CLAUDE.md]] |
-| Persona（著者プロフィール・全体共通） | [[Persona/CLAUDE.md]] |
+| Work（受託案件） | [[Work/AGENTS.md]]（PROJ_A / PROJ_B / … — 各 `Work/{CODE}/project.md`） |
+| Research（研究） | [[Research/AGENTS.md]]（submodule で外部リポをマウントする場合は別契約） |
+| Others（活動・学習・アイデア） | [[Others/AGENTS.md]] |
+| Persona（著者プロフィール・全体共通） | [[Persona/AGENTS.md]] |
 | Maps（横断 MOC） | [[Maps/Code-Map.md]]（コード知識） / [[Maps/People-Map.md]]（関わる人・名寄せ） |
 | Meta（vault 自己言及） | [[Meta/README.md]] |
 | Archive（退避） | [[Archive/README.md]] |

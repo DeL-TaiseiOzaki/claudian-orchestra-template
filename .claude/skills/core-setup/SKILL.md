@@ -58,7 +58,7 @@ git add -A && git commit -m "core-setup: codex-only (migrate .claude/ -> .agents
 ```
 
 - 以後、契約は [[AGENTS.md]](パス書き換え後は `.agents/` を参照)のみ。skills はトリガー時に Codex が `SKILL.md` を読んで従う
-- ドメイン直下の `CLAUDE.md`(Work/PROJ_A/CLAUDE.md 等)は**ドメイン契約として残す**(ファイル名は歴史的・内容はコア中立)。気になるなら `AGENTS.md` へのリネームも可(リンク書き換えとセットで)
+- ドメイン直下の契約ファイルは最初から `AGENTS.md`(Work/AGENTS.md・Work/PROJ_A/AGENTS.md 等)なので移行対象外。root の `CLAUDE.md`(アダプタ)だけを削除する
 
 ### 選択 = `claude`(Claude Code のみ)
 

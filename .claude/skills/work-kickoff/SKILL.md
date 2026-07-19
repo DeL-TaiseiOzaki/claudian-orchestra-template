@@ -1,6 +1,6 @@
 ---
 name: work-kickoff
-description: Bootstrap a new Work client engagement or transition a won proposal into delivery. Interviews the user (client, code, phase, Slack / repos / 納期 / 予算 / team / initial sources), then proposes and — on approval — creates the Work/{CODE}/ 4-layer folder with seed files AND registers the new project code across the taxonomy (work-management / vault-tagging / vault-metadata / README / Work/CLAUDE.md / work-project-writer). Use when starting a new proposal or new client (新規案件の立ち上げ / 新規提案を始める / 新しいクライアント), assigning a new project code, or moving a won deal from proposal to delivery (提案→デリバリ / 受注したので案件化する).
+description: Bootstrap a new Work client engagement or transition a won proposal into delivery. Interviews the user (client, code, phase, Slack / repos / 納期 / 予算 / team / initial sources), then proposes and — on approval — creates the Work/{CODE}/ 4-layer folder with seed files AND registers the new project code across the taxonomy (work-management / vault-tagging / vault-metadata / README / Work/AGENTS.md / work-project-writer). Use when starting a new proposal or new client (新規案件の立ち上げ / 新規提案を始める / 新しいクライアント), assigning a new project code, or moving a won deal from proposal to delivery (提案→デリバリ / 受注したので案件化する).
 ---
 
 # Work Kickoff Skill
@@ -29,7 +29,7 @@ description: Bootstrap a new Work client engagement or transition a won proposal
 - **当日取得**：`date` で当日を取得（推測しない）。`created` / `updated` / 立ち上げ日に使う。
 - **既定 dry-run**：作成・編集の前に必ず差分（作るフォルダ / seed ファイル / taxonomy 追記）を提示し、**承認を得てから適用**。
 - **Daily に必ず記録**：立ち上げ／移行を `Daily/{当日}.md` の `## 📝 ログ > 🏢 Work` に 1 行残す（[[.claude/rules/daily-operations.md]]「Daily＝その日の完全な記録」）。
-- **機密分離**：他案件フォルダと情報を混在させない（[[Work/CLAUDE.md]]）。
+- **機密分離**：他案件フォルダと情報を混在させない（[[Work/AGENTS.md]]）。
 - **言語**：クライアント文脈なので seed 本文は日本語、frontmatter キー / enum / コード / タグは英語（[[.claude/rules/language.md]]）。
 
 ---
@@ -46,7 +46,7 @@ description: Bootstrap a new Work client engagement or transition a won proposal
 | 必須 | 案件コード | 未定なら Step 2 で採番案を出す |
 | 必須 | 開始フェーズ | `提案` / `デリバリ` |
 | 必須 | 概要・目的（1〜2 行） | `project.md` |
-| 任意 | Slack channel | `CLAUDE.md` 定数 |
+| 任意 | Slack channel | `AGENTS.md` 定数 |
 | 任意 | GitHub repos | `code/README.md` ＋ [[Maps/Code-Map.md]] |
 | 任意 | 納期 `delivery_date` / 予算 `budget` | deliverable / 開始時のみ |
 | 任意 | チーム（メンバー・役割） | `team.md` |
@@ -68,7 +68,7 @@ description: Bootstrap a new Work client engagement or transition a won proposal
 
 | 生成物 | テンプレ | 備考 |
 |---|---|---|
-| `Work/{CODE}/CLAUDE.md` | [[Templates/work-claude.md]] | 案件 Schema（定数） |
+| `Work/{CODE}/AGENTS.md` | [[Templates/work-agents.md]] | 案件 Schema（定数） |
 | `Work/{CODE}/project.md` | [[Templates/work-project-overview.md]] | 入口 MOC。主要リンクに全レイヤー（`proposals/` 含む） |
 | `Work/{CODE}/status.md` | [[Templates/work-status.md]] | 全体フェーズ＝選択フェーズ（`提案（受注前）` / `デリバリ`） |
 | `Work/{CODE}/team.md` | [[Templates/work-team.md]] | 任意項目が空なら TBD |
@@ -134,7 +134,7 @@ description: Bootstrap a new Work client engagement or transition a won proposal
 2. [[.claude/rules/vault-tagging.md]] … 「プロジェクトタグ」ブロックに `#{code}` を追加
 3. [[.claude/rules/vault-metadata.md]] … Work 追加フィールドの `project` enum と `client` enum に追記
 4. [[README.md]] … ドメインフォルダ図の `Work/{PROJ_A,…}/` 列挙に `{CODE}` 追加
-5. [[Work/CLAUDE.md]] … 冒頭の案件列挙＋ frontmatter `project` / `client` enum に追記
+5. [[Work/AGENTS.md]] … 冒頭の案件列挙＋ frontmatter `project` / `client` enum に追記
 6. [[.claude/skills/work-project-writer/SKILL.md]] … 案件コード列挙箇所（description・本文の `PROJ_A / PROJ_B / …`）に追記
 
 > 6 か所一括が「フル登録」。漏らすと整合性チェック（[[.claude/skills/vault-consistency-check/SKILL.md]]）で検出される。
@@ -149,7 +149,7 @@ description: Bootstrap a new Work client engagement or transition a won proposal
 
 ## 関連
 
-- [[.claude/rules/work-management.md]]（4 層標準・提案→デリバリのライフサイクル）/ [[Work/CLAUDE.md]]
+- [[.claude/rules/work-management.md]]（4 層標準・提案→デリバリのライフサイクル）/ [[Work/AGENTS.md]]
 - [[.claude/skills/work-project-writer/SKILL.md]]（ノート作成の実務）
 - [[.claude/rules/vault-metadata.md]] / [[.claude/rules/vault-tagging.md]] / [[.claude/rules/daily-operations.md]] / [[.claude/rules/agent-boundaries.md]] / [[.claude/rules/language.md]]
-- テンプレ：[[Templates/work-claude.md]] / [[Templates/work-project-overview.md]] / [[Templates/work-status.md]] / [[Templates/work-team.md]] / [[Templates/work-proposal.md]] / [[Templates/work-doc.md]]
+- テンプレ：[[Templates/work-agents.md]] / [[Templates/work-project-overview.md]] / [[Templates/work-status.md]] / [[Templates/work-team.md]] / [[Templates/work-proposal.md]] / [[Templates/work-doc.md]]

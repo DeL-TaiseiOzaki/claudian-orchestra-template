@@ -14,7 +14,7 @@ Activities/{NAME}/
 └── logs/         # ④ Log：活動ログ
 ```
 
-- ② Schema は本ファイル（共通）。固有規約が育ったサブエリアは `{NAME}/CLAUDE.md` を新設してよい（そちらが優先）。
+- ② Schema は本ファイル（共通）。固有規約が育ったサブエリアは `{NAME}/AGENTS.md` を新設してよい（そちらが優先）。
 - `sources/` は immutable：リネーム・編集・削除しない（provenance 維持）。蒸留は `notes/` / `meetings/` に別ノートを書く。
 - 単位フォルダ内の `sources/` は必要になったら作る（YAGNI）。自作の非 md（スクリプト・生成データ）は `_assets/` へ。
 
@@ -30,4 +30,4 @@ Activities/{NAME}/
 
 ## 関連
 
-- [[Others/CLAUDE.md]] / [[.claude/rules/others-management.md]] / [[.claude/rules/vault-metadata.md]]
+- [[Others/AGENTS.md]] / [[.claude/rules/others-management.md]] / [[.claude/rules/vault-metadata.md]]

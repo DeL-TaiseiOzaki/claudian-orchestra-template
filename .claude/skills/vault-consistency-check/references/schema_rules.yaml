@@ -96,7 +96,7 @@ inbox_common_required:
   - updated
 
 # --- Structure drift (Check #8) ---
-# ディレクトリ構造の drift 検査用 registry。CLAUDE.md §1 のドメイン構成と整合させる。
+# ディレクトリ構造の drift 検査用 registry。AGENTS.md §1 のドメイン構成と整合させる。
 # これらが構造の単一の正（single source of truth）であり、Python はここを読む。
 
 # (a) Root registry: vault root 直下に存在してよいコンテンツ dir

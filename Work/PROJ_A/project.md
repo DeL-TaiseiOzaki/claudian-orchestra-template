@@ -12,7 +12,7 @@ updated: 2026-01-01
 # PROJ_A — Client A
 
 このページは PROJ_A の**人間向け入口 MOC**。
-規約・定数は [[Work/PROJ_A/CLAUDE.md]]、現況は [[Work/PROJ_A/status.md]]、チーム状況は [[Work/PROJ_A/team.md]]。
+規約・定数は [[Work/PROJ_A/AGENTS.md]]、現況は [[Work/PROJ_A/status.md]]、チーム状況は [[Work/PROJ_A/team.md]]。
 
 ## 概要
 
@@ -22,7 +22,7 @@ updated: 2026-01-01
 
 ## 主要リンク
 
-- 規約・定数：[[Work/PROJ_A/CLAUDE.md]]
+- 規約・定数：[[Work/PROJ_A/AGENTS.md]]
 - 現況：[[Work/PROJ_A/status.md]]
 - チーム：[[Work/PROJ_A/team.md]]
 - 会議メモ：[[Work/PROJ_A/meetings/]]

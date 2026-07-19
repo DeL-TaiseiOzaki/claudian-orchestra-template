@@ -53,7 +53,7 @@ def _looks_like_vault(path: Path) -> bool:
     """Return True only for a plausible your-vault root."""
     return (
         (path / "Inbox").is_dir()
-        and ((path / "CLAUDE.md").is_file() or (path / ".obsidian").exists())
+        and ((path / "AGENTS.md").is_file() or (path / ".obsidian").exists())
     )
 
 

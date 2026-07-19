@@ -51,7 +51,7 @@ echo "$PAYLOAD_JSON" | python "${HERMES_HOME:-$HOME/.hermes}/skills/vault-captur
 ```
 
 - 出力先：`Inbox/{YYYY-MM-DD}/clippings/{slug}.md`（日付つき親フォルダが日付を持ち、ファイル名に日付 prefix は付けない。衝突時は `-2`, `-3` …で**上書きしない**）。
-- vault ルートは `OBSIDIAN_VAULT_PATH` を最優先。未設定時はカレントディレクトリまたは `HERMES_HOME` の親が <your-vault> Vault に見える場合のみ採用（`Inbox/` + `CLAUDE.md` / `.obsidian` で検証）。
+- vault ルートは `OBSIDIAN_VAULT_PATH` を最優先。未設定時はカレントディレクトリまたは `HERMES_HOME` の親が <your-vault> Vault に見える場合のみ採用（`Inbox/` + `AGENTS.md` / `.obsidian` で検証）。
 - 付与する frontmatter：
 
 ```yaml

@@ -9,7 +9,7 @@ updated: 2026-01-01
 
 # Others — entry
 
-Work / Research のどちらにも属さない活動のホーム。詳細は [[Others/CLAUDE.md]]。
+Work / Research のどちらにも属さない活動のホーム。詳細は [[Others/AGENTS.md]]。
 
 ## サブカテゴリ
 

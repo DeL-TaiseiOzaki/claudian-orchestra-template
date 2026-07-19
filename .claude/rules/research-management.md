@@ -7,17 +7,17 @@
 - **submodule にする**（推奨・vault と分離）：別 GitHub リポジトリ（例：`your-org/your-research`）を `Research/` にマウント。`.gitmodules` に登録。
 - **vault 内に直書きする**：研究 vault と作業 vault を分離せず、`Research/` を普通のフォルダとして使う。submodule の更新オーバーヘッドが要らない。
 
-このテンプレでは **`Research/` は空（CLAUDE.md スタブのみ）**で、submodule にするか直書きするかは利用者の判断に委ねている。
+このテンプレでは **`Research/` は空（AGENTS.md スタブのみ）**で、submodule にするか直書きするかは利用者の判断に委ねている。
 
 このテンプレでは置き場だけ規定する：
 
-- このサブモジュールは**自己完結**を推奨：独自の `CLAUDE.md` / `.claude/rules/` / `.claude/skills/` / `status.md` を持つ。
+- このサブモジュールは**自己完結**を推奨：独自の `AGENTS.md` / rules / skills / `status.md` を持つ。
 - **submodule にする場合、研究作業のルールはサブモジュール側が「正」**。vault 側（本ファイル）はそれに優先しない。
 
 ## 入口（推奨構造）
 
 - 入口 MOC（人間向け）: `[[Research/research.md]]`
-- 全体契約: `[[Research/CLAUDE.md]]`
+- 全体契約: `[[Research/AGENTS.md]]`
 - 現況の単一の真実: `Research/status.md`
 - 主要ルール（`Research/.claude/rules/`）の例：
   - `reference-management.md` … 論文フォルダ（PDF + .bib + summary.md の3点ルールなど）
@@ -33,7 +33,7 @@ vault の 4 層フラクタル（Raw → Schema → Compiled → Log）に整列
 ```
 Research/
 ├── research.md     # 入口 MOC（人間向け）
-├── CLAUDE.md       # ② Schema：研究エージェント契約
+├── AGENTS.md       # ② Schema：研究エージェント契約
 ├── status.md       # ④ Log：現況 SSOT
 ├── sources/        # ① Raw：外部・事務資料（immutable）
 ├── notes/          # ③ Compiled：研究ノート（survey/analysis/synthesis/landscape/profile/experiment）
@@ -70,6 +70,6 @@ git add Research && git commit -m "research: bump Research"
 
 ## 関連
 
-- [[Research/CLAUDE.md]]
+- [[Research/AGENTS.md]]
 - [[.claude/skills/vault-github-sync/SKILL.md]]
 - [[.claude/rules/vault-metadata.md]] / [[.claude/rules/language.md]]
