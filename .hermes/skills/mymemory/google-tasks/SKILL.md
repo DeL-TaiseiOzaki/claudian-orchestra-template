@@ -115,7 +115,7 @@ gws tasks tasklists list --params '{\"maxResults\":10}'
 gws tasks tasks list --params '{\"tasklist\":\"TASKLIST_ID\",\"showCompleted\":false,\"maxResults\":100}'
 ```
 
-See `google-workspace/references/gws-cli-calendar-tasks-windows.md` for the broader GWS CLI Calendar/Tasks workflow and Calendar access-role pitfalls.
+See `../google-auth/references/gws-cli-calendar-tasks.md` for the broader GWS CLI Calendar/Tasks workflow and pitfalls.
 
 ### `gws` CLI backend
 

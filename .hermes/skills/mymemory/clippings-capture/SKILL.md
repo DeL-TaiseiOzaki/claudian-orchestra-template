@@ -70,16 +70,14 @@ tags: ["clipping", "<source>", ...]
 
 ## 起動方法（on-demand 既定 / cron は任意）
 
-**既定 = on-demand**：このスキルは元々 **event-driven**（Chrome 拡張 webhook → Hermes gateway）。それに加えて the user が Daily ノートの `## 🤖 ジョブリスト` を見て「clippings の取り込みやって」と Claude に指示 → Claude が hermes に CLI で委譲（[[.claude/skills/hermes-query/SKILL.md]]）するパターンも on-demand 既定として扱う。
+**既定 = on-demand**：このスキルは元々 **event-driven**（Chrome 拡張 webhook → Hermes gateway）。それに加えてユーザーが Daily ノートの `## 🤖 ジョブリスト` を見て「clippings の取り込みやって」と Claude に指示 → Claude が hermes に CLI で委譲（[[.claude/skills/hermes-query/SKILL.md]]）するパターンも on-demand 既定として扱う。
 
-### 手動 invoke コマンド（PowerShell）
+### 手動 invoke コマンド
 
-> ⚠️ **2026-06-16 修正**：`--skill` / `--workdir` は無効（`hermes chat -q` の実際のフラグは `-s SKILLS` / cwd）。Set-Location で vault に入ってから呼ぶ。`$env:PYTHONUTF8 = '1'` は cp932 文字化け回避（[[.claude/docs/knowledges/python/windows-cp932-stdout-default.md]]）。
+> `hermes chat -q` のスキル指定は `-s <skill>`（`--skill` / `--workdir` というフラグは無い）。vault ルートに cd してから呼ぶ。日本語 Windows では呼び出し前に `PYTHONUTF8=1` を設定する（cp932 デコード起因の出力欠落防止 → [[.claude/skills/hermes-query/SKILL.md]]）。
 
-```powershell
-# PowerShell（推奨・cp932 落とし穴回避のため $env:PYTHONUTF8 必須）
-$env:PYTHONUTF8 = '1'
-Set-Location "<vault root>"
+```bash
+cd "<vault root>"
 
 # 既に拡張から POST されている JSON ペイロードを再投入する場合（bash でも動作）
 echo "$PAYLOAD_JSON" | python "${HERMES_HOME:-$HOME/.hermes}/skills/mymemory/clippings-capture/scripts/write_clipping.py"
@@ -88,9 +86,9 @@ echo "$PAYLOAD_JSON" | python "${HERMES_HOME:-$HOME/.hermes}/skills/mymemory/cli
 hermes chat -q "Load the clippings-capture skill and process the pending clipping payload (or the URL the user pastes inline) into Inbox/<today>/clippings/{slug}.md as RAW markdown." -s clippings-capture -Q --source claude-code
 ```
 
-### Cron 登録（任意 / メインPC のみ・現状は維持）
+### Cron 登録（任意）
 
-> ⚠️ **2026-06-16 方針変更**：cron による定期起動は **任意**。本 skill は元々 event-driven なので cron 登録は通常不要だが、定期的な webhook backlog 再処理などで運用している cron job があれば維持してよい（新規登録は不要）。
+> 本 skill は元々 event-driven なので cron 登録は通常不要。定期的な webhook backlog 再処理をしたい場合のみ登録する。
 
 ```bash
 # 参考：定期的に pending webhook queue を flush する場合の cron 例（任意）

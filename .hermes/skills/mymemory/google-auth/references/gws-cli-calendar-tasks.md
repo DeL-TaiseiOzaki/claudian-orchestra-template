@@ -60,36 +60,36 @@ Use write scopes only after explicit user approval:
 gws auth login --scopes 'https://www.googleapis.com/auth/calendar,https://www.googleapis.com/auth/tasks'
 ```
 
-## <your-vault> multi-account checks
+## Multi-account checks
 
-When the user asks whether the <your-vault> GWS Calendar/Tasks target accounts are set up, do **not** inspect `gcloud auth list` — that reports Google Cloud CLI identities, not the accounts that `gws` uses for Calendar/Tasks capture.
+When the user asks whether the GWS Calendar/Tasks target accounts are set up, do **not** inspect `gcloud auth list` — that reports Google Cloud CLI identities, not the accounts that `gws` uses for Calendar/Tasks capture.
 
 For `@googleworkspace/cli` 0.22.x, account selection is config-directory based:
 
 ```bash
-# lab / personal Calendar+Tasks target
+# personal Calendar+Tasks target
 unset GOOGLE_WORKSPACE_CLI_CONFIG_DIR
 gws auth status
 
-# Secondary Calendar+Tasks target
-GOOGLE_WORKSPACE_CLI_CONFIG_DIR="$HOME/.config/gws-secondary" gws auth status
+# additional (e.g. work) Calendar+Tasks target
+GOOGLE_WORKSPACE_CLI_CONFIG_DIR="$HOME/.config/gws-work" gws auth status
 ```
 
-<your-vault> convention:
+Convention:
 
-- default `~/.config/gws` → `your-gmail@example.com`
-- `~/.config/gws-secondary` via `GOOGLE_WORKSPACE_CLI_CONFIG_DIR` → `your-work-email@example.com`
+- default `~/.config/gws` → personal account (e.g. `your-personal@gmail.com`)
+- `~/.config/gws-<name>` via `GOOGLE_WORKSPACE_CLI_CONFIG_DIR` → each additional account (e.g. `you@your-org.example.com`)
 
-If `~/.config/gws-secondary` is absent, create it and copy the same Desktop OAuth client JSON used by default gws:
+If an additional config dir is absent, create it and copy the same Desktop OAuth client JSON used by default gws:
 
 ```bash
-mkdir -p "$HOME/.config/gws-secondary"
-cp -f "<vault>/.hermes/gws_key.json" "$HOME/.config/gws-secondary/client_secret.json"
-GOOGLE_WORKSPACE_CLI_CONFIG_DIR="$HOME/.config/gws-secondary" \
+mkdir -p "$HOME/.config/gws-work"
+cp -f /path/to/client_secret.json "$HOME/.config/gws-work/client_secret.json"
+GOOGLE_WORKSPACE_CLI_CONFIG_DIR="$HOME/.config/gws-work" \
   gws auth login --scopes 'https://www.googleapis.com/auth/calendar.readonly,https://www.googleapis.com/auth/tasks.readonly'
 ```
 
-If default gws says `Token has been expired or revoked`, re-run `gws auth login --scopes ...` without overriding `GOOGLE_WORKSPACE_CLI_CONFIG_DIR` and choose `your-gmail@example.com`.
+If default gws says `Token has been expired or revoked`, re-run `gws auth login --scopes ...` without overriding `GOOGLE_WORKSPACE_CLI_CONFIG_DIR` and choose the personal account.
 
 ## Verification commands
 

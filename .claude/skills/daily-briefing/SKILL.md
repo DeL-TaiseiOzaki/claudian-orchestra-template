@@ -29,7 +29,7 @@ description: Compose the day's root Daily note (Daily/{YYYY-MM-DD}.md) at mornin
 
 ### Step 2: 入力源を取得 = `Inbox/{date}/daily/daily.md` を読むだけ
 
-**2026-06-16 アーキ修正**：外部接続は **hermes が一手に引き受ける**原則（[[.claude/rules/agent-boundaries.md]] §6）。Claude 側で直接 ics fetch / Calendar MCP を叩かない。**Calendar・Tasks 共に `Inbox/{date}/daily/daily.md` の単一ソースから読む**。生成は hermes 側 [[.hermes/skills/mymemory/inbox-daily-capture/SKILL.md]] の責務（Private + Research を ics 経由＋secondary を gsk 経由＋Tasks を list_tasks.py 経由で統合）。
+外部接続は **hermes が一手に引き受ける**原則（[[.claude/rules/agent-boundaries.md]] §6）。Claude 側で直接 ics fetch / Calendar MCP を叩かない。**Calendar・Tasks 共に `Inbox/{date}/daily/daily.md` の単一ソースから読む**。生成は hermes 側 [[.hermes/skills/mymemory/inbox-daily-capture/SKILL.md]] の責務（Calendar を ics 経由＋追加アカウントを gws 経由＋Tasks を list_tasks.py 経由で統合）。
 
 ```bash
 # 既に hermes が capture 済みかチェック

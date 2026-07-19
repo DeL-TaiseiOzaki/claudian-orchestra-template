@@ -129,10 +129,9 @@ shapes.
 Key pitfalls:
 
 - `gws auth setup --project <PROJECT_ID>` can enable many Workspace APIs and create OAuth credentials in the selected GCP project. Always run `--dry-run` first and get explicit approval before the non-dry-run setup.
-- For <your-vault> Calendar/Tasks account checks, inspect `gws auth status` for each `GOOGLE_WORKSPACE_CLI_CONFIG_DIR`, not `gcloud auth list`. `gcloud` accounts are Cloud CLI identities and do not tell which Google account `gws` will query.
-- <your-vault> convention: default `~/.config/gws` is the lab/personal account; Secondary uses `~/.config/gws-secondary` selected with `GOOGLE_WORKSPACE_CLI_CONFIG_DIR`. See `references/gws-cli-calendar-tasks.md` for the exact multi-account verification and setup commands.
+- For Calendar/Tasks account checks, inspect `gws auth status` for each `GOOGLE_WORKSPACE_CLI_CONFIG_DIR`, not `gcloud auth list`. `gcloud` accounts are Cloud CLI identities and do not tell which Google account `gws` will query.
+- Multi-account convention: default `~/.config/gws` is the personal account; each additional account gets its own config dir (e.g. `~/.config/gws-work`) selected with `GOOGLE_WORKSPACE_CLI_CONFIG_DIR`. See `references/gws-cli-calendar-tasks.md` for the exact multi-account verification and setup commands.
 
-## Related
 ## References
 
 - `references/gws-cli-calendar-tasks.md` — direct `@googleworkspace/cli` setup for Calendar + Tasks: OAuth Desktop client JSON placement, minimal scopes, login flow, and verification commands.

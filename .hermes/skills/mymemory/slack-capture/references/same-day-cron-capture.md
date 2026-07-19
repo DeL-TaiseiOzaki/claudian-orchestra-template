@@ -1,6 +1,6 @@
 # Same-day cron capture notes
 
-Session context: same-day scheduled capture for Asia/Tokyo `00:00` to now, collecting the user-authored and @mention messages including private/DM where visible.
+Covers same-day scheduled capture for local-timezone `00:00` to now, collecting user-authored and @mention messages including private/DM where visible.
 
 > Trigger note: on-demand kick (from the Daily `## 🤖 ジョブリスト`) is the primary path now; cron is just one transitional trigger (existing jobs only, no new ones). The capture logic below applies the same way however it is invoked.
 

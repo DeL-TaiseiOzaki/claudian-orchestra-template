@@ -65,9 +65,9 @@ defuddle parse <url> -p domain
 
 ## Claude Code からの on-demand 呼び出し
 
-```powershell
-$env:PYTHONUTF8 = '1'
-Set-Location "<vault root>"
+```bash
+# 日本語 Windows のみ PYTHONUTF8=1 を前置（cp932 デコード起因の出力欠落防止）
+cd "<vault root>"
 
 hermes chat -q "Fetch <URL> as clean markdown via 'defuddle parse <URL> --md' and return the markdown on stdout. Do not write to any file." -s defuddle -Q --source claude-code
 ```

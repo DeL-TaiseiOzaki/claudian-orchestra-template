@@ -16,7 +16,6 @@ metadata:
 Genspark の `gsk task slides` を起動するだけの **Hermes 側 thin wrapper**。
 
 > **役割境界（2026-06-16 整理 / 2026-06-16 hermes 移管）**：
-> - 旧 Claude 側 [[Archive/.claude/skills/genspark-slide/SKILL.md]] は外部接続を持っていたため、**外部接続=Hermes 原則**（[[.claude/rules/agent-boundaries.md]] §6）に従い本スキルへ移管。
 > - **本スキルは task を kick して結果メタデータを stdout で返すだけ**（vault には書き込まない）。
 > - **Vault のリファレンスノート作成は Claude の責務**（呼び出し元）。Claude は `hermes chat -q -s genspark-slide` で本スキルを叩き、返ってきた `task_id` / URL / PPTX path を `Work/{XXX}/deliverables/{topic}.md` 等に手で書く。
 > - 議事録取得は [[.hermes/skills/mymemory/genspark-mtg/SKILL.md]]、Calendar 取得は [[.hermes/skills/mymemory/inbox-daily-capture/SKILL.md]]（兄弟スキル）。
@@ -63,9 +62,9 @@ gsk task slides --help
 
 Claude → Hermes 委譲フォーマット：
 
-```powershell
-$env:PYTHONUTF8 = '1'
-Set-Location "<vault root>"
+```bash
+# 日本語 Windows のみ PYTHONUTF8=1 を前置（cp932 デコード起因の出力欠落防止）
+cd "<vault root>"
 
 hermes chat -q "Load genspark-slide and run `gsk task slides --task_name '{topic}' --query '...' --instructions '...' -o '{topic}.pptx'`. Return task_id, Genspark URL, and the local PPTX path on stdout as a small JSON object." -s genspark-slide -Q --source claude-code
 ```

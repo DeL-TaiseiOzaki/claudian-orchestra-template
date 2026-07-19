@@ -116,7 +116,7 @@ EOD distill 候補：
 - **Daily からの削除はしない**：Daily は「その日の完全な記録」を保つ。Daily にリンクを残すことで traceability 確保
 - **Research / Work 案件への大量移送**：1 案件あたり 1 ノート（logs/{date}.md または notes/{topic}.md）にまとめる
 - **mtgs の例外**：raw transcript は捨て、要約だけ compiled 領域へ（[[.claude/rules/inbox-routing.md]] §3.3）。話者名は [[Maps/People-Map.md]] で名寄せ
-- **起動は on-demand が既定**（Daily `## 🤖 ジョブリスト` の「EOD distill」指示で実行）。**既存メインPC cron の EOD job** は本スキルに置き換え推奨（過渡期は cron を維持してよい・新規登録なし）
+- **起動は on-demand が既定**（Daily `## 🤖 ジョブリスト` の「EOD distill」指示で実行）
 
 ## 他 skill との連携
 

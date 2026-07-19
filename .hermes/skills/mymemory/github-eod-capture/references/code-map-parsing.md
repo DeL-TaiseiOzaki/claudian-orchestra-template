@@ -78,4 +78,3 @@
 
 - [[.hermes/skills/mymemory/github-eod-capture/SKILL.md]] §3 / §4
 - [[Maps/Code-Map.md]] 追跡ブランチ規則
-- [[.claude/docs/research/github-eod-capture-design.md]] Codex 設計

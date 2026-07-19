@@ -1,6 +1,7 @@
-# SETUP — Push out this template as a new GitHub repo
+# MAINTAINERS — Push out this template as a new GitHub repo
 
-> このファイルは **テンプレ作者向け**。利用者向けのクイックスタートは [`README.md`](./README.md) 参照。
+> このファイルは **テンプレ作者向け**。利用者向けのセットアップは [`GETTING-STARTED.md`](./GETTING-STARTED.md) / [`README.md`](./README.md) 参照。
+> （旧ファイル名 `SETUP.md`。利用者が最初に開いて混乱しないよう 2026-07-19 にリネーム）
 
 このディレクトリ `Meta/claudian-orchestra-template/` は MY_MEMORY vault の中で組み立てた **新規 public リポジトリの中身**そのもの。以下の手順で独立リポジトリとして push する。
 
@@ -54,9 +55,9 @@ git push -u origin main
 
 ## 5. このファイルの扱い
 
-`SETUP.md` はテンプレ作者専用なので、公開 repo に push **する** と利用者が混乱する可能性がある。判断：
+`MAINTAINERS.md` はテンプレ作者専用なので、公開 repo に push **する** と利用者が混乱する可能性がある。判断：
 
 - **残す**：利用者が forkして自分の派生テンプレを作りやすい
 - **削除する**：利用者向け UX を優先する
 
-迷ったら残して `README.md` の冒頭に「（テンプレを派生したい場合は `SETUP.md` を参照）」と一文足せばよい。
+迷ったら残せばよい（利用者向けの入口は `GETTING-STARTED.md` に分離済みなので、名前で混同されることはない）。

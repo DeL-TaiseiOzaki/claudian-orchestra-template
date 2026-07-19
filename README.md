@@ -45,6 +45,8 @@ Work / Research / Others                   → Evergreen
 
 ## クイックスタート
 
+> **初めての人はまず [`GETTING-STARTED.md`](./GETTING-STARTED.md) を読んでください。** 全部を一度にセットアップする必要はなく、Obsidian + Claude Code だけ(15分)→ Codex → Hermes → 外部接続 1 本ずつ、という段階式で始められます。外部接続(Slack / Google / GitHub 等)の個別手順とトラブルシューティングは [`docs/connections/`](./docs/connections/README.md) にあります。
+
 ### 1. clone してリネーム
 
 ```bash
@@ -66,6 +68,12 @@ cd my-vault
 
 Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わないなら **Claude Code + Codex だけ**で十分動きます．その場合は `Inbox/` への投入を全部手動でやることになります．
 
+外部接続の繋ぎ込みは PKM 最大の躓きポイントなので，接続ごとに**手順・動作確認・よくある失敗**をまとめたガイドを用意しています：
+
+- 段階式セットアップ：[`GETTING-STARTED.md`](./GETTING-STARTED.md)（Level 0〜3）
+- 接続別ガイド：[`docs/connections/`](./docs/connections/README.md)（GitHub / Google / Slack / クリッピング / Genspark / Notion）
+- 診断：Claude Code に「**接続チェックして**」と言えば [`connection-doctor`](./.claude/skills/connection-doctor/SKILL.md) skill がどこが繋がっていてどこが切れているかを表で報告します
+
 ### 4. 自分用に整える
 
 - `Work/PROJ_A/` を実際の案件コード（例：`Work/MYCLIENT/`）にリネーム．`.claude/rules/work-management.md` の対応表も更新．
@@ -79,6 +87,8 @@ Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わ
 
 | パス | 中身 |
 |---|---|
+| [`GETTING-STARTED.md`](./GETTING-STARTED.md) | 段階式セットアップガイド（Level 0〜3・初めての人はここから） |
+| [`docs/connections/`](./docs/connections/) | 外部接続の個別セットアップガイド（GitHub / Google / Slack / クリッピング / Genspark / Notion） |
 | [`CLAUDE.md`](./CLAUDE.md) | Claude Code 向けオーケストレーション契約（vault の最上位ルール） |
 | [`AGENTS.md`](./AGENTS.md) | Codex / 外部エージェント向け契約 |
 | [`.claude/rules/`](./.claude/rules/) | 運用ルール（frontmatter / tagging / Daily 運用 / Inbox routing / Work / Others 等） |

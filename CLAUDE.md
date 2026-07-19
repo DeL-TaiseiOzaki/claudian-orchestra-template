@@ -29,6 +29,7 @@ Primary purpose: **create / organize / reference your work as Markdown notes (`.
 | **Meta** | `Meta/` | Self-referential projects about the vault itself (re-architecture, pipeline rebuilds). 1 project = 1 sub-folder. Archive after completion. |
 | **Archive** | `Archive/` | Inactive-content sink (never deleted). Mirrors original paths. `status: archived`. [[.claude/skills/vault-archive/SKILL.md]] |
 | **Templates** | `Templates/` | Note templates. |
+| **docs** | `docs/` | Human-facing setup guides for template users (`connections/` = per-connection setup / verification / troubleshooting). Not vault content — no aggregation / distill applies. Entry: [[GETTING-STARTED.md]]. |
 
 > Each domain ships its own `CLAUDE.md` directly under the folder — always consult it. CLAUDE.md states "what to do + placement / naming / frontmatter / forbidden patterns" concisely; details live in `.claude/rules/*-management.md`.
 
@@ -45,6 +46,7 @@ Primary purpose: **create / organize / reference your work as Markdown notes (`.
 - Agent boundaries (Hermes / Claude Code / Codex — control plane, sources of truth, capture/curate split): [[.claude/rules/agent-boundaries.md]].
 - Note-writing skills: `work-project-writer` / `others-writer` / `daily-briefing` / `weekly-review` / `vault-github-sync` (research uses skills inside `Research/` if mounted as a submodule).
 - Maintenance skill: `vault-archive` (anti-bloat: move inactive notes to `Archive/` — approval required).
+- Diagnostics skill: `connection-doctor` (read-only check of all Hermes-owned external connections; entry point when the user says 「接続チェックして」).
 - Backup target: your own GitHub repo (see [[.claude/skills/vault-github-sync/SKILL.md]]).
 
 ---

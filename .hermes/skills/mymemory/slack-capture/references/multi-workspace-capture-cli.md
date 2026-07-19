@@ -1,6 +1,6 @@
 # Multi-workspace Slack capture CLI pattern
 
-Use this when the user wants secondary (or another primary workspace) to remain the interactive Hermes Slack gateway while additional Slack workspaces are treated as read-only information sources.
+Use this when the user wants the primary workspace to remain the interactive Hermes Slack gateway while additional Slack workspaces are treated as read-only information sources.
 
 ## Key distinction
 
@@ -10,7 +10,7 @@ Use this when the user wants secondary (or another primary workspace) to remain 
 
 ## Recommended architecture
 
-1. Keep the primary workspace, e.g. `secondary`, as the Hermes gateway workspace for interaction and notifications.
+1. Keep the primary workspace (key `primary`) as the Hermes gateway workspace for interaction and notifications.
 2. Register sub-workspaces as capture sources with workspace-keyed env vars.
 3. Implement or use a capture CLI/script that calls Slack Web API directly.
 4. Run it manually first, then via Hermes cron.
@@ -46,8 +46,8 @@ A compact YAML config keeps scripts and cron prompts stable:
 
 ```yaml
 workspaces:
-  secondary:
-    display_name: secondary
+  primary:
+    display_name: Primary (gateway)
     user_token_env: SLACK_USER_TOKEN_WORKSPACE_A
     bot_token_env: SLACK_BOT_TOKEN_WORKSPACE_A
     default_channels: [times_yourname]
@@ -55,10 +55,10 @@ workspaces:
       my_messages: true
       mentions: true
       keywords: []
-    # date-first: digests → Inbox/{date}/slack/secondary-{channel}.md (workspace key folded into slug)
-    channel_prefix: secondary
+    # date-first: digests → Inbox/{date}/slack/primary-{channel}.md (workspace key folded into slug)
+    channel_prefix: primary
 
-  secondary_workspace:
+  workspace_b:
     display_name: Workspace B
     user_token_env: SLACK_USER_TOKEN_WORKSPACE_B
     bot_token_env: SLACK_BOT_TOKEN_WORKSPACE_B
@@ -67,8 +67,8 @@ workspaces:
       my_messages: true
       mentions: true
       keywords: [your-name]
-    # date-first: digests → Inbox/{date}/slack/secondary_workspace-{channel}.md (workspace key folded into slug)
-    channel_prefix: secondary_workspace
+    # date-first: digests → Inbox/{date}/slack/workspace_b-{channel}.md (workspace key folded into slug)
+    channel_prefix: workspace_b
 ```
 
 Suggested path: `.hermes/config/slack-workspaces.yaml` or another profile-local config path.
@@ -79,11 +79,11 @@ Design the capture tool around explicit verbs:
 
 ```bash
 python .hermes/scripts/slack_multi_capture.py auth-test --all
-python .hermes/scripts/slack_multi_capture.py auth-test --workspace secondary_workspace
-python .hermes/scripts/slack_multi_capture.py capture --workspace secondary_workspace --date today --mode my-messages
-python .hermes/scripts/slack_multi_capture.py capture --workspace secondary_workspace --date today --mode mentions
+python .hermes/scripts/slack_multi_capture.py auth-test --workspace workspace_b
+python .hermes/scripts/slack_multi_capture.py capture --workspace workspace_b --date today --mode my-messages
+python .hermes/scripts/slack_multi_capture.py capture --workspace workspace_b --date today --mode mentions
 python .hermes/scripts/slack_multi_capture.py capture --all-workspaces --date yesterday --mode daily
-python .hermes/scripts/slack_multi_capture.py search --workspace secondary 'in:#times_yourname from:me on:06/13/2026'
+python .hermes/scripts/slack_multi_capture.py search --workspace primary 'in:#times_yourname from:me on:06/13/2026'
 ```
 
 ## API preference
@@ -106,7 +106,7 @@ Do not retry `search.messages` with bot tokens after `not_allowed_token_type`; t
 
 When explaining the user's work, keep it concise and action-oriented:
 
-1. List sub-workspaces and assign stable keys (`secondary_workspace`, `client_a`, etc.).
+1. List sub-workspaces and assign stable keys (`workspace_b`, `client_a`, etc.).
 2. Decide capture modes per workspace: my messages, mentions, channels, keywords, attachments.
 3. Create or update a Slack App in each workspace.
 4. Add User Token scopes first: `search:read`, `users:read`.

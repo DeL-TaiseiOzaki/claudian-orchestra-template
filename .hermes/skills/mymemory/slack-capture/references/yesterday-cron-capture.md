@@ -1,6 +1,6 @@
 # Yesterday cron capture safeguards
 
-Session context: cron invoked `slack-capture` with "run it for yesterday". The reusable script only handled "today's user messages", so an ad-hoc yesterday capture script was used to query Slack and verify/write daily digests.
+Covers the "run it for yesterday" invocation of `slack-capture`. The reusable script only handles "today's user messages", so a yesterday capture typically needs an ad-hoc query to verify/write daily digests.
 
 > Trigger note: on-demand kick (from the Daily `## 🤖 ジョブリスト`) is the primary path now; cron is just one transitional trigger (existing jobs only, no new ones). The safeguards below apply the same way however it is invoked.
 
@@ -14,7 +14,7 @@ Useful pattern:
 
 Pitfall found:
 
-- A simplified ad-hoc reconstruction can overwrite richer existing digests and lose attachments or original mention display text. In the session, existing `Inbox/2026-06-05/slack/*.md` files already contained richer capture data; the attempted overwrite removed an attachment link and normalized mention text. The correct resolution was to restore the existing files and report verified counts instead of leaving downgraded changes.
+- A simplified ad-hoc reconstruction can overwrite richer existing digests and lose attachments or original mention display text. If the target date's `Inbox/{date}/slack/*.md` files already contain richer capture data, an overwrite silently removes attachment links and normalizes mention text. The correct resolution is to restore/keep the existing files and report verified counts instead of leaving downgraded changes.
 
 Checklist before final response:
 

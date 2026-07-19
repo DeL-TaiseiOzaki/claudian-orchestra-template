@@ -53,4 +53,3 @@ repo:your-org/proj-a-repo is:issue updated:>=2026-06-06T00:00:00+09:00
 ## 関連
 
 - [[.hermes/skills/mymemory/github-eod-capture/SKILL.md]] §5
-- [[.claude/docs/research/github-eod-capture-design.md]] Codex 設計（Risks セクション）

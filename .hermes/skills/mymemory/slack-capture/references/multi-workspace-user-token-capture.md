@@ -1,6 +1,6 @@
 # Multi-workspace user-token Slack capture
 
-Session learning: for sub-workspaces where Hermes should not run a Slack bot, use a user-token-only Slack App plus a workspace-aware capture CLI. Keep the main Hermes Slack gateway pinned to the primary workspace, and treat other workspaces as read/search/capture sources.
+For sub-workspaces where Hermes should not run a Slack bot, use a user-token-only Slack App plus a workspace-aware capture CLI. Keep the main Hermes Slack gateway pinned to the primary workspace, and treat other workspaces as read/search/capture sources.
 
 ## Slack App manifest shape
 
@@ -33,20 +33,20 @@ settings:
 
 ## Config pattern
 
-Store one env var per workspace, e.g. `SLACK_USER_TOKEN_YNLP`, and keep the token value out of prompts. Use a YAML config such as `.hermes/config/slack-workspaces.yaml`:
+Store one env var per workspace, e.g. `SLACK_USER_TOKEN_WORKSPACE_B`, and keep the token value out of prompts. Use a YAML config such as `.hermes/config/slack-workspaces.yaml`:
 
 ```yaml
 workspaces:
-  ynlp:
-    display_name: yans-nlp
-    team_id: T0A3AQMBL
-    user_id: U0A7B205P6Y
-    user_name: sg23174y
-    user_token_env: SLACK_USER_TOKEN_YNLP
+  workspace_b:
+    display_name: Workspace B
+    team_id: T0XXXXXXX
+    user_id: U0XXXXXXX
+    user_name: your-slack-username
+    user_token_env: SLACK_USER_TOKEN_WORKSPACE_B
     bot_token_env: null
     # date-first layout: digests → Inbox/{date}/slack/, attachments → Inbox/{date}/attachments/slack/
-    # workspace key is folded into the channel slug (e.g. ynlp-{channel}.md) to stay distinct within the day
-    channel_prefix: ynlp
+    # workspace key is folded into the channel slug (e.g. workspace_b-{channel}.md) to stay distinct within the day
+    channel_prefix: workspace_b
     timezone: Asia/Tokyo
     capture:
       all_day: true
@@ -66,9 +66,9 @@ workspaces:
 ## Verification commands
 
 ```bash
-python .hermes/scripts/slack_multi_capture.py auth-test --workspace ynlp
-python .hermes/scripts/slack_multi_capture.py search --workspace ynlp --query 'on:06/13/2026' --max-pages 1 --print-limit 5
-python .hermes/scripts/slack_multi_capture.py capture --workspace ynlp --date today --mode all-day
+python .hermes/scripts/slack_multi_capture.py auth-test --workspace workspace_b
+python .hermes/scripts/slack_multi_capture.py search --workspace workspace_b --query 'on:06/13/2026' --max-pages 1 --print-limit 5
+python .hermes/scripts/slack_multi_capture.py capture --workspace workspace_b --date today --mode all-day
 python -m py_compile .hermes/scripts/slack_multi_capture.py
 ```
 

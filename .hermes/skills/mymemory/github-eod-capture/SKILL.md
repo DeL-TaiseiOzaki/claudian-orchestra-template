@@ -18,7 +18,7 @@ Pipeline Step 5（[[.claude/rules/daily-operations.md]] §0）専用の Hermes c
 > [!important] 役割境界
 > - このスキルは Step 5 の **raw capture 専用**。LLM による要約・言い換え・タグ推定・本文再構成・auto-route は行わない。
 > - 書いてよいのは **`Inbox/{YYYY-MM-DD}/code/code.md` のみ**。`.claude/**`・`Daily/**`・`Research/**`・`Templates/**`・`Archive/**`・curated note body は変更しない（agent-boundaries.md §1 + inbox-routing.md §7）。
-> - GitHub からの取得は **configured GitHub MCP のみ**。cron 実行中に `terminal` / `execute_code` / `gh` / `git` / Python subprocess は使わない（cron context BLOCK と vault path `マ` 文字問題の両方を回避）。
+> - GitHub からの取得は **configured GitHub MCP のみ**。cron 実行中に `terminal` / `execute_code` / `gh` / `git` / Python subprocess は使わない（cron context BLOCK と、vault path に非 ASCII 文字が含まれる場合のシェル解決問題の両方を回避）。
 > - `Maps/Code-Map.md` の読み取りと `Inbox/{YYYY-MM-DD}/code/...` の書き込みは Hermes の通常 file I/O で行う。外部 repo 取得だけを GitHub MCP に限定する。
 
 > [!important] Self-edit boundary (#37, 2026-06-07 確定)
@@ -187,34 +187,32 @@ tags: ["github", "capture", "code"]
 - なし
 ```
 
-## Cross-territory observation 規約（#32 #29 と整合）
+## Cross-territory observation 規約
 
 GitHub API / MCP 仕様 drift（field rename・新フィールド出現・rate limit ポリシー変化など）を発見しても、**`.claude/skills/` / `.claude/rules/` / `Maps/Code-Map.md` を直接編集してはならない**。代わりに `Inbox/{date}/clippings/hermes-obs-github-mcp.md` に observation/proposal note を新規作成し、必須 frontmatter（`affected_path` / `observed_at` / `evidence` / `proposed_change` / `source: hermes:observation:github-mcp:<ISO8601>`）を入れる。
 
 ## 起動方法（on-demand 既定 / cron は任意）
 
-**既定 = on-demand**：the user が Daily ノートの `## 🤖 ジョブリスト` を見て「<該当 job> やって」と Claude に指示 → Claude が hermes に CLI で委譲（[[.claude/skills/hermes-query/SKILL.md]]）。
+**既定 = on-demand**：ユーザーが Daily ノートの `## 🤖 ジョブリスト` を見て「<該当 job> やって」と Claude に指示 → Claude が hermes に CLI で委譲（[[.claude/skills/hermes-query/SKILL.md]]）。
 
-### 手動 invoke コマンド（PowerShell）
+### 手動 invoke コマンド
 
-> ⚠️ **2026-06-16 修正**：`--skill` / `--workdir` は無効（`hermes chat -q` の実際のフラグは `-s SKILLS` / cwd）。Set-Location で vault に入ってから呼ぶ。`$env:PYTHONUTF8 = '1'` は cp932 文字化け回避（[[.claude/docs/knowledges/python/windows-cp932-stdout-default.md]]）。
+> `hermes chat -q` のスキル指定は `-s <skill>`（`--skill` / `--workdir` というフラグは無い）。vault ルートに cd してから呼ぶ。日本語 Windows では呼び出し前に `PYTHONUTF8=1` を設定する（cp932 デコード起因の出力欠落防止 → [[.claude/skills/hermes-query/SKILL.md]]）。
 
-```powershell
-# PowerShell（推奨・cp932 落とし穴回避のため $env:PYTHONUTF8 必須）
-$env:PYTHONUTF8 = '1'
-Set-Location "<vault root>"
+```bash
+cd "<vault root>"
 hermes chat -q "Maps/Code-Map.md に載っている GitHub リポジトリについて、当日 00:00 JST から現在までの commits / PRs / issues を GitHub MCP で取得し、Inbox/{YYYY-MM-DD}/code/code.md に raw capture として保存する（日付つき親フォルダがあり、ファイル名は固定 code.md）。既存ファイルがあれば上書きしない。" -s github-eod-capture -Q --source claude-code
 ```
 
-### Cron 登録（任意 / メインPC のみ・現状は維持）
+### Cron 登録（任意）
 
-> ⚠️ **2026-06-16 方針変更**：cron による定期起動は **任意**。既存の cron job（21:30 想定）が稼働中なら維持してよいが、新規登録は不要（on-demand が既定）。下記コマンドは参照用に残す。
+> cron による定期起動は**任意**（on-demand が既定）。定時運用したい場合の典型は終業後 21:30 の 1 本。
 
 ```bash
 hermes cron create "30 21 * * *" "Maps/Code-Map.md に載っている GitHub リポジトリについて、当日 00:00 JST から現在までの commits / PRs / issues を GitHub MCP で取得し、Inbox/{YYYY-MM-DD}/code/code.md に raw capture として保存する（日付つき親フォルダがあり、ファイル名は固定 code.md）。既存ファイルがあれば上書きしない。" --name github-eod-evening --skill github-eod-capture --workdir "<vault root>"
 ```
 
-> argparse quirk：positional `prompt` は schedule の直後、flag より前に置く（[[Meta/rearchitecture/status.md]] §4.7 参照）。
+> argparse quirk：positional `prompt` は schedule の直後、flag より前に置く（後ろに置くと `unrecognized arguments` エラー）。
 
 ## 関連
 
@@ -226,4 +224,3 @@ hermes cron create "30 21 * * *" "Maps/Code-Map.md に載っている GitHub リ
 - [[.hermes/skills/mymemory/genspark-mtg/SKILL.md]] / [[.hermes/skills/mymemory/slack-capture/SKILL.md]]（idiom 参考）
 - `references/code-map-parsing.md`
 - `references/github-mcp-fallbacks.md`
-- Codex design 原本：[[.claude/docs/research/github-eod-capture-design.md]]

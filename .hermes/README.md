@@ -17,6 +17,8 @@ What's NOT tracked (see [`.gitignore`](../.gitignore)):
 
 ## Setup (quick)
 
+> **Beginner-friendly walkthroughs** (per connection, with verification steps and troubleshooting) live in [`docs/connections/`](../docs/connections/README.md) — start there if this is your first setup. The staged onboarding path is [`GETTING-STARTED.md`](../GETTING-STARTED.md). The steps below are the condensed version.
+
 1. Install Hermes: see [the upstream repo](https://github.com/NousResearch/Hermes-Agent) for the latest install instructions.
 2. Copy this `config.yaml` into your `${HERMES_HOME}` (default `~/.hermes/`) and merge with the defaults Hermes creates.
 3. Authenticate the integrations you'll use:

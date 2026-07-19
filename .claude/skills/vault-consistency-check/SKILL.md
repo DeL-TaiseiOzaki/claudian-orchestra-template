@@ -132,7 +132,6 @@ schtasks /create /tn "VaultConsistencyCheck_Full" `
 
 ## 関連
 
-- 設計: [[.claude/docs/research/vault-consistency-check-design.md]]
 - Hermes live query: [[.claude/skills/hermes-query/SKILL.md]]
 - Daily 作成元: [[.claude/skills/daily-briefing/SKILL.md]]
 - Archive 運用: [[.claude/skills/vault-archive/SKILL.md]]
@@ -157,7 +156,7 @@ remote checks の既定は off である。
 - `Code-Map repo health` は Hermes で GitHub URL health を JSON 取得するときだけ remote
 - timeout や malformed JSON は check 単位で `WARN` に倒し、run 全体は継続する
 
-`Structure drift`（Check #8）はディレクトリ構造の drift を検査する（[[Meta/rearchitecture/directory-structure-strategy.md]] §6）。
+`Structure drift`（Check #8）はディレクトリ構造の drift を検査する（正本は [[CLAUDE.md]] §1 のドメイン構成と `references/schema_rules.yaml`）。
 
 - (a) root registry 外の dir [WARN] と (b) 必須 dir の物理欠落 [ERROR] は light / full 両方で走る
 - (c) 非 md ファイルの配置違反 [WARN] と (d) 空 dir の `.gitkeep` 欠落 [WARN] は full のみ

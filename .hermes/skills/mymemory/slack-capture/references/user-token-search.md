@@ -1,6 +1,6 @@
 # Slack user-token search notes
 
-Session learning: Slack `search.messages` is the right path for cross-channel queries such as "today's messages by the user", but it requires a User OAuth Token. A bot token returns `not_allowed_token_type` even when the bot can otherwise read DMs/channels.
+Slack `search.messages` is the right path for cross-channel queries such as "today's messages by the user", but it requires a User OAuth Token. A bot token returns `not_allowed_token_type` even when the bot can otherwise read DMs/channels.
 
 ## Observed API behavior
 

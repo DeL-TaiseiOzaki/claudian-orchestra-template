@@ -25,7 +25,7 @@ hermes との情報のやり取りは 2 方向ある。**両方とも user-instr
 
 - **なぜ pull が要るか**：外部接続の認証は hermes が一元所有（§6）。Claude は Slack/GWS/Notion を直接叩けないので、その場の参照は hermes に委譲する。Codex に**コード**を委譲するのと対の、**外部接続**の委譲。
 - **境界**：pull は read/query 既定。durable な結果は hermes に **`Inbox/{date}/` へ書かせる**（curated 直書き禁止）。transient な確認は stdout で受けて会話に統合（永続化しない）。外部への書き込み・破壊操作は §5 の承認ティアに従う。
-- **cron は廃止（2026-06-16 切替・既定は on-demand）**：既存のメインPC の cron job（slack-capture 07:00/21:00・genspark polling/evening・github-eod 21:30 等）は**触らず過渡期維持**で放置するが、**新規登録はしない**。**既定は on-demand**＝Daily ノート `## 🤖 ジョブリスト` から user instruction → Claude が hermes に CLI 委譲。
+- **cron は廃止（既定は on-demand）**：既存の cron job（slack-capture・genspark polling/evening・github-eod 等）が稼働中の環境では**触らず過渡期維持**で放置してよいが、**新規登録はしない**。**既定は on-demand**＝Daily ノート `## 🤖 ジョブリスト` から user instruction → Claude が hermes に CLI 委譲。
 - **push を pull で置き換えない**：定常 capture は hermes capture skill に通す（push）、pull は「今すぐ・特定の検索」用途に限る。
 
 ## 2. system of record（正本の所在）
@@ -73,19 +73,19 @@ hermes との情報のやり取りは 2 方向ある。**両方とも user-instr
 | **on-demand（既定・2026-06-16 以降）** | 取り込み（`Inbox/{date}/` capture）・同期・バックアップ・ダイジェスト | the user (per the Daily job list) instructs → Claude / Hermes が実行 |
 | 提案 → レビュー | Vault へのノート草稿、Notion 公開、Tasks 自動起票 | Hermes / Claude → user approval |
 | 承認前提（不可逆・要判断） | 構造改変・削除・スキーマ変更・コード・本文編集・Main DB への配分 | Claude Code + Codex + the user |
-| 全自動（**廃止＝過渡期維持のみ**） | 既存メインPC の cron job（slack-capture / genspark / github-eod 等） | Hermes cron — 触らない・**新規登録なし** |
+| 全自動（**廃止＝過渡期維持のみ**） | 既存の cron job（slack-capture / genspark / github-eod 等） | Hermes cron — 触らない・**新規登録なし** |
 
 ## 6. 接続の所有（複製しない）
 
 | 接続 | 所有者 | 経路 | 備考 |
 |---|---|---|---|
 | Slack（業務 IF） | Hermes | Slack app（双方向） | **仕事の会話はすべて Slack で進む** |
-| Google Calendar（Private / Research） | Hermes | **ics 直 fetch**（限定公開 URL、`.hermes/skills/mymemory/inbox-daily-capture/scripts/fetch_calendar_ics.py`） | your-gmail ＋ your-gmail-account。OAuth 不要・URL に token 内包。Claude は読まない |
-| Google Calendar（Secondary） | Hermes | **gws（GWS CLI）`gws calendar events list`**（`GOOGLE_WORKSPACE_CLI_CONFIG_DIR=~/.config/gws-secondary`・readonly）／ gsk フォールバック | your-work-email@example.com。2026-06-22 に gsk→gws へ切替（your-organization is external-OAuth-friendly）。要：consent screen の test user 追加＋`serviceUsageConsumer` IAM。Testing 公開のままだと token 約7日失効（[[.claude/docs/knowledges/hermes/gws-multi-account-secondary.md]]）。**capture 実行 PC のローカルに gws-secondary 資格情報が必要**（未 provision の PC では gsk fallback に落ちる） |
-| Google Tasks | Hermes | `list_tasks.py`（library 直叩き・`${HERMES_HOME}/google_token.json`） | your-gmail@example.com（共有トークン）。**`gws` には依存しない**（library が自前で OAuth refresh） |
+| Google Calendar（個人・複数可） | Hermes | **ics 直 fetch**（限定公開 URL、`.hermes/skills/mymemory/inbox-daily-capture/scripts/fetch_calendar_ics.py`） | OAuth 不要・URL に token 内包。Claude は読まない。セットアップ → [[docs/connections/google-calendar-tasks.md]] |
+| Google Calendar（追加アカウント・任意） | Hermes | **gws（GWS CLI）`gws calendar events list`**（アカウント別 config dir `GOOGLE_WORKSPACE_CLI_CONFIG_DIR=~/.config/gws-<name>`・readonly） | ics の限定公開 URL を出せない組織アカウント用。要：consent screen の test user 追加。Testing 公開のままだと token 約7日失効。**capture 実行 PC のローカルに該当 config dir の資格情報が必要** |
+| Google Tasks | Hermes | `list_tasks.py`（library 直叩き・`${HERMES_HOME}/google_token.json`） | 共有 OAuth トークン。**`gws` には依存しない**（library が自前で OAuth refresh） |
 | Notion | Hermes | Notion MCP | 取り込みなし。Vault → Notion publish のみ |
 | Web（調査・検証 read） | Claude Code（read）／ Hermes（capture） | Claude: WebFetch / WebSearch・subagent ／ Hermes: 拡張・on-demand（Web Clipper・AI Exporter） | **Web の調査・検証 read は Claude Code から直接可**（[[CLAUDE.md]] §4 研究委譲と整合）。**Inbox へ残すクリッピング capture は hermes** 経由（ブラウザ拡張） |
-| **Google Drive / Docs**（共有ドライブ資料の read） | **Claude Code**（特殊対応・2026-06-16 承認） | claude.ai **Google Drive コネクタ** `read_file_content`（fileId 指定） | **hermes 経由不要**の明示的例外。hermes は任意の Google Docs を読めない（Google 接続は Calendar / Tasks のみ）ため。**read 専用**。例：YANS CfP2-base（[[Others/Activities/YANS/CLAUDE.md]]） |
+| **Google Drive / Docs**（共有ドライブ資料の read） | **Claude Code**（特殊対応・2026-06-16 承認） | claude.ai **Google Drive コネクタ** `read_file_content`（fileId 指定） | **hermes 経由不要**の明示的例外。hermes は任意の Google Docs を読めない（Google 接続は Calendar / Tasks のみ）ため。**read 専用** |
 | **GitHub MCP**（他リポのコード context） | **Hermes** | **GitHub MCP**（PAT は hermes のみ保持） | CC / CX は hermes 経由で読み取り（push: on-demand `github-eod-capture`→`Inbox/{date}/code/`・既存 cron は過渡期維持 ／ pull: `hermes chat -q`） |
 | Git（vault 自身） | Claude Code | ローカル `gh` / `git` CLI | バックアップ + 履歴管理（GitHub MCP とは別経路） |
 

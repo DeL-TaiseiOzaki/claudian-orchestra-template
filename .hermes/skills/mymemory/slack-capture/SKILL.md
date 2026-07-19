@@ -21,7 +21,7 @@ This is a **capture-only** skill: it writes RAW Slack material into `Inbox/{YYYY
 
 ### Multi-workspace user-token-only capture
 
-When the user wants to treat extra Slack workspaces as sub-workspace information sources, keep the primary Hermes Slack gateway on the main workspace and add one workspace-specific User OAuth token per source workspace (for example `SLACK_USER_TOKEN_YNLP`). Do not require a bot for read-only capture if the user explicitly says bot is not needed.
+When the user wants to treat extra Slack workspaces as sub-workspace information sources, keep the primary Hermes Slack gateway on the main workspace and add one workspace-specific User OAuth token per source workspace (for example `SLACK_USER_TOKEN_WORKSPACE_B`). Do not require a bot for read-only capture if the user explicitly says bot is not needed.
 
 For “all messages today” capture, use `search.messages` with `on:MM/DD/YYYY` as the baseline for all messages visible to that user token, then supplement with `conversations.list` + `conversations.history` for richer channel/file metadata. Group by channel and write one raw digest per channel under `Inbox/{YYYY-MM-DD}/slack/{channel}.md` (multi-workspace captures may prefix the workspace into the channel slug, e.g. `{workspace}-{channel}.md`, to keep them distinct within the day's `slack/` folder). See `references/multi-workspace-user-token-capture.md` for the manifest, config pattern, CLI shape, verification commands, and pitfalls.
 
@@ -57,7 +57,7 @@ Pitfall: Slack `search.messages` rejects bot tokens with `not_allowed_token_type
 ## Setup checklist for user-token search
 
 1. Open Slack App management: `https://api.slack.com/apps`.
-2. Select the existing Hermes / `ozaki_assistant` app.
+2. Select the existing Hermes app (the one you created for this vault).
 3. Go to OAuth & Permissions.
 4. Add User Token Scopes: `search:read`, `users:read`.
 5. Reinstall to Workspace.
@@ -97,20 +97,18 @@ When this skill is invoked with wording like "run it for yesterday" (either by a
 8. For same-day captures ("today 00:00 to now", whether on-demand or via cron), use the same preservation/merge rules as yesterday re-runs: if today's digest already exists, repair frontmatter or append missing message entries without replacing richer existing bodies. If there are zero qualifying messages and no filesystem changes, report silence only when the invoking job explicitly requested a silent sentinel.
 9. When the reusable script is insufficient and a one-off helper is needed, write it under a temporary path such as `.tmp/`, run it, then remove it and verify removal before finalizing. Never print Slack token values in script output or logs.
 
-See `references/yesterday-cron-capture.md` for the session that established these safeguards, `references/frontmatter-repair.md` for the frontmatter-only repair pattern, and `references/same-day-cron-capture.md` for same-day digest-writing capture details, bot-supplement rate-limit handling, and cleanup/reporting checks.
+See `references/yesterday-cron-capture.md` for the preservation safeguards, `references/frontmatter-repair.md` for the frontmatter-only repair pattern, and `references/same-day-cron-capture.md` for same-day digest-writing capture details, bot-supplement rate-limit handling, and cleanup/reporting checks.
 
 ## 起動方法（on-demand 既定 / cron は任意）
 
-**既定 = on-demand**：the user が Daily ノートの `## 🤖 ジョブリスト` を見て「<該当 job> やって」と Claude に指示 → Claude が hermes に CLI で委譲（[[.claude/skills/hermes-query/SKILL.md]]）。
+**既定 = on-demand**：ユーザーが Daily ノートの `## 🤖 ジョブリスト` を見て「<該当 job> やって」と Claude に指示 → Claude が hermes に CLI で委譲（[[.claude/skills/hermes-query/SKILL.md]]）。
 
-### 手動 invoke コマンド（PowerShell）
+### 手動 invoke コマンド
 
-> ⚠️ **2026-06-16 修正**：`--skill` / `--workdir` は無効（`hermes chat -q` の実際のフラグは `-s SKILLS` / cwd）。Set-Location で vault に入ってから呼ぶ。`$env:PYTHONUTF8 = '1'` は cp932 文字化け回避（[[.claude/docs/knowledges/python/windows-cp932-stdout-default.md]]）。
+> `hermes chat -q` のスキル指定は `-s <skill>`（`--skill` / `--workdir` というフラグは無い）。vault ルートに cd してから呼ぶ。日本語 Windows では呼び出し前に `PYTHONUTF8=1` を設定する（cp932 デコード起因の出力欠落防止 → [[.claude/skills/hermes-query/SKILL.md]]）。
 
-```powershell
-# PowerShell（推奨・cp932 落とし穴回避のため $env:PYTHONUTF8 必須）
-$env:PYTHONUTF8 = '1'
-Set-Location "<vault root>"
+```bash
+cd "<vault root>"
 
 # 当日分の Slack 取り込み（今日 00:00 から now まで）
 hermes chat -q "Load the slack-capture skill and run it for today: capture Slack messages visible to the user (authored / mentioned / DM / private), grouped by channel, into Inbox/<today>/slack/{channel}.md. Capture only — no routing, no curated edits." -s slack-capture -Q --source claude-code
@@ -119,9 +117,9 @@ hermes chat -q "Load the slack-capture skill and run it for today: capture Slack
 hermes chat -q "Load the slack-capture skill and run it for yesterday: capture Slack messages visible to the user (authored / mentioned / DM / private), grouped by channel, into Inbox/<yesterday>/slack/{channel}.md. Preserve richer existing digests; frontmatter-only repair if needed." -s slack-capture -Q --source claude-code
 ```
 
-### Cron 登録（任意 / メインPC のみ・現状は維持）
+### Cron 登録（任意）
 
-> ⚠️ **2026-06-16 方針変更**：cron による定期起動は **任意**。既存の cron job（typically 21:00 same-day capture + 07:00 翌朝 catch-all）が稼働中なら維持してよいが、新規登録は不要（on-demand が既定）。下記コマンドは参照用に残す。
+> cron による定期起動は**任意**（on-demand が既定）。定時 capture したい場合の典型は「21:00 same-day capture + 翌朝 07:00 catch-all」の 2 本立て。
 
 ```bash
 # same-day capture（21:00）
@@ -131,7 +129,7 @@ hermes cron create "0 21 * * *" "Load the slack-capture skill and run it for tod
 hermes cron create "0 7 * * *" "Load the slack-capture skill and run it for yesterday: capture Slack messages visible to the user (authored / mentioned / DM / private), grouped by channel, into Inbox/<yesterday>/slack/{channel}.md. Preserve richer existing digests." --name slack-capture-yesterday --skill slack-capture --workdir "<vault root>"
 ```
 
-## Self-edit boundary (#37, 2026-06-07 確定)
+## Self-edit boundary
 
 > このスキルは **自分の SKILL.md / references / config を autonomous に編集しない**。実行中に drift / empirical finding を検知した場合（CLI 挙動変化、Slack API スキーマ drift、cron mode 運用学習など）は、対象 file を直接編集せず `Inbox/{YYYY-MM-DD}/clippings/hermes-obs-slack-capture.md` に observation/proposal note を新規作成する。frontmatter 必須：`affected_path` / `observed_at` / `evidence` / `proposed_change` / `source: "hermes:observation:slack-capture:<ISO8601>"`。詳細は [[.claude/rules/inbox-routing.md]] §7。
 
