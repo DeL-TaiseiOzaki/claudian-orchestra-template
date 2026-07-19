@@ -15,7 +15,7 @@ metadata:
 
 任意 URL を Defuddle CLI で取得し、clean markdown を返す **外部接続スキル**。
 
-> **境界**：Claude Code 側に旧 `defuddle` skill があったが、外部接続は hermes に集約する原則（2026-06-16）に従い本スキル（Hermes 側）へ移管。Claude 側エントリは `Archive/.claude/skills/defuddle/` へ退避済み。
+> **境界**：外部接続は hermes に集約する原則（2026-06-16）に従い、URL fetch はこのスキル（Hermes 側）が担う。
 
 ## 用途
 

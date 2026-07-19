@@ -1,13 +1,13 @@
 ---
 name: work-project-writer
-description: Create and manage Work project notes for the PROJ_A / PROJ_B / PROJ_C / PROJ_D / PROJ_E / PROJ_F / PROJ_G client engagements — project overviews, daily logs, deliverables, proposals (pre-sale 提案書 / 見積 / スコープ / 体制), references — following the Work frontmatter schema. Use when writing or organizing client project notes under Work/, including the proposal phase before a deal is won.
+description: Create and manage Work project notes for the PROJ_A / PROJ_B / PROJ_C client engagements — project overviews, daily logs, deliverables, proposals (pre-sale 提案書 / 見積 / スコープ / 体制), references — following the Work frontmatter schema. Use when writing or organizing client project notes under Work/, including the proposal phase before a deal is won.
 ---
 
 # Work Project Writer Skill
 
 ## 目的
 
-Work プロジェクト（PROJ_A / PROJ_B / PROJ_C / PROJ_D / PROJ_E / PROJ_F / PROJ_G）のノートを効率的に作成・管理します。
+Work プロジェクト（PROJ_A / PROJ_B / PROJ_C）のノートを効率的に作成・管理します。
 
 ## できること
 
@@ -18,7 +18,7 @@ Work プロジェクト（PROJ_A / PROJ_B / PROJ_C / PROJ_D / PROJ_E / PROJ_F / 
 
 ### 2. デイリーログの作成
 - その日のプロジェクト進捗をまとめる
-- 各案件（PROJ_A / PROJ_B / PROJ_C / PROJ_D / PROJ_E / PROJ_F / PROJ_G）の進捗を記録
+- 各案件（PROJ_A / PROJ_B / PROJ_C）の進捗を記録
 - ブロッカーや懸念点を記載
 
 ### 3. ウィークリーレビューの生成
@@ -34,7 +34,7 @@ Work プロジェクト（PROJ_A / PROJ_B / PROJ_C / PROJ_D / PROJ_E / PROJ_F / 
 
 ## プロジェクト構造（共通5種）
 
-各案件 `Work/{PROJ_A,PROJ_B,PROJ_C,PROJ_D,PROJ_E,PROJ_F,PROJ_G}/` の共通コンテンツと置き場（詳細は [[.claude/rules/work-management.md]]）：
+各案件 `Work/{PROJ_A,PROJ_B,PROJ_C}/` の共通コンテンツと置き場（詳細は [[.claude/rules/work-management.md]]）：
 
 | 情報 | 置き場 | テンプレート |
 |---|---|---|

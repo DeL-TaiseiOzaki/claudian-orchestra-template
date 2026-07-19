@@ -35,26 +35,6 @@ You are the **execution arm** of the main orchestrator. Your responsibilities:
 
 > This agent handles research, analysis, implementation, and multimodal content (PDF/images) using Claude's built-in multimodal capabilities.
 
-## Calling Codex CLI
-
-When planning, design decisions, debugging, or complex implementation is needed:
-
-```bash
-# Analysis (read-only)
-codex exec --model "${CODEX_MODEL:-gpt-5.5}" --sandbox read-only "{question}" 2>/dev/null
-
-# Implementation work (can write files)
-codex exec --model "${CODEX_MODEL:-gpt-5.5}" --sandbox workspace-write "{task}" 2>/dev/null
-```
-
-**When to call Codex:**
-- Planning: "Create implementation plan for X"
-- Design: "How should I structure this?"
-- Debugging: "Why isn't this working?"
-- Complex code: "Implement this algorithm"
-- Trade-offs: "Which approach is better?"
-- Code review: "Review this implementation"
-
 ## Research & Investigation
 
 Use WebSearch and WebFetch for external research:
@@ -80,7 +60,6 @@ Save results to:
 - Complete your assigned task without asking clarifying questions
 - Make reasonable assumptions when details are unclear
 - Report results, not questions
-- **Call Codex directly when needed** (don't escalate back)
 
 ### Efficiency
 - Use parallel tool calls when possible
@@ -113,7 +92,7 @@ Save results to:
 ## Result
 {concise summary of what you accomplished}
 
-## Key Insights (from Codex/research if consulted)
+## Key Insights (from research if consulted)
 - {insight 1}
 - {insight 2}
 
@@ -148,20 +127,11 @@ Task: "Understand how module X works"
 5. Return concise overview
 ```
 
-### Pattern 3: Design Decision with Codex
-```
-Task: "Decide between approach A vs B for feature X"
-
-1. Call Codex CLI with context
-2. Extract recommendation and rationale
-3. Return decision + key reasons (concise)
-```
-
-### Pattern 4: Implementation with Codex Planning
+### Pattern 3: Implementation
 ```
 Task: "Plan and implement feature X"
 
-1. Call Codex CLI for implementation plan
+1. Draft a short implementation plan
 2. Implement the feature following the plan
 3. Run tests
 4. Return summary of changes

@@ -1,6 +1,6 @@
 ---
 name: knowledge-capture
-description: "Capture durable learnings (root causes, gotchas, recurring patterns, postmortems) discovered during agent work into the structured knowledge base under .claude/docs/knowledges/. Use when a root cause is identified after debugging, when Codex consultation surfaces a non-obvious finding, when a sequence of failed hypotheses leads to insight, or when the user says 'これ knowledge 化して' / '学びをまとめて'."
+description: "Capture durable learnings (root causes, gotchas, recurring patterns, postmortems) discovered during agent work into the structured knowledge base under .claude/docs/knowledges/. Use when a root cause is identified after debugging, when an investigation surfaces a non-obvious finding, when a sequence of failed hypotheses leads to insight, or when the user says 'これ knowledge 化して' / '学びをまとめて'."
 ---
 
 # knowledge-capture
@@ -20,10 +20,10 @@ This skill exists because the vault accumulates valuable debugging knowledge (`s
 When any of these patterns occur in a session, Claude **proposes** capture and waits for the user's approval:
 
 1. **Root cause confirmed after >=2 failed hypotheses** — e.g. #38 ran through PAT scope → SSO authorization → fine-grained owner → Classic PAT regen → finally found `_build_safe_env()` filtering. Hypothesis chain that ends in a non-obvious cause is the strongest signal.
-2. **Codex returns a structured response that resolves a previously stuck issue** — the design / Risks section often surfaces a reusable insight beyond the immediate fix.
+2. **調査で行き詰まりが解けた時** — 行き詰まっていた問題が調査で解決したとき、その過程には immediate fix を超えた再利用可能な insight が含まれることが多い。
 3. **A specific harness / tool / API quirk is identified** — argparse positional ordering, env passthrough rules, cron expression edge cases.
 4. **A policy fails in production** — e.g. #37 markdown callout not enforced. The non-effectiveness itself is the learning.
-5. **Repeating the same Codex consultation feels likely** — knowledge note prevents re-spending tokens on the same investigation.
+5. **同じ調査を繰り返しそうな時** — knowledge note prevents re-spending tokens on the same investigation.
 
 Phrasing for proactive hint (always offer "skip" option):
 
@@ -31,8 +31,8 @@ Phrasing for proactive hint (always offer "skip" option):
 
 ### Do NOT invoke for
 - Daily journaling (`Daily/`)
-- Project-specific notes (`Work/{PROJ_A,PROJ_B,PROJ_C,PROJ_D,PROJ_E,PROJ_F}/`)
-- Codex raw consultation results (use `.claude/docs/research/`)
+- Project-specific notes (`Work/{PROJ_A,PROJ_B,PROJ_C}/`)
+- Raw investigation results (use `.claude/docs/research/`)
 - Decision log entries that belong in `status.md`
 - One-off task tracking
 
@@ -47,7 +47,7 @@ Phrasing for proactive hint (always offer "skip" option):
 ├── git/                  ← git workflow / commit / branch patterns
 ├── vault/                ← Obsidian / vault structure / single-writer
 ├── architecture/         ← agent orchestration / policy enforcement
-├── codex/                ← Codex consultation patterns (when to ask, prompt shape)
+├── codex/                ← Codex CLI 固有挙動 (sandbox / config / skills 連携)
 └── python/               ← Python / uv / dependency idioms
 ```
 
@@ -112,4 +112,4 @@ Never delete a knowledge note. Even deprecated entries help future readers verif
 - テンプレート: [[.claude/skills/knowledge-capture/references/template.md]]
 - カテゴリ定義: [[.claude/skills/knowledge-capture/references/categories.md]]
 - 隣接 skill: [[.claude/skills/vault-archive/SKILL.md]]（archived knowledge は deprecated に残し移動しない）。調査の生データは `.claude/docs/research/` へ、durable learning は knowledges/ へ
-- 親ルール: [[CLAUDE.md]] §4 オーケストレーション契約 / [[.claude/rules/agent-boundaries.md]]
+- 親ルール: [[AGENTS.md]] §4 動作モデル / [[.claude/rules/agent-boundaries.md]]

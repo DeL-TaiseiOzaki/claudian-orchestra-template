@@ -90,8 +90,8 @@ hermes との情報のやり取りは 2 方向ある。**両方とも user-instr
 | Google Tasks | Hermes | `list_tasks.py`（library 直叩き・`${HERMES_HOME}/google_token.json`） | 共有 OAuth トークン。**`gws` には依存しない**（library が自前で OAuth refresh） |
 | Gmail | Hermes | bundled `google-workspace`（共有 OAuth token・`gmail.*` scopes） | **pull 既定**（検索・参照）。定常 capture なし。残すときだけ on-demand で `Inbox/{date}/mail/` へ。下書き作成は承認制・自動送信なし（[[docs/connections/gmail.md]]） |
 | Notion | Hermes | Notion MCP | 取り込みなし。Vault → Notion publish のみ |
-| Web（調査・検証 read） | Claude Code（read）／ Hermes（capture） | Claude: WebFetch / WebSearch・subagent ／ Hermes: 拡張・on-demand（Web Clipper・AI Exporter） | **Web の調査・検証 read は Claude Code から直接可**（[[CLAUDE.md]] §4 研究委譲と整合）。**Inbox へ残すクリッピング capture は hermes** 経由（ブラウザ拡張） |
-| **Google Drive / Docs**（共有ドライブ資料の read） | **Claude Code**（特殊対応・2026-06-16 承認） | claude.ai **Google Drive コネクタ** `read_file_content`（fileId 指定） | **hermes 経由不要**の明示的例外。hermes は任意の Google Docs を読めない（Google 接続は Calendar / Tasks のみ）ため。**read 専用** |
+| Web（調査・検証 read） | Claude Code（read）／ Hermes（capture） | Claude: WebFetch / WebSearch・subagent ／ Hermes: 拡張・on-demand（Web Clipper・AI Exporter） | **Web の調査・検証 read は Claude Code から直接可**（[[AGENTS.md]] §4 operating model と整合）。**Inbox へ残すクリッピング capture は hermes** 経由（ブラウザ拡張） |
+| **Google Drive / Docs**（共有ドライブ資料の read） | **Claude Code**（特殊対応・2026-06-16 承認） | claude.ai **Google Drive コネクタ** `read_file_content`（fileId 指定） | **hermes 経由不要**の明示的例外。Claude コアの利便経路（コネクタ）。Codex コア / headless は hermes 経由（[[docs/connections/google-drive.md]] 経路 B）。**read 専用** |
 | **GitHub MCP**（他リポのコード context） | **Hermes** | **GitHub MCP**（PAT は hermes のみ保持） | CC / CX は hermes 経由で読み取り（push: on-demand `github-eod-capture`→`Inbox/{date}/code/`・既存 cron は過渡期維持 ／ pull: `hermes chat -q`） |
 | Git（vault 自身） | Claude Code | ローカル `gh` / `git` CLI | バックアップ + 履歴管理（GitHub MCP とは別経路） |
 

@@ -44,11 +44,10 @@ grep -rlZ '\.claude/' --include='*.md' --include='*.yaml' --include='*.py' \
 # 3) ディレクトリをリネーム
 git mv .claude .agents
 
-# 4) Claude 固有物を削除
-git rm CLAUDE.md                    # Claude コア用アダプタ
-git rm -r .agents/hooks             # Claude Code hooks(旧委譲強制)
-git rm .agents/settings.json        # Claude Code 設定
-git rm -r .agents/agents            # Claude subagent 定義
+# 4) Claude 固有物を削除(--ignore-unmatch:存在しない場合はスキップ)
+git rm --ignore-unmatch CLAUDE.md                 # Claude コア用アダプタ
+git rm --ignore-unmatch .agents/settings.json     # Claude Code 設定
+git rm -r --ignore-unmatch .agents/agents         # Claude subagent 定義
 find . -name 'CLAUDE.md' -not -path './.git/*'   # ドメイン配下の契約ファイルは AGENTS 用に有用なので残す(名前は歴史的)
 
 # 5) 検証:リンク切れが無いこと・AGENTS.md が .agents/ を指すこと
@@ -81,7 +80,7 @@ git add -A && git commit -m "core-setup: claude-only (remove .codex/)"
 
 ## 再実行(コア変更)
 
-- `core:` を書き換え、Step 3 を該当方向に再実行する。codex-only 移行済み vault で Claude を足す場合は、git 履歴から `CLAUDE.md` / hooks / settings を復元し、必要なら `.agents/` → `.claude/` の逆リネームを行う(同じ手順の逆向き)
+- `core:` を書き換え、Step 3 を該当方向に再実行する。codex-only 移行済み vault で Claude を足す場合は、git 履歴から `CLAUDE.md` / settings / subagent 定義を復元し、必要なら `.agents/` → `.claude/` の逆リネームを行う(同じ手順の逆向き)
 
 ## 関連
 

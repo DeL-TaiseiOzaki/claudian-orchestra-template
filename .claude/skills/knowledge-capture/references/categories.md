@@ -10,7 +10,7 @@ Top-level dirs under `.claude/docs/knowledges/`. Add a new dir if a learning gen
 | `git/` | git workflow / commit / branch | submodule update, LF/CRLF, sed -i on Windows |
 | `vault/` | Obsidian / vault 構造の慣習 | single-writer per file、`Inbox/**` lifecycle、frontmatter override |
 | `architecture/` | 多エージェント orchestration / policy 設計 | markdown callout の限界、observation-note pattern、carve-out 設計 |
-| `codex/` | Codex consultation の使い方 | 適切な prompt 形、token budget 見積もり、structured output 強制 |
+| `codex/` | Codex CLI 固有挙動（sandbox, config.toml, vendored skills） | sandbox 書き込み制約、config.toml 設定、vendored skills 連携の gotcha |
 | `python/` | Python / `uv` / dependency 周り | encoding（Windows cp932）、`uv run` パス解決、stdio reconfigure |
 
 ## カテゴリの追加ルール

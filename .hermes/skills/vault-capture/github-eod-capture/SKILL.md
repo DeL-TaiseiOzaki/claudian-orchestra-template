@@ -1,4 +1,4 @@
-﻿---
+---
 name: github-eod-capture
 description: "Use to capture same-day GitHub commits, pull requests, and issues for repositories listed in Maps/Code-Map.md into Inbox/{YYYY-MM-DD}/code/code.md as raw input for later Claude distillation (Step 6). Intended to be invoked on-demand when the user issues a 取り込み instruction (typically from the Daily-note ジョブリスト, e.g. after 21:30). May also run from a cron if registered, but on-demand is the primary mode."
 version: 1.0.0

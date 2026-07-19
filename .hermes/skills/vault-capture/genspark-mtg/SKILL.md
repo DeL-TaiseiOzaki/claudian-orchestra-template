@@ -1,4 +1,4 @@
-﻿---
+---
 name: genspark-mtg
 description: Use to capture Genspark AI meeting transcripts into the vault. Hermes lists recent meetings via `gsk meeting list`, keeps only COMPLETED ones inside a short recency window (today + yesterday JST), fetches each full transcript via `gsk meeting get`, and writes RAW transcript markdown to `Inbox/{YYYY-MM-DD}/mtgs/genspark-{slug}.md` without any summarization, body edits, or destination judgment. Always lands in Inbox; allocation to Work/Others/Research meetings/ etc. is done later by Claude Code + user (curate). Idempotency is filename-only — no sidecar state file, so frequent polling is safe. Intended to be invoked on-demand when the user issues a 取り込み instruction (typically from the Daily-note ジョブリスト). May also run from a cron if registered (daytime polling + evening safety-net), but on-demand is the primary mode. Single-meeting fetch via `--task_id` is handled by the same skill (Claude invokes it via `hermes chat -q`).
 version: 3.0.0
@@ -237,7 +237,7 @@ hermes cron create "0 21 * * *" "Load genspark-mtg and run it for the vault as t
 ## 関連
 
 - [[.claude/rules/inbox-routing.md]] — Inbox 経路の正本（本 skill は §7 に完全準拠）
-- [[.claude/rules/agent-boundaries.md]] — 3 エージェント分担・single-writer 原則
+- [[.claude/rules/agent-boundaries.md]] — エージェント分担・single-writer 原則
 - [[.claude/rules/vault-metadata.md]] — frontmatter schema 単一の正（Inbox-source 拡張・移行ルール）
 - [[.claude/rules/vault-tagging.md]] — tag 体系（`genspark` vendor tag は本 skill で初登場）
 - [[.claude/rules/work-management.md]] — 割り振り先 `Work/{XXX}/meetings/` の標準命名

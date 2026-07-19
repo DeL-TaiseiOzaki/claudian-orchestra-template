@@ -45,7 +45,7 @@ hermes chat -q "List today's calendar events via gsk. First run `gsk calendar ac
 ```markdown
 今日の予定（{date}）:
 1. 13:00-13:30 【External】Client D (livestock)お打ち合わせ（会議URL: あり）
-2. 14:00-15:00 [PROJ_D] public broadcaster partnerラップアップ（会議URL: あり）
+2. 14:00-15:00 [PROJ_C] partner Xラップアップ（会議URL: あり）
 3. 14:30-15:30 [RL WG] 定例MTG（会議URL: あり）
 4. 15:00- Physical AI関連相談（会議URL: なし）
 → どれを準備しますか？（番号で複数可）
@@ -57,7 +57,7 @@ hermes chat -q "List today's calendar events via gsk. First run `gsk calendar ac
 
 ```markdown
 🎙️ Genspark bot 準備（Web UI で操作してください）:
-- [ ] [PROJ_D] public broadcaster partnerラップアップ → Genspark「AIミーティングノート > 今後の予定」で「会議に参加」を ON
+- [ ] [PROJ_C] partner Xラップアップ → Genspark「AIミーティングノート > 今後の予定」で「会議に参加」を ON
 - [ ] [RL WG] 定例MTG → 同上
 （会議URLなしの「Physical AI関連相談」は bot 参加不可のため対象外）
 ※ すでに「録画中…」表示のものは join 済み。
@@ -72,9 +72,9 @@ hermes chat -q "List today's calendar events via gsk. First run `gsk calendar ac
 
 | タイトル prefix / 手掛かり | 配置先 `meetings/` |
 |---|---|
-| `[PROJ_A]` `[PROJ_B]` `[PROJ_X]` `[PROJ_C]` `[PROJ_D]` `[PROJ_E]` `[PROJ_F]` | `Work/{CODE}/meetings/` |
-| `[RL WG]` / `[Agent WG]` | `Others/Activities/RL-WG/` ・ `Others/Activities/Agent-WG/` |
-| YSAI / YANS / Kaggle / Conferences / Ecosystem | `Others/Activities/{NAME}/meetings/` |
+| `[PROJ_A]` `[PROJ_B]` `[PROJ_C]` `[PROJ_X]` | `Work/{CODE}/meetings/` |
+| `[WG-A]` / `[WG-B]` | `Others/Activities/WG-A/` ・ `Others/Activities/WG-B/` |
+| Community-A / Community-B / Kaggle / Conferences / Ecosystem | `Others/Activities/{NAME}/meetings/` |
 | Research 関連 | `Research/`（サブモジュール側の規約に従う・本 skill は原則扱わない） |
 | `[External]` / prefix 無し / 判別不能 | **ユーザーに確認**（案件か活動か、新規エリアか） |
 

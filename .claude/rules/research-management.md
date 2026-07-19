@@ -46,6 +46,7 @@ Research/
 ```
 
 > 著者プロフィールは vault root の `Persona/` に置き、研究応募からは `../Persona/` を参照する。
+> vault 側テンプレ: [[Templates/research-paper-note.md]] / [[Templates/research-experiment-note.md]]（submodule を使わず直書きする場合の paper / experiment ノート雛形）。
 
 ## サブモジュールの更新フロー
 

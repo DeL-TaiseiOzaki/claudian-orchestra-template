@@ -4,7 +4,6 @@ filters:
     - 'file.ext == "md"'
     - not:
         - file.inFolder("Templates")
-        - file.inFolder("Others/your-submodule")
 
 properties:
   status:

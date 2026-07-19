@@ -29,6 +29,9 @@ Inbox/{YYYY-MM-DD}/{daily,slack,discord,code,mtgs,clippings,chat-logs,mail,attac
 | mail | `Inbox/{date}/mail/{slug}.md`（Gmail・**on-demand のみ**。定常 capture なし） |
 | attachments | `Inbox/{date}/attachments/…` |
 
+> **chat-logs の normalize**:capture 時の frontmatter は `source: <provider>`（例:`chatgpt` / `claude`）のまま。
+> curate（EOD distill）時に `source: chat:<provider>:<id>` へ正規化し、`type: capture` / `status: inbox` を標準 enum に書き換える（[[.claude/rules/inbox-routing.md]] §4）。
+
 ## ライフサイクル
 
 ```

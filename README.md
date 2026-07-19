@@ -17,9 +17,28 @@
 
 ## アーキテクチャ概要
 
-![Architecture — Obsidian Workspace (your vault) + Agent Orchestra (core agent + Hermes) + External Sources](assets/architecture.png)
-
-*Vault そのものを共有メモリに、コアエージェント（Codex 既定 / Claude Code 可）と Hermes がその上で協調する。左＝Obsidian Workspace、中央＝Agent Orchestra、右＝External Sources。*
+```mermaid
+flowchart LR
+  user((You)) <--> core
+  subgraph orchestra[Agent Orchestra]
+    core["コアエージェント<br/>(Codex 既定 / Claude Code 可)"]
+    hermes["Hermes<br/>(ingestion・全外部接続を所有)"]
+  end
+  subgraph vault[Obsidian Vault = 共有メモリ]
+    inbox["Inbox/{date}/{source}/"]
+    daily["Daily/{date}.md(ハブ)"]
+    main["Work / Others / Research"]
+  end
+  subgraph ext[External Sources]
+    ex1[Slack / Discord]
+    ex2[Google Calendar / Tasks / Gmail / Drive]
+    ex3[GitHub / RSS / AI 議事録 / Web]
+  end
+  ext --> hermes --> inbox
+  core --> daily --> main
+  inbox -. aggregate .-> daily
+  core <--> hermes
+```
 
 情報の流れは **capture → Daily ハブ → Main DB** の 3 段：
 
@@ -47,7 +66,7 @@ Work / Research / Others                   → Evergreen
 ### 1. clone してリネーム
 
 ```bash
-git clone https://github.com/your-org/claudian-orchestra.git my-vault
+git clone https://github.com/your-org/claudian-orchestra-template.git my-vault
 cd my-vault
 ```
 
@@ -85,7 +104,7 @@ Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わ
 | パス | 中身 |
 |---|---|
 | [`GETTING-STARTED.md`](./GETTING-STARTED.md) | 段階式セットアップガイド（Level 0〜3・初めての人はここから） |
-| [`docs/connections/`](./docs/connections/) | 外部接続の個別セットアップガイド（GitHub / Google / Slack / クリッピング / Genspark / Notion） |
+| [`docs/connections/`](./docs/connections/) | 外部接続の個別セットアップガイド（GitHub / Google 系 / Slack / Discord / RSS / クリッピング / AI 議事録 / Zotero / Notion の 11 接続 + カタログ外対応表） |
 | [`AGENTS.md`](./AGENTS.md) | **コア契約**（vault の最上位ルール。Codex が自動読込・Claude コアもここに従う） |
 | [`CLAUDE.md`](./CLAUDE.md) | Claude Code をコアにする場合のアダプタ（AGENTS.md を指す） |
 | [`.claude/rules/`](./.claude/rules/) | 運用ルール（frontmatter / tagging / Daily 運用 / Inbox routing / Work / Others 等） |

@@ -47,4 +47,4 @@ If you don't want Hermes at all, you can:
 - Strip the corresponding `.claude/skills/hermes-query/` and `.claude/skills/aggregate-*/` references.
 - Drop the `Inbox/` capture pipeline (move to fully-manual capture).
 
-Claude Code + Codex still work without Hermes — you just lose the automated Slack / GCal / GTasks / GitHub ingestion.
+The core agent (Codex or Claude Code) still works without Hermes — you just lose the automated Slack / GCal / GTasks / GitHub ingestion.

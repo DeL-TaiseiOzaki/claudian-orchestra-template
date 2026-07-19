@@ -34,7 +34,7 @@ resource: "..."  # optional — see "resource（任意・OKF 整合）" below
 
 ```yaml
 ---
-project: "PROJ_A" | "PROJ_B" | "PROJ_X" | "PROJ_C" | "PROJ_D" | "PROJ_E" | "PROJ_F" | "PROJ_G"
+project: "PROJ_A" | "PROJ_B" | "PROJ_C" | "PROJ_X"
 client: "クライアント名"
 delivery_date: "2026-XX-XX"       # 納期
 budget: "¥XXX,000"                # 予算（プロジェクト開始時）

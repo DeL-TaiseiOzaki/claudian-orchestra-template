@@ -100,13 +100,13 @@
 
 ### 17. Structure drift non-md placement and empty dir (full only)
 - kind: automated-fixture
-- setup: `Others/Activities/Conferences/JSAI2026/foo.py`（`_assets/` の外）を置き、空 dir `Others/Activities/Foo/`（`.gitkeep` 無し）を用意する。`Inbox/{YYYY-MM-DD}/attachments/` 配下や `*/_assets/` 配下、`Maps/*.base`、`.gitkeep`、`.canvas` は flag されないことも確認する。（空 dir を `Inbox/` 直下に置くと (d) ではなく (b2) Inbox shape で WARN になる→ #19）
+- setup: `Others/Activities/Conferences/CONF2026/foo.py`（`_assets/` の外）を置き、空 dir `Others/Activities/Foo/`（`.gitkeep` 無し）を用意する。`Inbox/{YYYY-MM-DD}/attachments/` 配下や `*/_assets/` 配下、`Maps/*.base`、`.gitkeep`、`.canvas` は flag されないことも確認する。（空 dir を `Inbox/` 直下に置くと (d) ではなく (b2) Inbox shape で WARN になる→ #19）
 - command: `uv run python .claude/skills/vault-consistency-check/scripts/check_vault_consistency.py --mode full --date 2026-06-06`
-- expected output: `- WARN [Structure drift] Others/Activities/Conferences/JSAI2026/foo.py :: ... 想定外の場所にある非 md ファイルです。...` と `- WARN [Structure drift] Others/Activities/Foo :: \`Others/Activities/Foo/\` が空で \`.gitkeep\` がないため git が追跡できません。...`。light mode では (c)/(d) は出ない。
+- expected output: `- WARN [Structure drift] Others/Activities/Conferences/CONF2026/foo.py :: ... 想定外の場所にある非 md ファイルです。...` と `- WARN [Structure drift] Others/Activities/Foo :: \`Others/Activities/Foo/\` が空で \`.gitkeep\` がないため git が追跡できません。...`。light mode では (c)/(d) は出ない。
 
 ### 18. Wikilink resolution covers non-scan files
 - kind: automated-fixture
-- setup: scan 対象ノートに `[[README.md]]`（root 直下）、`[[Work/CLAUDE.md]]`、`[[Meta/{your-meta-project}/status.md]]`、`[[Maps/views/logs.base|logs]]`、`[[Others/Activities/Conferences/JSAI2026/_assets/jsai2026_map.html|map]]` を書く（いずれも実在ファイル）。
+- setup: scan 対象ノートに `[[README.md]]`（root 直下）、`[[Work/CLAUDE.md]]`、`[[Maps/Home.md]]`、`[[Templates/daily-note.md]]`、`[[Maps/views/logs.base|logs]]` を書く（いずれも実在ファイル。md と非 md（`.base`）の両方をカバー）。
 - command: `uv run python .claude/skills/vault-consistency-check/scripts/check_vault_consistency.py --mode light --date 2026-06-10`
 - expected output: これらのリンクは `Broken wikilinks` として flag されない（resolution index は content-scan の除外（SCAN_EXCLUDED_FILENAMES / NOTE_ROOTS / 非 md）と独立に、`.git` / `.trash` / `.tmp` / `.uv-cache` / `.obsidian*` を除く vault 全 file を索引する）。
 

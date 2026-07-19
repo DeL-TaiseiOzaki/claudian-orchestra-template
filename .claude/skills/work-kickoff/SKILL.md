@@ -8,7 +8,7 @@ description: Bootstrap a new Work client engagement or transition a won proposal
 ## 目的
 
 受託案件の**立ち上げ準備**を 1 本で回す。**聞き込み → 確認（dry-run）→ 承認 → フォルダ作成＋初期ファイル seed＋taxonomy 登録**まで。
-構造の新設・規約の改変を伴うため **承認前提**で動く（[[.claude/rules/agent-boundaries.md]] §5 不可逆・要判断ティア）。フォルダ新設は対応する rules / README / CLAUDE.md の更新と**同一 commit**（[[CLAUDE.md]] §2）。
+構造の新設・規約の改変を伴うため **承認前提**で動く（[[.claude/rules/agent-boundaries.md]] §5 不可逆・要判断ティア）。フォルダ新設は対応する rules / README / ドメイン契約の更新と**同一 commit**（[[AGENTS.md]] §2）。
 
 > ノート作成の実務は [[.claude/skills/work-project-writer/SKILL.md]]、構造の正は [[.claude/rules/work-management.md]]。本 skill はその**上位の立ち上げワークフロー**。
 
@@ -21,7 +21,7 @@ description: Bootstrap a new Work client engagement or transition a won proposal
 
 ## 使用場面
 
-- A：`新規案件を立ち上げて` / `新しいクライアントの提案を始める` / `PROJ_E みたいに案件フォルダ作って`
+- A：`新規案件を立ち上げて` / `新しいクライアントの提案を始める` / `PROJ_A みたいに案件フォルダ作って`
 - B：`{CODE} 受注したのでデリバリに移行` / `提案通ったので案件化して`
 
 ## 共通原則
@@ -57,7 +57,7 @@ description: Bootstrap a new Work client engagement or transition a won proposal
 
 ### Step 2: コード採番（重複チェック）
 
-- 既存コード（`PROJ_A` / `PROJ_B` / `PROJ_X`（archived） / `PROJ_C` / `PROJ_D` / `PROJ_E` / `PROJ_F`）と**衝突しない大文字 3 字**を提案（クライアント名由来。例：Client E (heavy industry)→`PROJ_E`）。`Work/` 直下を `Glob` して既存コードと突き合わせ、重複・表記揺れがないことを確認。
+- 既存コード（`PROJ_A` / `PROJ_B` / `PROJ_C` / `PROJ_X`（archived））と**衝突しない大文字 3 字**を提案（クライアント名由来。例：Acme Corp→`ACM`）。`Work/` 直下を `Glob` して既存コードと突き合わせ、重複・表記揺れがないことを確認。
 - 候補を提示しユーザー確定。タグは小文字化（`#{code}`）。
 
 ### Step 3: 差分提示（dry-run）
@@ -77,7 +77,7 @@ description: Bootstrap a new Work client engagement or transition a won proposal
 
 - **提案フェーズ開始**：
   - `Work/{CODE}/proposals/{当日}-提案骨子.md` を [[Templates/work-proposal.md]] から seed。
-  - **`sources/`（① Raw・先方資料）と `references/`（③ サーベイ）を先に作成**する（提案フェーズは資料受領＋サーベイが即始まるため）。空フォルダは Obsidian / git が保持できないので、各層に**用途を書いた `README.md` を placeholder** として置く（[[Work/PROJ_F/sources/README.md]] / [[Work/PROJ_F/references/README.md]] が参考）。
+  - **`sources/`（① Raw・先方資料）と `references/`（③ サーベイ）を先に作成**する（提案フェーズは資料受領＋サーベイが即始まるため）。空フォルダは Obsidian / git が保持できないので、各層に**用途を書いた `README.md` を placeholder** として置く（[[Work/PROJ_A/sources/README.md]] / [[Work/PROJ_A/references/README.md]] が参考）。
   - `meetings/` は MTG があれば `{MTG日}-{topic}.md` を作成（無ければ初出時）。`docs/` `logs/` `code/` `deliverables/` は初出時に作成。
 - **デリバリフェーズ開始**：`Work/{CODE}/docs/` に要件 starter（[[Templates/work-doc.md]]）を seed。`sources/` `references/` も未作成なら同様に README 付きで用意。
 
@@ -143,7 +143,7 @@ description: Bootstrap a new Work client engagement or transition a won proposal
 
 - **コード重複・表記揺れ防止**：大文字 3 字・既存と非衝突を `Glob Work/*` で確認してから採番。
 - **承認前提**：作成・規約改変・移行はすべて dry-run → 承認 → 適用。
-- **同一 commit**：フォルダ新設と rules / README / CLAUDE.md 更新は分けない（[[CLAUDE.md]] §2）。
+- **同一 commit**：フォルダ新設と rules / README / ドメイン契約更新は分けない（[[AGENTS.md]] §2）。
 - **proposals/ は移さない**：受注後も履歴として残す（受注前の判断の証跡。[[.claude/rules/work-management.md]] §提案 → デリバリのライフサイクル）。
 - **Git 前提**：Drive 同期と競合しないよう自動コミッタは 1 つ（[[.claude/rules/agent-boundaries.md]] §4）。
 

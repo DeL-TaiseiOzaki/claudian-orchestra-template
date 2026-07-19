@@ -39,5 +39,5 @@ Default conventions:
 
 ## 関連
 
-- [[CLAUDE.md]] §3 言語規約
+- [[AGENTS.md]] §3 Language conventions
 - [[.claude/rules/vault-metadata.md]] / [[.claude/rules/vault-tagging.md]]

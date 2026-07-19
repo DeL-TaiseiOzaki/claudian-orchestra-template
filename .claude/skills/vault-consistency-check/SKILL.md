@@ -156,7 +156,7 @@ remote checks の既定は off である。
 - `Code-Map repo health` は Hermes で GitHub URL health を JSON 取得するときだけ remote
 - timeout や malformed JSON は check 単位で `WARN` に倒し、run 全体は継続する
 
-`Structure drift`（Check #8）はディレクトリ構造の drift を検査する（正本は [[CLAUDE.md]] §1 のドメイン構成と `references/schema_rules.yaml`）。
+`Structure drift`（Check #8）はディレクトリ構造の drift を検査する（正本は [[AGENTS.md]] §1 のドメイン構成と `references/schema_rules.yaml`）。
 
 - (a) root registry 外の dir [WARN] と (b) 必須 dir の物理欠落 [ERROR] は light / full 両方で走る
 - (c) 非 md ファイルの配置違反 [WARN] と (d) 空 dir の `.gitkeep` 欠落 [WARN] は full のみ

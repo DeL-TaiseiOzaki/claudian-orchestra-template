@@ -48,6 +48,7 @@ updated: {{date:YYYY-MM-DD}}
 ### 取り込み（capture → `Inbox/{date}/{source}/...`）
 - [ ] **Calendar + Tasks**（朝 briefing 用素材）→ `inbox-daily-capture` <!-- connection: google-calendar google-tasks -->
 - [ ] **Slack**（今日 ＋ 前日 catch-all）→ `slack-capture` <!-- connection: slack -->
+- [ ] **Discord**（bot 参加サーバの日次 digest → 自作 discord-capture・[[docs/connections/discord.md]]） <!-- connection: discord -->
 - [ ] **GitHub EOD**（Code-Map 由来 repo の today 変化）→ `github-eod-capture` <!-- connection: github -->
 - [ ] **AI 議事録**（今日完了した MTG の transcript を取得。Genspark は `genspark-mtg` で一括／他サービスはエクスポート投入）→ `Inbox/{date}/mtgs/` <!-- connection: meeting-notes -->
 - [ ] **RSS 巡回**（購読フィードの新着 → clippings）→ hermes on-demand <!-- connection: rss -->
@@ -81,9 +82,6 @@ updated: {{date:YYYY-MM-DD}}
 - **PROJ_A**: 
 - **PROJ_B**: 
 - **PROJ_C**: 
-- **PROJ_D**: 
-- **PROJ_E**:
-- **PROJ_F**: 
 
 ### 🔬 Research
 - 

@@ -7,7 +7,9 @@
 | `obsidian-markdown/` | Obsidian Flavored Markdown（wikilink / embed / callout / properties / tag） | 不要 |
 | `obsidian-bases/` | `.base` ファイル（ビュー・フィルタ・数式・サマリ） | 不要 |
 | `json-canvas/` | `.canvas` ファイル（ノード・エッジ・グループ） | 不要 |
-| `defuddle/` | Webページから本文markdown抽出 | **`defuddle`（npm）が必要** |
+
+> [!note] defuddle は Claude 側ミラーなし
+> `defuddle/`（Webページから本文markdown抽出・`defuddle` npm CLI が必要）は **`.codex/skills/defuddle/` と `.hermes/skills/vault-capture/defuddle/` のみ**に置く。`.claude/skills/` 配下にミラーは無い。
 
 > [!note] obsidian-cli は除外
 > Obsidian アプリ内で作業しているため、外部 `obsidian-cli`（プラグイン/テーマ開発・CLI経由のVault操作）は冗長と判断し導入対象から外した。
@@ -27,7 +29,7 @@
 | **Claude Code** | `.claude/skills/<name>/` | `<name>/SKILL.md` を自動検出 |
 | **Codex CLI** | `.codex/skills/<name>/` | `.codex/config.toml` の `[[skills.config]]` で登録 |
 
-Codex は `.codex/skills/` 配下のスキルのみ拾うため、**両ディレクトリに同一実体を置く**（Windows + Google Drive で symlink が不可のため）。`.claude/skills/` を編集元（正）とし、`.codex/skills/` へ複製する。
+Codex は `.codex/skills/` 配下のスキルのみ拾うため、**両ディレクトリに同一実体を置く**（Windows + Google Drive で symlink が不可のため）。`.claude/skills/` を編集元（正）とし、`.codex/skills/` へ複製する。**例外：`defuddle/` は codex 側＋hermes 側のみ**（`.claude/skills/` にミラーを置かない）。
 
 ## adaptation 方針
 

@@ -10,7 +10,7 @@ Others/
 ├── Ideas/        # アイデア帳（着想の種）＋ 別シードの検証・PoC・初期構想（旧 Exploration を統合・2026-06-13）
 ├── Activities/   # 継続的活動（社内外コミュニティ・学会委員・グループ・コンペ・エコシステム創発）
 │   ├── CLAUDE.md # サブエリア共通 Schema（4 層標準の定義）
-│   ├── YSAI/ YANS/ RL-WG/ Agent-WG/ Kaggle/ Conferences/
+│   ├── Community-A/ Community-B/ WG-A/ WG-B/ Kaggle/ Conferences/
 │   └── Ecosystem/  # 教育→インターン→起業/活躍 の循環を創発する組織活動（2026-06-12 Activities 配下に正式化）
 └── Learning/     # 個人学習・読書ノート・技術メモ（1 トピック = 1 フォルダ：`Learning/{Topic}/` 配下に note 等をまとめる）
 ```
@@ -63,8 +63,8 @@ Ideas（着想・検証/PoC を含む） → Research / Work
   - ② Schema：`Activities/CLAUDE.md`（共通）。固有規約が育ったら `{NAME}/CLAUDE.md` を新設
   - ③ Compiled：`notes/` + `meetings/{YYYY-MM-DD}-{topic}.md`（**genspark MTG は curate 時に要約してここへ**＝inbox-routing §3 例外。raw は git 履歴に残す）
   - ④ Log：`logs/` + `README.md`（入口 MOC・現況）
-- コンペ系は `Kaggle/{competition-name}/`、学会参加は `Conferences/{学会名年度}/`（例 `JSAI2026`）。単位フォルダ内の `sources/` は必要になったら作る（YAGNI）。自作の非 md（スクリプト・生成データ）は従来どおり `_assets/` へ。
-- 現在のサブエリア：`YSAI`（人工知能学会 若手の会・委員）/ `YANS`（言語処理学会 若手の会・委員）/ `RL-WG`（強化学習WG・R&D）/ `Agent-WG`（エージェント開発WG・R&D・your organization内部）/ `Kaggle`（コンペ）/ `Conferences`（学会参加）/ `Ecosystem`（下記）。
+- コンペ系は `Kaggle/{competition-name}/`、学会参加は `Conferences/{学会名年度}/`（例 `ConfX2026`）。単位フォルダ内の `sources/` は必要になったら作る（YAGNI）。自作の非 md（スクリプト・生成データ）は従来どおり `_assets/` へ。
+- 現在のサブエリア（例）：`Community-A`（学会若手会コミュニティの例）/ `Community-B`（同・例）/ `WG-A`（社内/研究 WG の例）/ `WG-B`（同・例）/ `Kaggle`（コンペ）/ `Conferences`（学会参加）/ `Ecosystem`（下記）。実際の所属活動に合わせてリネームする。
 - R&D・検証で芽が出たものは `Ideas/` へ切り出し、さらに育てば Research / Work へ昇格（移動元にリンクを残す）。
 
 ### Activities/Ecosystem

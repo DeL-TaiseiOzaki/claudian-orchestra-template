@@ -1,4 +1,4 @@
-﻿---
+---
 name: daily-briefing
 description: Compose the day's root Daily note (Daily/{YYYY-MM-DD}.md) at morning startup. Reads Hermes-staged raw data from Inbox/{YYYY-MM-DD}/daily/daily.md (Google Calendar events + Google Tasks) and renders the morning briefing (today's schedule, tasks, Genspark join reminders, Today's Focus, job list). If the Inbox stage is missing, prompts the user to run inbox-daily-capture via the Daily-note ジョブリスト rather than fetching directly (external connections are hermes-only per agent-boundaries.md §6). Morning-only — mid-day on-demand aggregation per source is handled by aggregate-* skills, and EOD distill to Main DB by the independent eod-distill skill (2026-06-16 split). Also surfaces MTG prep: it lists today's meetings (with conference URL) and prompts mtg-prep to create 議事録 stubs in the right meetings/ folder and link them from Daily — the briefing offers/guides only; the interactive stub creation (which interviews the user) runs inside mtg-prep. Use for morning briefing or re-running the morning section.
 ---

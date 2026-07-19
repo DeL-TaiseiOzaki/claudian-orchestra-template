@@ -59,7 +59,7 @@ description: At end-of-day, distill Daily's accumulated log content into the Mai
 EOD distill 候補：
 
 1. **PROJ_A データ前処理修正** → [[Work/PROJ_A/logs/{date}.md]]?
-2. **Slack で議論された新仕様** → [[Work/PROJ_D/notes/{slug}.md]]?
+2. **Slack で議論された新仕様** → [[Work/PROJ_B/notes/{slug}.md]]?
 3. **defuddle 移管学び** → [[.claude/docs/knowledges/architecture/...]]?
    ...
 

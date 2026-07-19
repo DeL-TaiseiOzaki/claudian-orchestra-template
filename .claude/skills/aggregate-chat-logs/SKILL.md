@@ -86,4 +86,3 @@ Hermes（Chrome 拡張 AI Exporter）が `Inbox/{date}/chat-logs/{provider}-{slu
 ## 関連
 
 - [[.claude/rules/inbox-routing.md]] §2 chat-logs 行
-- [[Meta/web-clipper-setup/status.md]]（AI Exporter pivot 経緯）

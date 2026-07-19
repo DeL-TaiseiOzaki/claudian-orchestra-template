@@ -37,7 +37,7 @@ Main DB（Work / Others / Research）          → Evergreen
 
 ## 2. Source → Inbox サブディレクトリ対応（日付ファースト）
 
-全ソースを `Inbox/{YYYY-MM-DD}/{source}/` 配下のサブフォルダに統一する。**サブフォルダはその日にそのソースが発生したときだけ作る**（毎日 7 個を強制しない）。ファイル名は識別子のみ（日付は親フォルダが持つので prefix 不要）。
+全ソースを `Inbox/{YYYY-MM-DD}/{source}/` 配下のサブフォルダに統一する。**サブフォルダはその日に発生した source の分だけ作る**（全 source を毎日強制しない）。ファイル名は識別子のみ（日付は親フォルダが持つので prefix 不要）。
 
 | Source | Inbox の落とし先 | hermes が必ずセットする frontmatter |
 |---|---|---|
@@ -46,7 +46,7 @@ Main DB（Work / Others / Research）          → Evergreen
 | **Slack**（hermes Slack app — **業務 IF**） | `Inbox/{date}/slack/{channel}.md`（DM は `dm-{counterpart}.md`） | `source: "slack:digest:<channel>:<date>"`, `channel`, `channel_id`, `is_dm`, `is_private`, `participants`, `user_authored`, `user_mentioned`, `message_count`, `fetched_at` |
 | **Notion** | （取り込みなし — Vault → Notion は一方向） | — |
 | **Web クリッピング**（ブラウザ拡張） | `Inbox/{date}/clippings/{slug}.md` | `source: "web:url:<URL>"`, `fetched_at` |
-| **AI 壁打ちログ**（ChatGPT / Claude — Obsidian AI Exporter 拡張 + Local REST API・2026-06-15 ピボット） | `Inbox/{date}/chat-logs/{slug}-{hash}.md` | capture 時：`source: <provider>` / curate 時：`source: chat:<provider>:<id>` 等へ正規化（[[Inbox/README.md]] §chat-logs の normalize 表参照） |
+| **AI 壁打ちログ**（ChatGPT / Claude — Obsidian AI Exporter 拡張 + Local REST API・2026-06-15 ピボット） | `Inbox/{date}/chat-logs/{provider}-{slug}.md` | capture 時：`source: <provider>` / curate 時：`source: chat:<provider>:<id>` 等へ正規化（[[Inbox/README.md]] の chat-logs normalize 注記参照） |
 | **GitHub MCP**（Step 5 コード変化） | `Inbox/{date}/code/code.md` | `source: "github:eod:<date>"`, `repos: [...]`, `fetched_at` |
 | **Genspark AI 議事録**（`gsk` CLI、**on-demand**＝Daily ジョブリストから指示） | `Inbox/{date}/mtgs/genspark-{slug}.md` | `source: "genspark:meeting:<task_id>"`, `meeting_title`, `meeting_date`, `participants`, `transcript_length` |
 | **Discord**（bot 参加サーバのみ・capture skill は slack-capture をひな形に自作） | `Inbox/{date}/discord/{channel}.md` | `source: "discord:digest:<channel>:<date>"`, `channel`, `fetched_at`（slack 準拠） |
@@ -63,11 +63,10 @@ Main DB（Work / Others / Research）          → Evergreen
 
 **auto-route は廃止**（hermes は capture only）。代わりに Claude が当日分を Daily に集約し、EOD に Main DB へ配分する。
 
-### 3.1 集約（Step 2 / daily-briefing）
+### 3.1 集約（Step 2 / daily-briefing + aggregate-*）
 
-- Claude（`daily-briefing` skill）が `Inbox/{date}/*` の全サブフォルダを走査し、`Daily/{date}.md` に取り込む。
-- 朝：`Inbox/{date}/daily/daily.md`（GCal + GTasks）→ 朝 briefing。
-- 日中〜EOD：`slack/` `code/` `mtgs/` `clippings/` `chat-logs/` をその日のログ／振り返りに集約。
+- 朝：Claude（`daily-briefing` skill）が `Inbox/{date}/daily/daily.md`（GCal + GTasks）**のみ**を読み、朝 briefing を構成。
+- 日中〜EOD：`slack/` `code/` `mtgs/` `clippings/` `chat-logs/` は per-source の `aggregate-*` skills が on-demand で `Daily/{date}.md` に集約（§1 表の Step (2) と同じ分担）。
 
 ### 3.2 配分（Step 6 / EOD distill）
 
@@ -175,8 +174,8 @@ frontmatter は §2 の slack 行を参照。
 
 ## 関連
 
-- [[CLAUDE.md]] §1 ドメイン構成
-- [[AGENTS]] §3 書き込み境界
+- [[AGENTS.md]] §1 Domain layout
+- [[AGENTS.md]] §5 Write boundaries
 - [[.claude/rules/agent-boundaries.md]] §3 capture → Daily 集約 → curate
 - [[.claude/rules/daily-operations.md]] — Daily ハブ集約フロー
 - [[.claude/rules/vault-metadata.md]] — frontmatter スキーマ

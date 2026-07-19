@@ -87,7 +87,7 @@ grep -E "^\s+env:" .hermes/config.yaml
 
 ## 関連 (Related)
 
-- 関連 issue: [[<your-vault>_deallocation_process/status.md]] #NN
+- 関連 issue: [[Meta/{your-meta-project}/status.md]] #NN
 - 関連 commit: `<hash>` `<short summary>`
 - 関連 knowledge: [[../other-category/sibling.md]]
 - 外部 doc: <URL>

@@ -17,7 +17,7 @@ Pick ONE configuration at setup time (the `core-setup` flow — [[.claude/skills
 
 | `core:` | Meaning | What stays in the repo |
 |---|---|---|
-| `codex` (default) | Codex CLI is the only core | `core-setup` migrates `.claude/` → `.agents/` (link rewrite included) and removes Claude-specific files (`CLAUDE.md`, hooks, settings) |
+| `codex` (default) | Codex CLI is the only core | `core-setup` migrates `.claude/` → `.agents/` (link rewrite included) and removes Claude-specific files (`CLAUDE.md`, settings, subagent defs) |
 | `claude` | Claude Code is the only core | Remove `.codex/` (this file stays — it is the core contract) |
 | `both` | Both CLIs are used interchangeably as the core | Keep everything |
 

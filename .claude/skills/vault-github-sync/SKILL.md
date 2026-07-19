@@ -36,7 +36,7 @@ git status --short
 | グループ | 対象パス |
 |----------|---------|
 | Daily / Weekly | `Daily/` |
-| Work 案件 | `Work/{PROJ_A,PROJ_B,PROJ_C,PROJ_D,PROJ_E,PROJ_F}/` |
+| Work 案件 | `Work/{PROJ_A,PROJ_B,PROJ_C}/` |
 | Research（submodule pointer） | `Research`（実体は別リポジトリ。下記参照） |
 | Others | `Others/` |
 | メタ（rules/skills/templates） | `.claude/`, `Templates/` |
@@ -53,7 +53,7 @@ git push
 | prefix | 用途 |
 |--------|------|
 | `daily:` | Daily / Weekly |
-| `work(toe):`, `work(mte):`, `work(tus):`, `work(mtd):`, `work(iia):`, `work(mhi):` | 案件作業 |
+| `work(proj-a):`, `work(proj-b):`, `work(proj-c):` | 案件作業 |
 | `research:` | 論文ノート、実験ログ |
 | `others:` | Ideas / Ecosystem / Activities / Learning |
 | `meta:` | rules / skills / templates / settings |
@@ -68,7 +68,7 @@ git push
 
 ```bash
 git add Work/PROJ_A/deliverables/
-git commit -m "work(toe): deliver vX.Y - <概要>"
+git commit -m "work(proj-a): deliver vX.Y - <概要>"
 git push
 ```
 

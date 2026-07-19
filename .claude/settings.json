@@ -1,9 +1,5 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "env": {
-    "EDITOR": "code --wait",
-    "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
-  },
   "permissions": {
     "allow": [
       "Read(*)",
@@ -32,12 +28,7 @@
       "Bash(mkdir:*)",
       "Bash(touch:*)",
       "Bash(cp:*)",
-      "Bash(mv:*)",
-      "Bash(rm:*)",
-      "Bash(chmod:*)",
       "Bash(git:*)",
-      "Bash(curl:*)",
-      "Bash(wget:*)",
       "Bash(jq:*)",
       "Bash(tree:*)",
       "Bash(which:*)",

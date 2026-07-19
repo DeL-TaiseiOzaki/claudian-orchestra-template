@@ -11,7 +11,7 @@ updated: 2026-07-19
 
 personal knowledge base の**一番の躓きポイントは外部ツールとの繋ぎ込み**です。このディレクトリは、接続を 1 本ずつ・動作確認しながら繋ぐためのガイド集です。
 
-> **まずは対話式がおすすめ**:Claude Code に「**接続セットアップして**」と言うと、[[.claude/skills/connection-setup/SKILL.md]] がユースケースを質問して**あなたの使うツールだけ**を選ばせ、このガイド群を台本に 1 本ずつセットアップしてくれます。選択は [[.claude/connections.yaml]] に記録され、使わないツールはジョブリスト・診断から消えます。以下は手動で進めたい人・個別に調べたい人向けです。
+> **まずは対話式がおすすめ**:コアエージェントに「**接続セットアップして**」と言うと、[[.claude/skills/connection-setup/SKILL.md]] がユースケースを質問して**あなたの使うツールだけ**を選ばせ、このガイド群を台本に 1 本ずつセットアップしてくれます。選択は [[.claude/connections.yaml]] に記録され、使わないツールはジョブリスト・診断から消えます。以下は手動で進めたい人・個別に調べたい人向けです。
 >
 > 前提:Hermes 本体のセットアップ(= [[GETTING-STARTED.md]] Level 2)が済んでいること(`web-clippings` の拡張直書き経路のみ Hermes 不要)。
 
@@ -22,7 +22,7 @@ personal knowledge base の**一番の躓きポイントは外部ツールとの
 3. **データの流れは 2 経路**:
    - **push(capture)**:Hermes が生データを `Inbox/{YYYY-MM-DD}/{source}/` に書く。Daily ジョブリストから「○○取り込みやって」で発火(on-demand 既定)
    - **pull(query)**:Claude Code が `hermes chat -q "..."` でその場の確認をする([[.claude/skills/hermes-query/SKILL.md]])
-4. **困ったら診断**:Claude Code に「**接続チェックして**」と言えば [[.claude/skills/connection-doctor/SKILL.md]] が全接続の状態と次アクションを報告する。
+4. **困ったら診断**:コアエージェントに「**接続チェックして**」と言えば [[.claude/skills/connection-doctor/SKILL.md]] が全接続の状態と次アクションを報告する。
 
 ## 接続一覧
 
@@ -69,4 +69,4 @@ personal knowledge base の**一番の躓きポイントは外部ツールとの
 ## 使わない接続について
 
 - 対応する capture skill(`.hermes/skills/vault-capture/{skill}/`)ごと削除して構いません
-- `Daily` のジョブリストからも該当項目が消えるよう、Claude Code に「○○は使わないので外して」と言えば整理してくれます
+- `Daily` のジョブリストからも該当項目が消えるよう、コアエージェントに「○○は使わないので外して」と言えば整理してくれます

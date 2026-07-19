@@ -25,7 +25,7 @@ Entry point for **reusable learnings** (root causes / gotchas / patterns) discov
 | git | 0 | git workflow |
 | vault | 0 | Obsidian / vault structure |
 | architecture | 0 | Multi-agent orchestration / policy |
-| codex | 0 | Codex consultation patterns |
+| codex | 0 | Codex CLI 固有の挙動（sandbox / config / skills 連携の gotcha） |
 | python | 0 | Python / uv / encoding |
 
 ## Usage
@@ -48,11 +48,11 @@ Entry point for **reusable learnings** (root causes / gotchas / patterns) discov
 
 - Daily content → `Daily/`
 - Per-project work logs → `Work/`
-- Raw Codex consultation results → `.claude/docs/research/`
+- Raw investigation results → `.claude/docs/research/`
 - A learning that only matters to one skill → that skill's `SKILL.md` `## Pitfalls` section
 
 ## See also
 
 - [[.claude/skills/knowledge-capture/SKILL.md]] — operating skill
 - [[Maps/Code-Map.md]] — codebase knowledge MOC
-- [[CLAUDE.md]] §4 orchestration contract
+- [[AGENTS.md]] §4 operating model
