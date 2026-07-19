@@ -49,6 +49,9 @@ Main DB（Work / Others / Research）          → Evergreen
 | **AI 壁打ちログ**（ChatGPT / Claude — Obsidian AI Exporter 拡張 + Local REST API・2026-06-15 ピボット） | `Inbox/{date}/chat-logs/{slug}-{hash}.md` | capture 時：`source: <provider>` / curate 時：`source: chat:<provider>:<id>` 等へ正規化（[[Inbox/README.md]] §chat-logs の normalize 表参照） |
 | **GitHub MCP**（Step 5 コード変化） | `Inbox/{date}/code/code.md` | `source: "github:eod:<date>"`, `repos: [...]`, `fetched_at` |
 | **Genspark AI 議事録**（`gsk` CLI、**on-demand**＝Daily ジョブリストから指示） | `Inbox/{date}/mtgs/genspark-{slug}.md` | `source: "genspark:meeting:<task_id>"`, `meeting_title`, `meeting_date`, `participants`, `transcript_length` |
+| **Discord**（bot 参加サーバのみ・capture skill は slack-capture をひな形に自作） | `Inbox/{date}/discord/{channel}.md` | `source: "discord:digest:<channel>:<date>"`, `channel`, `fetched_at`（slack 準拠） |
+| **RSS**（`feeds.local.yaml` の購読フィード・on-demand 巡回） | `Inbox/{date}/clippings/{slug}.md`（clippings に相乗り） | `source: "rss:<feed-slug>:<entry-id>"`, `fetched_at` |
+| **Gmail**（**on-demand のみ**＝「このメール残して」指示。定常 capture なし・pull 既定） | `Inbox/{date}/mail/{slug}.md` | `source: "gmail:message:<id>"`, `fetched_at` |
 | **添付ファイル**（手動 import / Slack files） | `Inbox/{date}/attachments/…`（Slack 添付は `attachments/slack/{channel}/…`） | `source: "manual"` 等 |
 
 > `Inbox/notion/` は作らない（一方向 publish [[.claude/rules/agent-boundaries.md]]）。
@@ -74,10 +77,12 @@ Daily に集約した内容から、durable なものを Main DB へ蒸留・配
 |---|---|---|
 | `daily/daily.md` | `Daily/{date}.md` | briefing として集約（compose） |
 | `slack/{channel}.md` | `Work/*/sources/`・`Others/*/sources/` 等（raw のまま） | 宛先は Claude/ユーザーが判断。蒸留ノートは `docs/`・`notes/` へ別途 |
+| `discord/{channel}.md` | `Others/Activities/{NAME}/sources/` 等（raw のまま） | コミュニティ会話が典型。扱いは slack と同じ |
 | `code/code.md` | raw を `Work/*/sources/`、必要分を `logs/{date}.md` へ蒸留 | per-repo セクションで分かれている |
 | `mtgs/genspark-*.md` | **要約して `{project}/meetings/{date}-{name}.md`（compiled）へ** | raw transcript は git 履歴に残す（§3.3 例外）。**話者名は [[Maps/People-Map.md]] で名寄せ**（AI 文字起こしは同音異字を誤記する。例：「ヤマダ」→「山田田」→ 実際は「山田 太郎」） |
 | `clippings/{slug}.md` | raw を `{area}/sources/`、蒸留は `notes/`・`Others/Ideas/` | 信号なし＝判断は Claude/ユーザー |
 | `chat-logs/{provider}-{slug}.md` | raw を `{area}/sources/`、または蒸留して `Others/Ideas/`・`notes/` | 〃 |
+| `mail/{slug}.md` | raw を `{area}/sources/`、要点は `docs/`・`notes/` へ蒸留 | on-demand capture のみ（Gmail は pull 既定） |
 | `attachments/…` | `Work/*/sources/`（先方資料）・`references/`（サーベイ資料）等へ raw のまま | 〃 |
 
 ### 3.3 curate 着地の原則

@@ -1,0 +1,103 @@
+# 外部接続レジストリ — このvaultで「どのツールを繋ぐか」の single source of truth
+#
+# 書き手: connection-setup skill(対話式セットアップ)。手動編集も可。
+# 読み手: daily-briefing(ジョブリスト生成のフィルタ)/ connection-doctor(診断対象の決定)
+#
+# status の意味:
+#   unconfigured — 未選択(初期値。セットアップ未実施)
+#   enabled      — 使う(セットアップ済み or セットアップ中)
+#   disabled     — 使わない(ジョブリスト・診断から除外。capture skill は残っていてもよい)
+#
+# 接続を後から足す/外すときは connection-setup を再実行するか、status を直接書き換える。
+# capture_skill: null は「定常 capture skill を同梱しない接続」(pull 参照 / 出力のみ /
+# 手動 Inbox 投入 / 必要になったら自作)。
+#
+# メールの方針: カタログ上のメール接続は Gmail のみ。Outlook 等の他メールは
+# **Gmail への自動転送で一本化**する(docs/connections/gmail.md 参照)。
+
+version: 1
+
+connections:
+  github:
+    status: unconfigured
+    label: "GitHub(コード変化の EOD capture)"
+    guide: docs/connections/github.md
+    capture_skill: .hermes/skills/vault-capture/github-eod-capture/
+    requires_hermes: true
+
+  google-calendar:
+    status: unconfigured
+    label: "Google カレンダー(朝 briefing の予定)"
+    guide: docs/connections/google-calendar-tasks.md
+    capture_skill: .hermes/skills/vault-capture/inbox-daily-capture/
+    requires_hermes: true
+
+  google-tasks:
+    status: unconfigured
+    label: "Google Tasks(朝 briefing のタスク・EOD の close/defer 反映)"
+    guide: docs/connections/google-calendar-tasks.md
+    capture_skill: .hermes/skills/vault-capture/inbox-daily-capture/
+    requires_hermes: true
+
+  gmail:
+    status: unconfigured
+    label: "Gmail(pull 検索・参照。他メールは Gmail 転送で一本化)"
+    guide: docs/connections/gmail.md
+    capture_skill: null   # pull 既定。on-demand 取り込みのみ(Inbox/{date}/mail/)
+    requires_hermes: true
+
+  google-drive:
+    status: unconfigured
+    label: "Google Drive / Docs(共有資料の read)"
+    guide: docs/connections/google-drive.md
+    capture_skill: null   # read 専用(claude.ai コネクタ or hermes 経由)
+    requires_hermes: false   # claude.ai Drive コネクタ経路なら Hermes 不要
+
+  slack:
+    status: unconfigured
+    label: "Slack(業務会話の日次ダイジェスト)"
+    guide: docs/connections/slack.md
+    capture_skill: .hermes/skills/vault-capture/slack-capture/
+    requires_hermes: true
+
+  discord:
+    status: unconfigured
+    label: "Discord(コミュニティ会話の capture・bot 方式のみ)"
+    guide: docs/connections/discord.md
+    capture_skill: null   # skill は未同梱(slack-capture をひな形に生成する。guide 参照)
+    requires_hermes: true
+
+  rss:
+    status: unconfigured
+    label: "RSS / ニュースレター(新着 → clippings)"
+    guide: docs/connections/rss.md
+    capture_skill: null   # feeds.local.yaml + hermes on-demand 巡回(guide 参照)
+    requires_hermes: true
+
+  web-clippings:
+    status: unconfigured
+    label: "Web クリッピング / AI 壁打ちログ"
+    guide: docs/connections/web-clippings.md
+    capture_skill: .hermes/skills/vault-capture/clippings-capture/
+    requires_hermes: false   # ブラウザ拡張直書き(経路A)なら Hermes 不要
+
+  meeting-notes:
+    status: unconfigured
+    label: "AI 議事録(Genspark / Otter / tl;dv / Notta 等)"
+    guide: docs/connections/meeting-notes.md
+    capture_skill: .hermes/skills/vault-capture/genspark-mtg/   # Genspark アダプタ利用時のみ
+    requires_hermes: false   # 手動エクスポート投入経路なら Hermes 不要
+
+  zotero:
+    status: unconfigured
+    label: "Zotero(文献管理 → Research 連携・研究者向け)"
+    guide: docs/connections/zotero.md
+    capture_skill: null   # pull 既定(Zotero Web API)
+    requires_hermes: true
+
+  notion:
+    status: unconfigured
+    label: "Notion(一方向 publish)"
+    guide: docs/connections/notion.md
+    capture_skill: null      # capture なし(出力のみ)
+    requires_hermes: true

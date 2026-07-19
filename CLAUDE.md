@@ -19,7 +19,7 @@ Primary purpose: **create / organize / reference your work as Markdown notes (`.
 
 | Domain | Path | Content |
 |---|---|---|
-| **Inbox** | `Inbox/{YYYY-MM-DD}/{daily,slack,code,mtgs,clippings,chat-logs,attachments}/` | Capture-only receiving area (raw, unsorted, **date-first**). Writers: Hermes / browser extensions only (**no auto-route**). Same-day content gets aggregated to Daily; curation is a later step. [[Inbox/README.md]] |
+| **Inbox** | `Inbox/{YYYY-MM-DD}/{daily,slack,discord,code,mtgs,clippings,chat-logs,mail,attachments}/` | Capture-only receiving area (raw, unsorted, **date-first**). Writers: Hermes / browser extensions only (**no auto-route**). `mail/` is on-demand only (Gmail pull-first design). Same-day content gets aggregated to Daily; curation is a later step. [[Inbox/README.md]] |
 | **Daily** | `Daily/` | The single hub per day (journal). Aggregates `Inbox/{date}/*` and distributes to Main DB. Daily / weekly reviews. |
 | **Work** | `Work/{PROJ_A,PROJ_B,PROJ_C}/` | Client engagements. Each project follows the **4-layer standard** (per-project `CLAUDE.md` + `sources/` + curated + `logs/`, [[.claude/rules/work-management.md]]). Add new project codes as needed. |
 | **Research** | `Research/` (optional submodule) | Research work. Often hosted as a git submodule with its own `CLAUDE.md` + `.claude/rules/`. The submodule's rules take precedence over vault rules for files under it. |
@@ -47,6 +47,7 @@ Primary purpose: **create / organize / reference your work as Markdown notes (`.
 - Note-writing skills: `work-project-writer` / `others-writer` / `daily-briefing` / `weekly-review` / `vault-github-sync` (research uses skills inside `Research/` if mounted as a submodule).
 - Maintenance skill: `vault-archive` (anti-bloat: move inactive notes to `Archive/` — approval required).
 - Diagnostics skill: `connection-doctor` (read-only check of all Hermes-owned external connections; entry point when the user says 「接続チェックして」).
+- Onboarding skill: `connection-setup` (interactive wizard — asks by use case which external tools the user actually uses, records the selection in `.claude/connections.yaml`, then guides setup of only the selected connections; entry point when the user says 「接続セットアップして」). The registry filters the Daily job list (`daily-briefing`) and the doctor's scope.
 - Backup target: your own GitHub repo (see [[.claude/skills/vault-github-sync/SKILL.md]]).
 
 ---

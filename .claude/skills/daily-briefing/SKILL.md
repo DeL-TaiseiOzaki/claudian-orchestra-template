@@ -26,6 +26,7 @@ description: Compose the day's root Daily note (Daily/{YYYY-MM-DD}.md) at mornin
 1. `date` で当日（`YYYY-MM-DD`）を取得（推測しない）
 2. `Daily/{YYYY-MM-DD}.md` の存在を確認
 3. なければ `Templates/daily-note.md` をベースに作成。あれば朝セクションのみ更新（夜セクションは触らない）
+4. **ジョブリストの registry フィルタ**：新規作成時は [[.claude/connections.yaml]] を読み、テンプレのジョブ行のうち `<!-- connection: {key...} -->` 付きの行を **listed キーのいずれかが `status: enabled` のものだけ残す**（キーはスペース区切りで複数可。例 `google-calendar google-tasks`。どれも enabled でない行は削除。コメント自体も出力からは除去してよい）。キーなしの行（朝 briefing / EOD distill / 整合性チェック / バックアップ等）は常に残す。**全接続が `unconfigured`**（セットアップ未実施）の場合はテンプレのまま全行残し、ジョブリスト末尾に `> 💡 使うツールを選ぶには「接続セットアップして」（connection-setup）` を 1 行追加する
 
 ### Step 2: 入力源を取得 = `Inbox/{date}/daily/daily.md` を読むだけ
 

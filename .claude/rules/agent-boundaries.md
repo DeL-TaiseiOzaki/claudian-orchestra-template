@@ -80,9 +80,13 @@ hermes との情報のやり取りは 2 方向ある。**両方とも user-instr
 | 接続 | 所有者 | 経路 | 備考 |
 |---|---|---|---|
 | Slack（業務 IF） | Hermes | Slack app（双方向） | **仕事の会話はすべて Slack で進む** |
+| Discord（コミュニティ・任意） | Hermes | bot token（`DISCORD_BOT_TOKEN`・read 専用） | **bot を追加できるサーバのみ**（self-bot は規約違反）。capture skill は slack-capture をひな形に自作（[[docs/connections/discord.md]]） |
+| RSS / ニュースレター（任意） | Hermes | HTTP fetch（認証なし・`feeds.local.yaml`） | 新着 → `Inbox/{date}/clippings/`。ニュースレターは Gmail 転送受けも可 |
+| Zotero（研究者・任意） | Hermes | Zotero Web API（`ZOTERO_API_KEY`・read-only） | pull 既定。文献の正本は Zotero、vault は文献ノート + `resource:` ポインタ（[[docs/connections/zotero.md]]） |
 | Google Calendar（個人・複数可） | Hermes | **ics 直 fetch**（限定公開 URL、`.hermes/skills/vault-capture/inbox-daily-capture/scripts/fetch_calendar_ics.py`） | OAuth 不要・URL に token 内包。Claude は読まない。セットアップ → [[docs/connections/google-calendar-tasks.md]] |
 | Google Calendar（追加アカウント・任意） | Hermes | **gws（GWS CLI）`gws calendar events list`**（アカウント別 config dir `GOOGLE_WORKSPACE_CLI_CONFIG_DIR=~/.config/gws-<name>`・readonly） | ics の限定公開 URL を出せない組織アカウント用。要：consent screen の test user 追加。Testing 公開のままだと token 約7日失効。**capture 実行 PC のローカルに該当 config dir の資格情報が必要** |
 | Google Tasks | Hermes | `list_tasks.py`（library 直叩き・`${HERMES_HOME}/google_token.json`） | 共有 OAuth トークン。**`gws` には依存しない**（library が自前で OAuth refresh） |
+| Gmail | Hermes | bundled `google-workspace`（共有 OAuth token・`gmail.*` scopes） | **pull 既定**（検索・参照）。定常 capture なし。残すときだけ on-demand で `Inbox/{date}/mail/` へ。下書き作成は承認制・自動送信なし（[[docs/connections/gmail.md]]） |
 | Notion | Hermes | Notion MCP | 取り込みなし。Vault → Notion publish のみ |
 | Web（調査・検証 read） | Claude Code（read）／ Hermes（capture） | Claude: WebFetch / WebSearch・subagent ／ Hermes: 拡張・on-demand（Web Clipper・AI Exporter） | **Web の調査・検証 read は Claude Code から直接可**（[[CLAUDE.md]] §4 研究委譲と整合）。**Inbox へ残すクリッピング capture は hermes** 経由（ブラウザ拡張） |
 | **Google Drive / Docs**（共有ドライブ資料の read） | **Claude Code**（特殊対応・2026-06-16 承認） | claude.ai **Google Drive コネクタ** `read_file_content`（fileId 指定） | **hermes 経由不要**の明示的例外。hermes は任意の Google Docs を読めない（Google 接続は Calendar / Tasks のみ）ため。**read 専用** |

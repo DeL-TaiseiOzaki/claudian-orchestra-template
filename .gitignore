@@ -81,6 +81,7 @@ Thumbs.db
 # external-access-must-go-through-hermes principle ([[.claude/rules/agent-boundaries.md]] §6).
 .hermes/skills/vault-capture/inbox-daily-capture/scripts/calendars.local.json
 *.local.json
+*.local.yaml
 .tmp_*.json
 .tmp_*.py
 

@@ -65,10 +65,11 @@ cd my-vault
 
 Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わないなら **Claude Code + Codex だけ**で十分動きます．その場合は `Inbox/` への投入を全部手動でやることになります．
 
-外部接続の繋ぎ込みは PKM 最大の躓きポイントなので，接続ごとに**手順・動作確認・よくある失敗**をまとめたガイドを用意しています：
+外部接続の繋ぎ込みは PKM 最大の躓きポイントなので，**自分の使うツールを選んで，選んだものだけ**をガイド付きで繋げる仕組みを用意しています：
 
+- **対話式セットアップ（推奨）**：Claude Code に「**接続セットアップして**」と言えば [`connection-setup`](./.claude/skills/connection-setup/SKILL.md) skill がユースケースを質問し，使うツールだけを [`connections.yaml`](./.claude/connections.yaml) に記録して 1 本ずつセットアップします．使わないツールはジョブリストからも消えます
 - 段階式セットアップ：[`GETTING-STARTED.md`](./GETTING-STARTED.md)（Level 0〜3）
-- 接続別ガイド：[`docs/connections/`](./docs/connections/README.md)（GitHub / Google / Slack / クリッピング / Genspark / Notion）
+- 接続別ガイド：[`docs/connections/`](./docs/connections/README.md)（GitHub / Google カレンダー・Tasks / Gmail / Google Drive / Slack / Discord / RSS / クリッピング / AI 議事録 / Zotero / Notion。カタログ外ツールの対応表つき）
 - 診断：Claude Code に「**接続チェックして**」と言えば [`connection-doctor`](./.claude/skills/connection-doctor/SKILL.md) skill がどこが繋がっていてどこが切れているかを表で報告します
 
 ### 4. 自分用に整える

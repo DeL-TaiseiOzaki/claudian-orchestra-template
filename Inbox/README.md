@@ -14,17 +14,19 @@ updated: 2026-01-01
 ## レイアウト（date-first）
 
 ```
-Inbox/{YYYY-MM-DD}/{daily,slack,code,mtgs,clippings,chat-logs,attachments}/
+Inbox/{YYYY-MM-DD}/{daily,slack,discord,code,mtgs,clippings,chat-logs,mail,attachments}/
 ```
 
 | source | 着地パス |
 |---|---|
 | daily | `Inbox/{date}/daily/daily.md`（GCal + GTasks 朝 capture） |
 | slack | `Inbox/{date}/slack/{channel}.md`（DM は `dm-{counterpart}.md`） |
+| discord | `Inbox/{date}/discord/{channel}.md`（bot 参加サーバのみ・skill は自作） |
 | code | `Inbox/{date}/code/code.md`（github-eod-capture） |
-| mtgs | `Inbox/{date}/mtgs/genspark-{slug}.md`（genspark 議事録） |
+| mtgs | `Inbox/{date}/mtgs/{slug}.md`（AI 議事録。Genspark は `genspark-{slug}.md`） |
 | clippings | `Inbox/{date}/clippings/{slug}.md`（Web クリップ） |
 | chat-logs | `Inbox/{date}/chat-logs/{provider}-{slug}.md`（ChatGPT / Claude 壁打ち） |
+| mail | `Inbox/{date}/mail/{slug}.md`（Gmail・**on-demand のみ**。定常 capture なし） |
 | attachments | `Inbox/{date}/attachments/…` |
 
 ## ライフサイクル

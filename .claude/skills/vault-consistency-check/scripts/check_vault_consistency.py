@@ -74,7 +74,7 @@ RESOLUTION_EXCLUDED_DIRS = {".git", ".trash", ".tmp", ".uv-cache"}
 INBOX_ROOT = "Inbox"
 INBOX_DATE_DIR_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 INBOX_KNOWN_SOURCE_DIRS = frozenset(
-    {"daily", "slack", "code", "mtgs", "clippings", "chat-logs", "attachments"}
+    {"daily", "slack", "discord", "code", "mtgs", "clippings", "chat-logs", "mail", "attachments"}
 )
 INBOX_STAGNATION_THRESHOLD_DAYS = 7
 DEFAULT_SCHEMA_RULES: dict[str, Any] = {
