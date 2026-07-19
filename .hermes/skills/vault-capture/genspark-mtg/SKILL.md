@@ -7,7 +7,7 @@ license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [vault, capture, genspark, meeting, cron, mymemory]
+    tags: [vault, capture, genspark, meeting, cron, vault-capture]
     related_skills: [obsidian]
 ---
 
@@ -35,7 +35,7 @@ MTG 終了＆Genspark 側の整理が済んだ会議を**できるだけ早く**
 > Genspark 側から `summary` / `user_notes` が返る場合のみ、その raw summary/notes も保存する
 > （Hermes 生成 summary で代替しない）。
 >
-> **Self-edit boundary**：**自己領域でも** `.hermes/skills/mymemory/genspark-mtg/SKILL.md` / `references/` / `config` を autonomous に編集してはならない。Hermes 自身の運用学習や仕様改訂提案も `Inbox/{YYYY-MM-DD}/clippings/hermes-obs-genspark-mtg.md` に observation/proposal note を作成する（必須 frontmatter は cross-territory と同じ、`source: "hermes:observation:genspark-mtg:<ISO8601>"`）。データ／学習 file 追記は例外（このスキルでは該当なし、`sidecar state file は持たない`方針）。詳細は [[.claude/rules/inbox-routing.md]] §7。
+> **Self-edit boundary**：**自己領域でも** `.hermes/skills/vault-capture/genspark-mtg/SKILL.md` / `references/` / `config` を autonomous に編集してはならない。Hermes 自身の運用学習や仕様改訂提案も `Inbox/{YYYY-MM-DD}/clippings/hermes-obs-genspark-mtg.md` に observation/proposal note を作成する（必須 frontmatter は cross-territory と同じ、`source: "hermes:observation:genspark-mtg:<ISO8601>"`）。データ／学習 file 追記は例外（このスキルでは該当なし、`sidecar state file は持たない`方針）。詳細は [[.claude/rules/inbox-routing.md]] §7。
 >
 > **single-writer / 冪等性**：宛先に **同名ファイルがあれば skip**（上書きしない）。
 > 既存ファイルは the user / Claude Code が curate した可能性があるため、Hermes は再書き込みしない。
@@ -50,7 +50,7 @@ MTG 終了＆Genspark 側の整理が済んだ会議を**できるだけ早く**
 - vault ルート解決順：
   1. `OBSIDIAN_VAULT_PATH`
   2. 未設定なら `HERMES_HOME` から親へ遡り、`CLAUDE.md` + `.obsidian*` + `Inbox/` を持つディレクトリを vault と認定。見つからなければ停止。
-- `gsk` は PATH 上にある前提（CLI 仕様は [[.hermes/skills/mymemory/genspark-slide/SKILL.md]]）。
+- `gsk` は PATH 上にある前提（CLI 仕様は [[.hermes/skills/vault-capture/genspark-slide/SKILL.md]]）。
 - Python を使う場合は `uv` を使う（`pip` 直接実行は禁止）。
 - Windows / WSL どちらでも forward slash 表記で OK。
 - **Windows cron / Git Bash pitfall**: Python `subprocess.run(["gsk", ...])` may not resolve the shell shim, and invoking the POSIX `gsk` shim via `bash -lc` from a non-ASCII vault path can fail before reaching the Node CLI. In Windows-hosted Hermes cron, prefer the Windows command shim when scripting: `C:/Users/<your-user>/AppData/Local/hermes/node/gsk.cmd meeting ...` (or a discovered `gsk.cmd` from PATH), while keeping output parsing unchanged. Also tolerate leading log lines such as `[INFO] Calling /meeting...` by scanning for the first valid JSON object, not the first `[` character.
@@ -242,6 +242,6 @@ hermes cron create "0 21 * * *" "Load genspark-mtg and run it for the vault as t
 - [[.claude/rules/vault-tagging.md]] — tag 体系（`genspark` vendor tag は本 skill で初登場）
 - [[.claude/rules/work-management.md]] — 割り振り先 `Work/{XXX}/meetings/` の標準命名
 - [[.claude/rules/language.md]] — 言語規約
-- [[.hermes/skills/mymemory/genspark-slide/SKILL.md]] — `gsk` CLI リファレンス
-- [[.hermes/skills/mymemory/slack-capture/SKILL.md]] — capture skill の structural 参照
+- [[.hermes/skills/vault-capture/genspark-slide/SKILL.md]] — `gsk` CLI リファレンス
+- [[.hermes/skills/vault-capture/slack-capture/SKILL.md]] — capture skill の structural 参照
 - [[Inbox/README.md]]

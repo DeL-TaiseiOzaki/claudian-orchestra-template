@@ -7,7 +7,7 @@ license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [vault, capture, clippings, chrome-extension, webhook, mymemory]
+    tags: [vault, capture, clippings, chrome-extension, webhook, vault-capture]
     related_skills: [defuddle, obsidian]
 ---
 
@@ -41,13 +41,13 @@ JSON を POST する（webhook 設定は `webhook-subscriptions` skill）。Herm
 - `content` のみ必須。`source` 既定は `web`、`captured_at` 既定は現在。
 - **チャット**：拡張側で会話を markdown 化して `content` に入れる（推奨）。
 - **一般 Web ページ**：`content` を作れない場合は `url` だけ送り、Hermes 側で
-  [[.hermes/skills/mymemory/defuddle/SKILL.md]] 等で本文 markdown を抽出してから `content` に詰める。
+  [[.hermes/skills/vault-capture/defuddle/SKILL.md]] 等で本文 markdown を抽出してから `content` に詰める。
 
 ## 書き込み（決定的・スクリプト）
 
 ```bash
 # 標準入力に上記 JSON を渡す。書き出したパスを stdout に返す。
-echo "$PAYLOAD_JSON" | python "${HERMES_HOME:-$HOME/.hermes}/skills/mymemory/clippings-capture/scripts/write_clipping.py"
+echo "$PAYLOAD_JSON" | python "${HERMES_HOME:-$HOME/.hermes}/skills/vault-capture/clippings-capture/scripts/write_clipping.py"
 ```
 
 - 出力先：`Inbox/{YYYY-MM-DD}/clippings/{slug}.md`（日付つき親フォルダが日付を持ち、ファイル名に日付 prefix は付けない。衝突時は `-2`, `-3` …で**上書きしない**）。
@@ -80,7 +80,7 @@ tags: ["clipping", "<source>", ...]
 cd "<vault root>"
 
 # 既に拡張から POST されている JSON ペイロードを再投入する場合（bash でも動作）
-echo "$PAYLOAD_JSON" | python "${HERMES_HOME:-$HOME/.hermes}/skills/mymemory/clippings-capture/scripts/write_clipping.py"
+echo "$PAYLOAD_JSON" | python "${HERMES_HOME:-$HOME/.hermes}/skills/vault-capture/clippings-capture/scripts/write_clipping.py"
 
 # または hermes 経由で skill 起動（webhook subscription 経由のリプレイ等）
 hermes chat -q "Load the clippings-capture skill and process the pending clipping payload (or the URL the user pastes inline) into Inbox/<today>/clippings/{slug}.md as RAW markdown." -s clippings-capture -Q --source claude-code
@@ -105,4 +105,4 @@ hermes chat -q "Load the clippings-capture skill and process the pending clippin
 
 - 取り込み先規約：[[Inbox/README.md]]
 - 境界：[[.claude/rules/agent-boundaries.md]]（capture / curate・single-writer）
-- 本文抽出：[[.hermes/skills/mymemory/defuddle/SKILL.md]]（一般 Web ページ）
+- 本文抽出：[[.hermes/skills/vault-capture/defuddle/SKILL.md]]（一般 Web ページ）

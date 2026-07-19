@@ -57,6 +57,6 @@ Genspark 議事録取り込みやって
 
 ## 6. 深掘り
 
-- [[.hermes/skills/mymemory/genspark-mtg/SKILL.md]] — capture skill 本体(recency 窓・冪等性・task_id 指定)
+- [[.hermes/skills/vault-capture/genspark-mtg/SKILL.md]] — capture skill 本体(recency 窓・冪等性・task_id 指定)
 - [[.claude/skills/mtg-prep/SKILL.md]] — 会議前の叩き台準備(こちらは Claude 側)
 - [[.claude/rules/inbox-routing.md]] §3.3 — genspark 議事録だけ「要約して meetings/ へ」の例外である理由

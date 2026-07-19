@@ -79,7 +79,7 @@ Thumbs.db
 # Calendar iCal secret feeds (private bearer token in URL — never commit; rotate if exposed)
 # Migrated 2026-06-16: was under .claude/skills/daily-briefing/_assets/ — moved to hermes side per
 # external-access-must-go-through-hermes principle ([[.claude/rules/agent-boundaries.md]] §6).
-.hermes/skills/mymemory/inbox-daily-capture/scripts/calendars.local.json
+.hermes/skills/vault-capture/inbox-daily-capture/scripts/calendars.local.json
 *.local.json
 .tmp_*.json
 .tmp_*.py
@@ -118,9 +118,9 @@ Thumbs.db
 .hermes/*_cache.json
 
 # Hermes — caches & vendored framework skill library (re-installable, not
-# authored here). Custom skills under .hermes/skills/mymemory/ ARE tracked.
+# authored here). Custom skills under .hermes/skills/vault-capture/ ARE tracked.
 .hermes/skills/*
-!.hermes/skills/mymemory/
+!.hermes/skills/vault-capture/
 .hermes/.update_check
 .hermes/.skills_prompt_snapshot.json
 .hermes/context_length_cache.yaml

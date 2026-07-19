@@ -29,7 +29,7 @@ description: Compose the day's root Daily note (Daily/{YYYY-MM-DD}.md) at mornin
 
 ### Step 2: 入力源を取得 = `Inbox/{date}/daily/daily.md` を読むだけ
 
-外部接続は **hermes が一手に引き受ける**原則（[[.claude/rules/agent-boundaries.md]] §6）。Claude 側で直接 ics fetch / Calendar MCP を叩かない。**Calendar・Tasks 共に `Inbox/{date}/daily/daily.md` の単一ソースから読む**。生成は hermes 側 [[.hermes/skills/mymemory/inbox-daily-capture/SKILL.md]] の責務（Calendar を ics 経由＋追加アカウントを gws 経由＋Tasks を list_tasks.py 経由で統合）。
+外部接続は **hermes が一手に引き受ける**原則（[[.claude/rules/agent-boundaries.md]] §6）。Claude 側で直接 ics fetch / Calendar MCP を叩かない。**Calendar・Tasks 共に `Inbox/{date}/daily/daily.md` の単一ソースから読む**。生成は hermes 側 [[.hermes/skills/vault-capture/inbox-daily-capture/SKILL.md]] の責務（Calendar を ics 経由＋追加アカウントを gws 経由＋Tasks を list_tasks.py 経由で統合）。
 
 ```bash
 # 既に hermes が capture 済みかチェック
@@ -63,7 +63,7 @@ ls "Inbox/${TODAY}/daily/daily.md"
 - [ ] {タスク名}{ 期日があれば （〜MM-DD）}
 ```
 
-**Genspark 議事録（join 取捨選択リマインダ）**（`### 🎙️ Genspark 議事録`）：今日の予定のうち **会議URL付き（= Genspark bot が join し得る）** のものを一覧し、「どれを文字起こしさせるかは **Genspark Web UI で取捨選択**」のリマインダを添える。**CLI では join を切り替えられない**ため、ここが人手の確認ポイント（[[.hermes/skills/mymemory/genspark-slide/SKILL.md]] §1A 参照）。取り込み自体は the user が `## 🤖 ジョブリスト` の「Genspark 議事録」を指示したときに [[.hermes/skills/mymemory/genspark-mtg/SKILL.md]] を on-demand 実行する（cron は廃止）。**ここで `gsk` 取得はしない**（Step 2 で得た予定データだけで一覧する）。
+**Genspark 議事録（join 取捨選択リマインダ）**（`### 🎙️ Genspark 議事録`）：今日の予定のうち **会議URL付き（= Genspark bot が join し得る）** のものを一覧し、「どれを文字起こしさせるかは **Genspark Web UI で取捨選択**」のリマインダを添える。**CLI では join を切り替えられない**ため、ここが人手の確認ポイント（[[.hermes/skills/vault-capture/genspark-slide/SKILL.md]] §1A 参照）。取り込み自体は the user が `## 🤖 ジョブリスト` の「Genspark 議事録」を指示したときに [[.hermes/skills/vault-capture/genspark-mtg/SKILL.md]] を on-demand 実行する（cron は廃止）。**ここで `gsk` 取得はしない**（Step 2 で得た予定データだけで一覧する）。
 
 ```markdown
 - HH:MM-HH:MM **{summary}**（会議URL: あり / なし）

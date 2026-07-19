@@ -67,7 +67,7 @@ NOTE_ROOTS = (
     "Archive",
 )
 SCAN_EXCLUDED_FILENAMES = {"README.md", "CLAUDE.md", "AGENTS.md"}
-SCAN_EXCLUDED_PREFIXES = ("Research/", "Others/zenn_blogs/")
+SCAN_EXCLUDED_PREFIXES = ("Research/",)
 # Wikilink resolution walks the WHOLE vault (broader than the content-scan scope)
 # so links to README/CLAUDE/root files/non-md assets are not false-flagged.
 RESOLUTION_EXCLUDED_DIRS = {".git", ".trash", ".tmp", ".uv-cache"}
@@ -194,7 +194,7 @@ DEFAULT_SCHEMA_RULES: dict[str, Any] = {
         "Meta",
         "Archive",
     ],
-    "structure_submodule_excludes": ["Research", "Others/zenn_blogs"],
+    "structure_submodule_excludes": ["Research"],
     "structure_nonmd_allowed": {
         "allowed_path_prefixes": ["Inbox/attachments"],
         "allowed_dir_names": ["_assets", "sources", "attachments"],
@@ -1022,7 +1022,7 @@ def check_submodule_drift(vault_root: Path) -> list[Finding]:
         elif prefix == "U":
             findings.append(Finding("ERROR", "Submodule dirty / commit drift", rel, finding_message("submodule で merge conflict が発生しています。", "競合を解消してから再実行してください")))
     for line in porcelain.stdout.splitlines():
-        match = re.match(r"^[ MARCUD?!]{2}\s+(Research|Others/zenn_blogs)$", line)
+        match = re.match(r"^[ MARCUD?!]{2}\s+(Research)$", line)
         if not match:
             continue
         findings.append(Finding("WARN", "Submodule dirty / commit drift", match.group(1), finding_message("親 vault に submodule pointer の未コミット変更があります。", "意図した pointer bump か確認して必要なら commit してください")))

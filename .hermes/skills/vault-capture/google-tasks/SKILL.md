@@ -53,7 +53,7 @@ missing, `list_tasks.py` exits non-zero with
 
 **Do NOT edit the bundled `google-workspace` SCOPES** — that file is gitignored /
 re-installable, so the edit is lost on reinstall. Instead use the tracked
-[[.hermes/skills/mymemory/google-auth/SKILL.md]] authorizer, which already
+[[.hermes/skills/vault-capture/google-auth/SKILL.md]] authorizer, which already
 includes `tasks.readonly` in its scope union and writes the SAME shared token:
 
 1. In Google Cloud Console, enable the **Google Tasks API** for the OAuth
@@ -63,7 +63,7 @@ includes `tasks.readonly` in its scope union and writes the SAME shared token:
 3. Authorize with the full scope union (base + tasks) in one consent:
 
    ```bash
-   GAUTH="python ${HERMES_HOME:-$HOME/.hermes}/skills/mymemory/google-auth/scripts/authorize.py"
+   GAUTH="python ${HERMES_HOME:-$HOME/.hermes}/skills/vault-capture/google-auth/scripts/authorize.py"
    $GAUTH --auth-url      # open URL, authorize, copy the redirect URL (or code)
    $GAUTH --auth-code "<code-or-redirect-url>"
    $GAUTH --check         # AUTHENTICATED + lists granted scopes incl. tasks.readonly
@@ -80,7 +80,7 @@ the one superset token. Future scopes: add them to `google-auth` (its
 ### Bundled read-only helper
 
 ```bash
-GTASKS="python ${HERMES_HOME:-$HOME/.hermes}/skills/mymemory/google-tasks/scripts/list_tasks.py"
+GTASKS="python ${HERMES_HOME:-$HOME/.hermes}/skills/vault-capture/google-tasks/scripts/list_tasks.py"
 
 # All incomplete tasks across every list
 $GTASKS
@@ -172,7 +172,7 @@ gws tasks tasks list --params '{"tasklist":"@default","showCompleted":false}'
 ```
 
 For Calendar + Tasks together, see
-`mymemory/google-auth/references/gws-cli-calendar-tasks.md`.
+`vault-capture/google-auth/references/gws-cli-calendar-tasks.md`.
 
 
 ### Arguments
@@ -208,9 +208,9 @@ than failing the whole briefing.
 
 | stderr message | Fix |
 |----------------|-----|
-| `no google-workspace token ...` | Store the client secret, then run [[.hermes/skills/mymemory/google-auth/SKILL.md]]. |
-| `token lacks the tasks.readonly scope ...` | Re-run `mymemory/google-auth/scripts/authorize.py --auth-url` → `--auth-code` to consent to the full union. |
-| `token is invalid ...` | Re-run [[.hermes/skills/mymemory/google-auth/SKILL.md]]. |
+| `no google-workspace token ...` | Store the client secret, then run [[.hermes/skills/vault-capture/google-auth/SKILL.md]]. |
+| `token lacks the tasks.readonly scope ...` | Re-run `vault-capture/google-auth/scripts/authorize.py --auth-url` → `--auth-code` to consent to the full union. |
+| `token is invalid ...` | Re-run [[.hermes/skills/vault-capture/google-auth/SKILL.md]]. |
 | `failed to query Google Tasks: ... 403 ...` | Enable the Google Tasks API in Cloud Console, or scope/consent still missing. |
 
 ## Dependencies

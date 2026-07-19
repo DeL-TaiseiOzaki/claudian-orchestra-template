@@ -1,6 +1,6 @@
-﻿# .hermes/skills/mymemory/ — このVault専用の自作 Hermes スキル（git 追跡）
+﻿# .hermes/skills/vault-capture/ — このVault専用の自作 Hermes スキル（git 追跡）
 
-bundled（同梱）スキルは `.gitignore` で除外しているが、**この `mymemory/` カテゴリだけは版管理対象**
+bundled（同梱）スキルは `.gitignore` で除外しているが、**この `vault-capture/` カテゴリだけは版管理対象**
 （制御プレーン＝<your-vault> で 3 エージェントの宣言的設定を管理する方針）。
 
 Hermes は `~/.hermes/skills/**/SKILL.md` を自動スキャンするので、ここに置けば登録される（manifest 不要）。

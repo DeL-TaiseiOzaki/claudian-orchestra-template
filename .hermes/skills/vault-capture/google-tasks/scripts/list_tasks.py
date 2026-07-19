@@ -5,7 +5,7 @@ Reuses the SAME OAuth credentials/token managed by the bundled
 ``google-workspace`` skill (``~/.hermes/google_token.json``). No separate
 authentication is required — but the existing token must include the
 ``tasks.readonly`` scope. If it does not, re-run the tracked
-``mymemory/google-auth/scripts/authorize.py`` flow (see SKILL.md).
+``vault-capture/google-auth/scripts/authorize.py`` flow (see SKILL.md).
 
 Read-only: this script never creates, updates, or deletes tasks.
 
@@ -84,7 +84,7 @@ def get_credentials():
     if not TOKEN_PATH.exists():
         _fail(
             f"no google-workspace token at {TOKEN_PATH} — run "
-            "mymemory/google-auth/scripts/authorize.py after storing the client secret"
+            "vault-capture/google-auth/scripts/authorize.py after storing the client secret"
         )
 
     from google.oauth2.credentials import Credentials
@@ -94,7 +94,7 @@ def get_credentials():
     if not any("tasks" in s for s in stored_scopes):
         _fail(
             "token lacks the tasks.readonly scope — re-run "
-            "mymemory/google-auth/scripts/authorize.py --auth-url then --auth-code"
+            "vault-capture/google-auth/scripts/authorize.py --auth-url then --auth-code"
         )
 
     try:
@@ -110,7 +110,7 @@ def get_credentials():
         _fail(f"credential load/refresh failed: {e}")
 
     if not creds.valid:
-        _fail("token is invalid — re-run mymemory/google-auth/scripts/authorize.py")
+        _fail("token is invalid — re-run vault-capture/google-auth/scripts/authorize.py")
     return creds
 
 

@@ -7,7 +7,7 @@ license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [vault, capture, github, code, cron, mymemory]
+    tags: [vault, capture, github, code, cron, vault-capture]
     related_skills: [obsidian]
 ---
 
@@ -221,6 +221,6 @@ hermes cron create "30 21 * * *" "Maps/Code-Map.md に載っている GitHub リ
 - [[.claude/rules/agent-boundaries.md]] §1（control-plane boundary）
 - [[.claude/rules/vault-metadata.md]]
 - [[Maps/Code-Map.md]] 追跡ブランチ規則
-- [[.hermes/skills/mymemory/genspark-mtg/SKILL.md]] / [[.hermes/skills/mymemory/slack-capture/SKILL.md]]（idiom 参考）
+- [[.hermes/skills/vault-capture/genspark-mtg/SKILL.md]] / [[.hermes/skills/vault-capture/slack-capture/SKILL.md]]（idiom 参考）
 - `references/code-map-parsing.md`
 - `references/github-mcp-fallbacks.md`

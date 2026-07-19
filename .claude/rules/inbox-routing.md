@@ -1,7 +1,7 @@
 # Inbox ルーティングルール
 
 外部ソース → **hermes** → **`Inbox/{YYYY-MM-DD}/{source}/`** → **Claude が当日分を Daily に集約** → EOD に Main DB（Work / Others / Research）へ配分、という <your-vault> 唯一の取り込み導線を定義する。
-このファイルは routing の **single source of truth**。Hermes-side capture skills（[[.hermes/skills/mymemory/]]）はここを実装する。
+このファイルは routing の **single source of truth**。Hermes-side capture skills（[[.hermes/skills/vault-capture/]]）はここを実装する。
 
 > 設計原則（2026-06-15 **日付ファースト＋Daily ハブ**へ再アーキ）：
 > 1. **必ず Inbox を経由**する（hermes は直接 curated／Main DB に書かない）。
@@ -137,7 +137,7 @@ Daily に集約した内容から、durable なものを Main DB へ蒸留・配
 
 frontmatter は §2 の slack 行を参照。
 
-> **廃止（2026-06-15）**：channel→project 対応表（`slack-channel-map.yaml`）・DM 振り分け（`slack-route` skill）・`Inbox/slack/_unsorted/`・hermes auto-route。Slack は **全 channel を Inbox に capture するだけ**で、宛先判断は Daily 集約／EOD 配分で Claude + ユーザーが行う。旧 skill / 対応表は `Archive/.hermes/skills/mymemory/` へ退避（provenance 保持）。
+> **廃止（2026-06-15）**：channel→project 対応表（`slack-channel-map.yaml`）・DM 振り分け（`slack-route` skill）・`Inbox/slack/_unsorted/`・hermes auto-route。Slack は **全 channel を Inbox に capture するだけ**で、宛先判断は Daily 集約／EOD 配分で Claude + ユーザーが行う。旧 skill / 対応表は `Archive/.hermes/skills/vault-capture/` へ退避（provenance 保持）。
 
 ---
 
@@ -175,4 +175,4 @@ frontmatter は §2 の slack 行を参照。
 - [[.claude/rules/agent-boundaries.md]] §3 capture → Daily 集約 → curate
 - [[.claude/rules/daily-operations.md]] — Daily ハブ集約フロー
 - [[.claude/rules/vault-metadata.md]] — frontmatter スキーマ
-- [[.hermes/skills/mymemory/]] — Hermes 側 capture skills（[[.hermes/skills/mymemory/inbox-daily-capture/SKILL.md]] 等）
+- [[.hermes/skills/vault-capture/]] — Hermes 側 capture skills（[[.hermes/skills/vault-capture/inbox-daily-capture/SKILL.md]] 等）

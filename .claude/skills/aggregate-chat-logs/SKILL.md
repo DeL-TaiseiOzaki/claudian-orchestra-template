@@ -81,7 +81,7 @@ Hermes（Chrome 拡張 AI Exporter）が `Inbox/{date}/chat-logs/{provider}-{slu
 - [[.claude/skills/eod-distill/SKILL.md]]（durable insight を Main DB へ配分）
 - [[.claude/skills/knowledge-capture/SKILL.md]]（学びとして昇華）
 - [[.claude/skills/others-writer/SKILL.md]]（Ideas / Learning ノート作成）
-- [[.hermes/skills/mymemory/clippings-capture/SKILL.md]]（capture 経路）
+- [[.hermes/skills/vault-capture/clippings-capture/SKILL.md]]（capture 経路）
 
 ## 関連
 

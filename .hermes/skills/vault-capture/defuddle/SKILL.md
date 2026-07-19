@@ -7,7 +7,7 @@ license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [vault, capture, web, defuddle, mymemory]
+    tags: [vault, capture, web, defuddle, vault-capture]
     related_skills: [clippings-capture]
 ---
 
@@ -21,7 +21,7 @@ metadata:
 
 | 経路 | 呼び出し方 | 説明 |
 |---|---|---|
-| 内部 | [[.hermes/skills/mymemory/clippings-capture/SKILL.md]] が `content` 欠落ペイロードを受けたとき | URL → markdown 抽出 → `write_clipping.py` の `content` に詰める |
+| 内部 | [[.hermes/skills/vault-capture/clippings-capture/SKILL.md]] が `content` 欠落ペイロードを受けたとき | URL → markdown 抽出 → `write_clipping.py` の `content` に詰める |
 | Claude → hermes pull | `hermes chat -q "... defuddle ..." -s defuddle` | on-demand で 1 URL を clean fetch して stdout で返す |
 | 単独 capture | clippings-capture 経由（本スキルは抽出だけ担う） | `Inbox/{YYYY-MM-DD}/clippings/{slug}.md` に書く |
 
@@ -82,6 +82,6 @@ hermes chat -q "Fetch <URL> as clean markdown via 'defuddle parse <URL> --md' an
 
 ## 関連
 
-- [[.hermes/skills/mymemory/clippings-capture/SKILL.md]]（内部呼び出し元）
+- [[.hermes/skills/vault-capture/clippings-capture/SKILL.md]]（内部呼び出し元）
 - [[.claude/rules/agent-boundaries.md]] §6 接続所有
 - [[.claude/rules/inbox-routing.md]]（clippings 取り込みの全体像）

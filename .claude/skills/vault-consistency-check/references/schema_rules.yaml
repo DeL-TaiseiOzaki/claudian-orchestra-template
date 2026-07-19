@@ -188,7 +188,6 @@ structure_scan_roots:
 # (c)/(d) submodule excludes: .gitmodules から読めない場合の fallback。実装は .gitmodules を優先する。
 structure_submodule_excludes:
   - Research
-  - Others/zenn_blogs
 
 # (c) Non-md placement: .md 以外で許容するファイルの判定材料
 structure_nonmd_allowed:

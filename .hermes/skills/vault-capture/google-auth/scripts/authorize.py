@@ -20,7 +20,7 @@ As a result:
   * Our own ``list_tasks.py`` works too, because the token now also grants
     the Tasks scope.
   * Reinstalling the bundled skill does not break anything — this file lives
-    in the tracked ``mymemory`` area and is never overwritten.
+    in the tracked ``vault-capture`` area and is never overwritten.
 
 This mirrors the bundled ``setup.py`` OAuth flow EXACTLY (google_auth_oauthlib
 ``Flow`` with a ``http://localhost:1`` redirect, PKCE auto-generated code
@@ -76,7 +76,7 @@ BASE_SCOPES = [
 ]
 
 EXTRA_SCOPES = [
-    # Google Tasks (read-only) — consumed by mymemory/google-tasks/list_tasks.py
+    # Google Tasks (read-only) — consumed by vault-capture/google-tasks/list_tasks.py
     "https://www.googleapis.com/auth/tasks.readonly",
 ]
 

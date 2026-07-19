@@ -1,6 +1,6 @@
 # Code-Map.md parser spec
 
-[[.hermes/skills/mymemory/github-eod-capture/SKILL.md]] §3 で参照される `Maps/Code-Map.md` の parser 契約。
+[[.hermes/skills/vault-capture/github-eod-capture/SKILL.md]] §3 で参照される `Maps/Code-Map.md` の parser 契約。
 
 ## Goal
 
@@ -76,5 +76,5 @@
 
 ## 関連
 
-- [[.hermes/skills/mymemory/github-eod-capture/SKILL.md]] §3 / §4
+- [[.hermes/skills/vault-capture/github-eod-capture/SKILL.md]] §3 / §4
 - [[Maps/Code-Map.md]] 追跡ブランチ規則

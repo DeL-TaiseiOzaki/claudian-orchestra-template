@@ -15,7 +15,7 @@ Hermes（Chrome 拡張 → webhook）が `Inbox/{date}/clippings/{slug}.md` に 
 
 - 走査: `Inbox/{YYYY-MM-DD}/clippings/*.md`
 - frontmatter: `source: "web:url:..."` / `"chatgpt:..."` / `"claude:..."`, `url`, `fetched_at`, `tags`
-- 本文: clean markdown（[[.hermes/skills/mymemory/defuddle/SKILL.md]] 抽出）
+- 本文: clean markdown（[[.hermes/skills/vault-capture/defuddle/SKILL.md]] 抽出）
 
 ## 出力（Daily 内の挿入先）
 
@@ -73,8 +73,8 @@ Hermes（Chrome 拡張 → webhook）が `Inbox/{date}/clippings/{slug}.md` に 
 ## 他 skill との連携
 
 - [[.claude/skills/eod-distill/SKILL.md]]（durable なものを配分）
-- [[.hermes/skills/mymemory/clippings-capture/SKILL.md]]（capture 側）
-- [[.hermes/skills/mymemory/defuddle/SKILL.md]]（本文抽出）
+- [[.hermes/skills/vault-capture/clippings-capture/SKILL.md]]（capture 側）
+- [[.hermes/skills/vault-capture/defuddle/SKILL.md]]（本文抽出）
 
 ## 関連
 

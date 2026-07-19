@@ -44,9 +44,9 @@ personal knowledge base の**一番の躓きポイントは外部ツールとの
 3. **手順** — 番号付き。コピペで進められる粒度
 4. **動作確認** — pull(即時)と push(capture → Inbox)の両方を確認
 5. **よくある躓き** — 実運用で踏んだ失敗と対処
-6. **深掘り** — 対応する Hermes capture skill(`.hermes/skills/mymemory/`)へのリンク
+6. **深掘り** — 対応する Hermes capture skill(`.hermes/skills/vault-capture/`)へのリンク
 
 ## 使わない接続について
 
-- 対応する capture skill(`.hermes/skills/mymemory/{skill}/`)ごと削除して構いません
+- 対応する capture skill(`.hermes/skills/vault-capture/{skill}/`)ごと削除して構いません
 - `Daily` のジョブリストからも該当項目が消えるよう、Claude Code に「○○は使わないので外して」と言えば整理してくれます

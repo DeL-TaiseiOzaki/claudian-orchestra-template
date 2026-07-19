@@ -94,6 +94,6 @@ Slack 取り込みやって
 
 ## 6. 深掘り
 
-- [[.hermes/skills/mymemory/slack-capture/SKILL.md]] — capture skill 本体(Bot / User トークンの使い分け・検索クエリの組み方)
-- 複数 workspace を情報源にしたい → [[.hermes/skills/mymemory/slack-capture/references/multi-workspace-user-token-capture.md]]
+- [[.hermes/skills/vault-capture/slack-capture/SKILL.md]] — capture skill 本体(Bot / User トークンの使い分け・検索クエリの組み方)
+- 複数 workspace を情報源にしたい → [[.hermes/skills/vault-capture/slack-capture/references/multi-workspace-user-token-capture.md]]
 - [[.claude/rules/inbox-routing.md]] §5 — Slack capture の設計(なぜ channel→project の自動振り分けをしないか)

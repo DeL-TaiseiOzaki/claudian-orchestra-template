@@ -64,4 +64,4 @@ approvals:
 #   3. Verify with `hermes chat -q "list my Google Tasks"` — that exercises the pull path.
 #
 # Capture skills (push path: external → Inbox/{date}/{source}/) live under
-# `.hermes/skills/mymemory/` and are tracked in git.
+# `.hermes/skills/vault-capture/` and are tracked in git.

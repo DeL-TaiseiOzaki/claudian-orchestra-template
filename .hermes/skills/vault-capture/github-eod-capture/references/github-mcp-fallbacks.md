@@ -1,6 +1,6 @@
 # GitHub MCP tool fallback table
 
-[[.hermes/skills/mymemory/github-eod-capture/SKILL.md]] §1 で参照される、GitHub MCP の tool 名前提を環境差分許容にするための fallback 表。
+[[.hermes/skills/vault-capture/github-eod-capture/SKILL.md]] §1 で参照される、GitHub MCP の tool 名前提を環境差分許容にするための fallback 表。
 
 ## 原則
 
@@ -52,4 +52,4 @@ repo:your-org/proj-a-repo is:issue updated:>=2026-06-06T00:00:00+09:00
 
 ## 関連
 
-- [[.hermes/skills/mymemory/github-eod-capture/SKILL.md]] §5
+- [[.hermes/skills/vault-capture/github-eod-capture/SKILL.md]] §5

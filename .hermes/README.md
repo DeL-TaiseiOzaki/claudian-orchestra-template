@@ -6,13 +6,13 @@ What's tracked here:
 
 - `config.yaml` — vault-specific deltas from the upstream Hermes defaults (MCP servers, plugins, approval gates). Secrets stay out of this file.
 - `SOUL.md` — Hermes' persona / system prompt for this vault.
-- `skills/mymemory/` — the **MY_MEMORY-specific capture skills** Hermes runs (Calendar / Tasks / Slack / GitHub / Genspark / Clippings). Each skill has its own `SKILL.md` describing trigger conditions and the Inbox landing path.
+- `skills/vault-capture/` — the **vault-specific capture skills** Hermes runs (Calendar / Tasks / Slack / GitHub / Genspark / Clippings). Each skill has its own `SKILL.md` describing trigger conditions and the Inbox landing path.
 
 What's NOT tracked (see [`.gitignore`](../.gitignore)):
 
 - Runtime state (`state.db`, `cron/`, `sessions/`, `gateway_state.json`, …)
 - Auth tokens & secrets (`.env`, `google_token.json`, `gws_key.json`, `mcp-tokens/`, …)
-- Vendored upstream skill library (`skills/*` other than `skills/mymemory/`)
+- Vendored upstream skill library (`skills/*` other than `skills/vault-capture/`)
 - Caches & logs
 
 ## Setup (quick)
@@ -23,14 +23,14 @@ What's NOT tracked (see [`.gitignore`](../.gitignore)):
 2. Copy this `config.yaml` into your `${HERMES_HOME}` (default `~/.hermes/`) and merge with the defaults Hermes creates.
 3. Authenticate the integrations you'll use:
    - Slack: `hermes slack add-workspace`
-   - Google Workspace (Calendar / Tasks): set up the `gws` CLI (see [`skills/mymemory/google-auth/`](skills/mymemory/google-auth/SKILL.md)).
+   - Google Workspace (Calendar / Tasks): set up the `gws` CLI (see [`skills/vault-capture/google-auth/`](skills/vault-capture/google-auth/SKILL.md)).
    - Notion MCP: OAuth via the Notion MCP endpoint.
    - GitHub: export `GITHUB_PERSONAL_ACCESS_TOKEN` so the GitHub MCP can use it.
 4. Verify with a pull query:
    ```bash
    hermes chat -q "list my Google Tasks"
    ```
-5. Try a capture skill — for example: `hermes skill run mymemory/inbox-daily-capture` should drop `Inbox/{today}/daily/daily.md` into the vault.
+5. Try a capture skill — for example: `hermes skill run vault-capture/inbox-daily-capture` should drop `Inbox/{today}/daily/daily.md` into the vault.
 
 ## Why Hermes (and not Claude Code) owns the external connections
 

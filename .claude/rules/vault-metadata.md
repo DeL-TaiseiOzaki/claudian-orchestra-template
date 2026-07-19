@@ -151,11 +151,11 @@ archived_from: "Work/PROJ_A/logs/2026-01-15.md"     # 元パス（provenance）
 
 対象 capture skills（Hermes 側、[[.claude/rules/inbox-routing.md]] §2）：
 
-- [[.hermes/skills/mymemory/inbox-daily-capture/SKILL.md]] → `Inbox/{date}/daily/daily.md`
-- [[.hermes/skills/mymemory/slack-capture/SKILL.md]] → `Inbox/{date}/slack/{channel}.md`（DM は `dm-{counterpart}.md`、複数 workspace は `{workspace}-{channel}.md`）
-- [[.hermes/skills/mymemory/genspark-mtg/SKILL.md]] → `Inbox/{date}/mtgs/genspark-{slug}.md`（割り振りは curate で）
-- [[.hermes/skills/mymemory/github-eod-capture/SKILL.md]] → `Inbox/{date}/code/code.md`
-- [[.hermes/skills/mymemory/clippings-capture/SKILL.md]] → `Inbox/{date}/clippings/{slug}.md`
+- [[.hermes/skills/vault-capture/inbox-daily-capture/SKILL.md]] → `Inbox/{date}/daily/daily.md`
+- [[.hermes/skills/vault-capture/slack-capture/SKILL.md]] → `Inbox/{date}/slack/{channel}.md`（DM は `dm-{counterpart}.md`、複数 workspace は `{workspace}-{channel}.md`）
+- [[.hermes/skills/vault-capture/genspark-mtg/SKILL.md]] → `Inbox/{date}/mtgs/genspark-{slug}.md`（割り振りは curate で）
+- [[.hermes/skills/vault-capture/github-eod-capture/SKILL.md]] → `Inbox/{date}/code/code.md`
+- [[.hermes/skills/vault-capture/clippings-capture/SKILL.md]] → `Inbox/{date}/clippings/{slug}.md`
 - AI Exporter / Web Clipper（ブラウザ拡張 + Local REST API） → `Inbox/{date}/chat-logs/{provider}-{slug}.md`（curate 時は `source: chat:<provider>:<id>` に正規化）
 
 **移行ルール**：curated 領域（`Work/`・`Others/`・`Research/`・`Daily/`・`Maps/`）へ

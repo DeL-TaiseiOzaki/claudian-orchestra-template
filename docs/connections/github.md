@@ -72,6 +72,6 @@ GitHub EOD 取り込みやって
 
 ## 6. 深掘り
 
-- [[.hermes/skills/mymemory/github-eod-capture/SKILL.md]] — capture skill 本体(取得ロジック・冪等性・MCP tool 名のフォールバック)
+- [[.hermes/skills/vault-capture/github-eod-capture/SKILL.md]] — capture skill 本体(取得ロジック・冪等性・MCP tool 名のフォールバック)
 - [[.claude/skills/hermes-query/SKILL.md]] — pull 経路の呼び出し方
 - [[.claude/rules/agent-boundaries.md]] §6 — なぜ PAT は Hermes だけが持つのか

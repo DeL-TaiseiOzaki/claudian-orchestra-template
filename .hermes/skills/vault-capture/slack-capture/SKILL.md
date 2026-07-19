@@ -7,7 +7,7 @@ license: MIT
 platforms: [windows, linux, macos]
 metadata:
   hermes:
-    tags: [vault, slack, capture, mymemory]
+    tags: [vault, slack, capture, vault-capture]
     related_skills: [obsidian]
 ---
 

@@ -7,7 +7,7 @@ license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [vault, capture, calendar, google-tasks, cron, mymemory]
+    tags: [vault, capture, calendar, google-tasks, cron, vault-capture]
     related_skills: [google-workspace, google-tasks, obsidian]
 ---
 
@@ -42,7 +42,7 @@ Google Tasks の未完了タスクを取得し、**生のまま** `Inbox/{YYYY-M
 Calendar の基本経路は **限定公開 ics URL の直 fetch** に一本化している(OAuth 不要・依存が少なく壊れにくい。hermes-owned HTTP source として [[.claude/rules/agent-boundaries.md]] §1.1 push 表に整合)。
 
 ```bash
-uv run "${HERMES_HOME:-$HOME/.hermes}/skills/mymemory/inbox-daily-capture/scripts/fetch_calendar_ics.py" --format md
+uv run "${HERMES_HOME:-$HOME/.hermes}/skills/vault-capture/inbox-daily-capture/scripts/fetch_calendar_ics.py" --format md
 ```
 
 - 設定ファイル `scripts/calendars.local.json`(**`.gitignore` 済み**・限定公開 ics URL を格納)に取得したいカレンダーを列挙する(複数可。書式は [[docs/connections/google-calendar-tasks.md]] 経路 A 参照)。
@@ -92,7 +92,7 @@ gws calendar events list --params '{"calendarId":"primary","timeMin":"'"${TODAY}
 ```bash
 HERMES_VENV_PY="$(dirname "$(command -v hermes 2>/dev/null || echo)")/python"
 [ -x "$HERMES_VENV_PY" ] || HERMES_VENV_PY="$HOME/AppData/Local/hermes/hermes-agent/venv/Scripts/python.exe"  # Windows fallback
-GTASKS="$HERMES_VENV_PY ${HERMES_HOME:-$HOME/.hermes}/skills/mymemory/google-tasks/scripts/list_tasks.py"
+GTASKS="$HERMES_VENV_PY ${HERMES_HOME:-$HOME/.hermes}/skills/vault-capture/google-tasks/scripts/list_tasks.py"
 $GTASKS   # 未完了タスクを JSON [{title, due, list, status}] で取得
 ```
 
@@ -100,7 +100,7 @@ $GTASKS   # 未完了タスクを JSON [{title, due, list, status}] で取得
 - 出力 JSON を「✅ Google Tasks」節に写す(**読み取りのみ**・vault で新規起票しない)。
 - **非ゼロ終了**(スコープ未付与・未認証等)なら、stderr の 1 行を使って
   `<!-- google-tasks unavailable: {message} -->` を残してスキップ(briefing 全体は止めない)。
-- 初回は **tasks.readonly スコープ追加+再認証**が必要:手順は [[.hermes/skills/mymemory/google-tasks/SKILL.md]]。
+- 初回は **tasks.readonly スコープ追加+再認証**が必要:手順は [[.hermes/skills/vault-capture/google-tasks/SKILL.md]]。
 
 ### 4. 生 markdown を書き出し
 - 下記フォーマットで `{vault}/Inbox/{today}/daily/daily.md` を**新規作成**(file tools で絶対パス書き込み)。

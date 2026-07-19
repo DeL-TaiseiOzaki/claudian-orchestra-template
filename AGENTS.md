@@ -22,7 +22,7 @@ This file is the contract for Codex and other non-Claude agents. The Claude Code
 
 | Tool | Purpose | Use in Codex |
 |---|---|---|
-| Genspark CLI | AI meeting transcripts / slide generation (separate contract) | Follow [[.hermes/skills/mymemory/genspark-slide/SKILL.md]] |
+| Genspark CLI | AI meeting transcripts / slide generation (separate contract) | Follow [[.hermes/skills/vault-capture/genspark-slide/SKILL.md]] |
 | GPT Image | Image generation | Codex native tool |
 
 > **GitHub MCP is owned by Hermes** (PAT lives only on Hermes). Codex does NOT connect to GitHub MCP directly. When cross-repo context is needed, either get it in the brief, or have Claude Code fetch it via Hermes (pull = `hermes chat -q` / push = `Inbox/{date}/code/`). See [[.claude/rules/agent-boundaries.md]] §6.

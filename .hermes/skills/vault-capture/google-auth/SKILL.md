@@ -28,14 +28,14 @@ This skill provides a **tracked** authorization entry point
   consent screen.
 - Writes the **same** shared token file `~/.hermes/google_token.json` in the
   **same** `authorized_user` JSON shape the bundled skill expects.
-- **Survives bundled reinstalls** (it lives in `mymemory/`, which is tracked
+- **Survives bundled reinstalls** (it lives in `vault-capture/`, which is tracked
   and never overwritten).
 
 Because the shared token becomes a strict **superset**:
 
 - The bundled `google_api.py` (calendar / gmail / drive / sheets / docs /
   contacts) keeps working unchanged.
-- `mymemory/google-tasks/list_tasks.py` works because the token also grants the
+- `vault-capture/google-tasks/list_tasks.py` works because the token also grants the
   Tasks scope.
 
 ## Canonical scope set
@@ -85,18 +85,18 @@ the vault needs in one consent:
 
 ```bash
 # 1. Print the consent URL (covers base + extra scopes). Open it in a browser.
-python .hermes/skills/mymemory/google-auth/scripts/authorize.py --auth-url
+python .hermes/skills/vault-capture/google-auth/scripts/authorize.py --auth-url
 
 # 2. Authorize in the browser. You land on a localhost page that fails to load
 #    (expected) — copy the FULL redirect URL from the address bar, or just the
 #    `code` value, and exchange it:
-python .hermes/skills/mymemory/google-auth/scripts/authorize.py --auth-code "<paste code OR full redirect URL>"
+python .hermes/skills/vault-capture/google-auth/scripts/authorize.py --auth-code "<paste code OR full redirect URL>"
 
 # 3. Verify: prints AUTHENTICATED and the granted scope list.
-python .hermes/skills/mymemory/google-auth/scripts/authorize.py --check
+python .hermes/skills/vault-capture/google-auth/scripts/authorize.py --check
 
 # Revoke + delete the shared token if needed:
-python .hermes/skills/mymemory/google-auth/scripts/authorize.py --revoke
+python .hermes/skills/vault-capture/google-auth/scripts/authorize.py --revoke
 ```
 
 Pasting the **full redirect URL** in step 2 is recommended: it lets the script
@@ -138,6 +138,6 @@ Key pitfalls:
 
 ## Related
 
-- `mymemory/google-tasks` — consumes the `tasks.readonly` scope this grants.
+- `vault-capture/google-tasks` — consumes the `tasks.readonly` scope this grants.
 - bundled `google-workspace` — calendar/gmail/drive; keeps working off the same
   superset token.

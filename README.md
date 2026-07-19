@@ -8,11 +8,8 @@
 
 ## これは何
 
-Zenn 記事「**続：AI 時代のタスク管理を考える．Claudian orchestra**」で紹介した **MY_MEMORY** という個人 vault の **scaffold（骨組み）だけを公開**したものです．
+**personal knowledge base（PKB）を 3 つの AI エージェントと一緒に運用するための vault テンプレート**です．**Markdown のフォルダ構造**・**3 エージェントの契約（`CLAUDE.md` / `AGENTS.md` / `.hermes/`）**・**運用ルール（`.claude/rules/`）**・**スキル群（`.claude/skills/`）**・**ノートテンプレ（`Templates/`）** で構成されています．clone してそのまま Obsidian で開けば，自分の PKB として使い始められます．
 
-クライアント名・個人情報・実コンテンツはすべて取り除き，**Markdown のフォルダ構造**・**3 エージェントの契約（`CLAUDE.md` / `AGENTS.md` / `.hermes/`）**・**運用ルール（`.claude/rules/`）**・**スキル群（`.claude/skills/`）**・**ノートテンプレ（`Templates/`）** だけを残しています．clone してそのまま Obsidian で開けば，自分版の "Claudian orchestra" を立ち上げられます．
-
-- 記事本文: [続：AI 時代のタスク管理を考える．Claudian orchestra](https://zenn.dev/mkj/articles/claudian-orchestra_20260616)（公開後）
 - 設計思想: Karpathy の "LLM wiki"・Google の Open Knowledge Format（OKF）・PKM の Zettelkasten 伝統と整合
 - フォーマット: **Just markdown / Just files / Just YAML frontmatter**（OKF 整合）．プラットフォーム非依存．
 
@@ -20,7 +17,7 @@ Zenn 記事「**続：AI 時代のタスク管理を考える．Claudian orchest
 
 ## アーキテクチャ概要
 
-![Claudian Orchestra architecture — Obsidian Workspace (MY_MEMORY Vault) + Claude Code Orchestra (Claude Code / Codex / Hermes) + External Sources](assets/architecture.png)
+![Architecture — Obsidian Workspace (your vault) + Agent Orchestra (Claude Code / Codex / Hermes) + External Sources](assets/architecture.png)
 
 *Vault そのものを共有メモリに、3 エージェント（Claude Code / Codex / Hermes）がその上で協調する。左＝Obsidian Workspace、中央＝Claude Code Orchestra、右＝External Sources。*
 
@@ -79,7 +76,7 @@ Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わ
 - `Work/PROJ_A/` を実際の案件コード（例：`Work/MYCLIENT/`）にリネーム．`.claude/rules/work-management.md` の対応表も更新．
 - `Persona/CLAUDE.md` に自分のプロフィールを書く（vault 全体から参照される identity の単一の正）．
 - `Maps/Home.md` に自分の vault の入口を書く．
-- 不要な skill は `.claude/skills/` から削除して構わない（特に `.hermes/skills/mymemory/` 配下の外部接続は，使うものだけ残す）．
+- 不要な skill は `.claude/skills/` から削除して構わない（特に `.hermes/skills/vault-capture/` 配下の外部接続は，使うものだけ残す）．
 
 ---
 
@@ -97,7 +94,7 @@ Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わ
 | [`.claude/hooks/`](./.claude/hooks/) | Codex 委譲を強制する hook |
 | [`.claude/docs/knowledges/`](./.claude/docs/knowledges/) | 運用で得た学びの structured knowledge base（テンプレでは README のみ） |
 | [`.codex/`](./.codex/) | Codex 側の契約・skill 共有 |
-| [`.hermes/`](./.hermes/) | Hermes 宣言的設定の雛形（`config.yaml`） + MY_MEMORY 固有 capture skill（mymemory/） |
+| [`.hermes/`](./.hermes/) | Hermes 宣言的設定の雛形（`config.yaml`） + vault 用 capture skill（vault-capture/） |
 | [`Templates/`](./Templates/) | ノートテンプレ（daily / weekly / work / idea / exploration / paper / experiment 等） |
 | [`Maps/`](./Maps/) | 横断 MOC（Home / Code-Map / People-Map）＋ 5 ラベル Bases ビュー |
 | [`Work/PROJ_A/`](./Work/PROJ_A/) | クライアント案件の 4 層標準構造（sources / docs / meetings / code / deliverables / proposals / references / logs） |
@@ -109,7 +106,7 @@ Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わ
 | [`Meta/`](./Meta/) | vault 自身についての作業（自己言及プロジェクト） |
 | [`Research/`](./Research/) | 研究用プレースホルダ（必要なら git submodule で外部リポを mount） |
 
-`.gitignore` は **secret は絶対に commit しない / runtime state は version しない** という方針で組まれています（特に `.hermes/skills/*` 配下は **mymemory/ 以外を除外**するように設定済み）．
+`.gitignore` は **secret は絶対に commit しない / runtime state は version しない** という方針で組まれています（特に `.hermes/skills/*` 配下は **vault-capture/ 以外を除外**するように設定済み）．
 
 ---
 
@@ -135,4 +132,4 @@ Hermes は任意です．Slack / Calendar / Tasks の自動取り込みを使わ
 - Andy Matuschak — Evergreen notes
 - Nous Research — Hermes Agent
 
-設計の収斂は [記事](https://zenn.dev/mkj/articles/claudian-orchestra_20260616) に書きました．フィードバック・PR は歓迎です．
+フィードバック・PR は歓迎です．

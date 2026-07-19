@@ -15,7 +15,7 @@ description: Pre-meeting preparation. Before a meeting, (1) list today's calenda
 4. 対応フォルダの `meetings/` に**議事録の叩き台**（`status: draft`）を作成
 5. その日の **Daily ノートからリンク**する
 
-> **pipeline 上の位置づけ**：これは **MTG 前の prep**。MTG 後の流れ（[[.hermes/skills/mymemory/genspark-mtg/SKILL.md]] capture → [[.claude/skills/aggregate-mtgs/SKILL.md]] 集約 → [[.claude/skills/eod-distill/SKILL.md]] 配分）と**対**になる。本 skill が作る叩き台が、後から流れてくる Genspark 議事録の**統合先（reconciliation target）**になる（§6）。朝の [[.claude/skills/daily-briefing/SKILL.md]] が今日の MTG を一覧する際に本 skill を案内・起動する（[[.claude/rules/daily-operations.md]] §0 Step 2 / §1）。
+> **pipeline 上の位置づけ**：これは **MTG 前の prep**。MTG 後の流れ（[[.hermes/skills/vault-capture/genspark-mtg/SKILL.md]] capture → [[.claude/skills/aggregate-mtgs/SKILL.md]] 集約 → [[.claude/skills/eod-distill/SKILL.md]] 配分）と**対**になる。本 skill が作る叩き台が、後から流れてくる Genspark 議事録の**統合先（reconciliation target）**になる（§6）。朝の [[.claude/skills/daily-briefing/SKILL.md]] が今日の MTG を一覧する際に本 skill を案内・起動する（[[.claude/rules/daily-operations.md]] §0 Step 2 / §1）。
 
 ## 境界（守ること）
 
@@ -221,7 +221,7 @@ meeting_title: "{元のカレンダータイトル}"
 ## 他 skill との連携
 
 - [[.claude/skills/hermes-query/SKILL.md]]（今日の予定取得＝pull）
-- [[.hermes/skills/mymemory/genspark-mtg/SKILL.md]]（会議**後**の transcript capture）
+- [[.hermes/skills/vault-capture/genspark-mtg/SKILL.md]]（会議**後**の transcript capture）
 - [[.claude/skills/aggregate-mtgs/SKILL.md]]（会議後の Daily 集約・reconciliation 相手）
 - [[.claude/skills/eod-distill/SKILL.md]]（会議後の `{area}/meetings/` 配分・reconciliation 相手）
 - [[.claude/skills/daily-briefing/SKILL.md]]（朝 briefing が今日の MTG を一覧 → 本 skill を案内/起動。Genspark join リマインダと整合）

@@ -20,7 +20,7 @@ hermes との情報のやり取りは 2 方向ある。**両方とも user-instr
 
 | 経路 | 向き | トリガー | 用途 | 実装 |
 |---|---|---|---|---|
-| **push**（capture） | hermes → `Inbox/{date}/` | **the user (per the Daily `## 🤖 ジョブリスト`) instructs** → Claude が hermes に CLI 委譲 | 定常取り込み（Calendar / Tasks / Slack / GitHub / Genspark 等） | [[.hermes/skills/mymemory/]]（capture skills）|
+| **push**（capture） | hermes → `Inbox/{date}/` | **the user (per the Daily `## 🤖 ジョブリスト`) instructs** → Claude が hermes に CLI 委譲 | 定常取り込み（Calendar / Tasks / Slack / GitHub / Genspark 等） | [[.hermes/skills/vault-capture/]]（capture skills）|
 | **pull**（query） | Claude → hermes（CLI `hermes chat -q`） | Claude が必要時に同期呼び出し | ライブ確認・検索（今のタスク？ この件の Slack は？ Notion 参照） | [[.claude/skills/hermes-query/SKILL.md]] |
 
 - **なぜ pull が要るか**：外部接続の認証は hermes が一元所有（§6）。Claude は Slack/GWS/Notion を直接叩けないので、その場の参照は hermes に委譲する。Codex に**コード**を委譲するのと対の、**外部接続**の委譲。
@@ -80,7 +80,7 @@ hermes との情報のやり取りは 2 方向ある。**両方とも user-instr
 | 接続 | 所有者 | 経路 | 備考 |
 |---|---|---|---|
 | Slack（業務 IF） | Hermes | Slack app（双方向） | **仕事の会話はすべて Slack で進む** |
-| Google Calendar（個人・複数可） | Hermes | **ics 直 fetch**（限定公開 URL、`.hermes/skills/mymemory/inbox-daily-capture/scripts/fetch_calendar_ics.py`） | OAuth 不要・URL に token 内包。Claude は読まない。セットアップ → [[docs/connections/google-calendar-tasks.md]] |
+| Google Calendar（個人・複数可） | Hermes | **ics 直 fetch**（限定公開 URL、`.hermes/skills/vault-capture/inbox-daily-capture/scripts/fetch_calendar_ics.py`） | OAuth 不要・URL に token 内包。Claude は読まない。セットアップ → [[docs/connections/google-calendar-tasks.md]] |
 | Google Calendar（追加アカウント・任意） | Hermes | **gws（GWS CLI）`gws calendar events list`**（アカウント別 config dir `GOOGLE_WORKSPACE_CLI_CONFIG_DIR=~/.config/gws-<name>`・readonly） | ics の限定公開 URL を出せない組織アカウント用。要：consent screen の test user 追加。Testing 公開のままだと token 約7日失効。**capture 実行 PC のローカルに該当 config dir の資格情報が必要** |
 | Google Tasks | Hermes | `list_tasks.py`（library 直叩き・`${HERMES_HOME}/google_token.json`） | 共有 OAuth トークン。**`gws` には依存しない**（library が自前で OAuth refresh） |
 | Notion | Hermes | Notion MCP | 取り込みなし。Vault → Notion publish のみ |
