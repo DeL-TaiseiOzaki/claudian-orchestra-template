@@ -10,6 +10,7 @@ Useful pattern:
 - Combine `SLACK_USER_TOKEN` `search.messages` (cross-channel authored messages and mentions visible to the user) with `SLACK_BOT_TOKEN` `conversations.history` (bot-visible channel/DM history) when available.
 - Dedupe messages by `channel.id + ts`, then group by channel.
 - Write one digest per channel to `Inbox/{YYYY-MM-DD}/slack/{channel}.md`. Capture only — no routing, no channel→project map.
+- Before changing an existing digest, search `Daily/{YYYY-MM-DD}.md` for its exact source wikilink. If linked, ownership has handed off to the core and Hermes must skip it unchanged.
 - Verify resulting digest files by counting `Inbox/{YYYY-MM-DD}/slack/*.md` files and `- Qualifying messages:` lines.
 
 Pitfall found:
@@ -18,8 +19,9 @@ Pitfall found:
 
 Checklist before final response:
 
-1. Existing target-date files checked? If yes, preserve richer existing content.
-2. Any empty frontmatter lists (`mentions:`) accidentally introduced? Prefer valid `mentions: []` or populated list.
-3. Temporary scripts removed?
-4. `git status --short` (or equivalent) checked for unintended changes?
-5. Report partial Slack API rate limits as caveats, not as total failure, if user-token search and existing captures provide adequate coverage.
+1. Daily handoff link checked? If present, skip the existing digest unchanged.
+2. Existing unlinked target-date files checked? If yes, preserve richer existing content.
+3. Any empty frontmatter lists (`mentions:`) accidentally introduced? Prefer valid `mentions: []` or populated list.
+4. Temporary scripts removed?
+5. `git status --short` (or equivalent) checked for unintended changes?
+6. Report partial Slack API rate limits as caveats, not as total failure, if user-token search and existing captures provide adequate coverage.

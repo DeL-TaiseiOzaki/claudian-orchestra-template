@@ -1,6 +1,6 @@
 ---
 name: obsidian-bases
-description: Create and edit Obsidian Bases (.base files) with views, filters, formulas, and summaries. Use when working with .base files, creating database-like views of notes, or when the user mentions Bases, table views, card views, filters, or formulas in Obsidian.
+description: Create and edit Obsidian Bases with views, filters, formulas, and summaries. Use for .base files or database-like note views.
 ---
 
 # Obsidian Bases Skill
@@ -503,5 +503,5 @@ formulas:
 このスキルは kepano/obsidian-skills から導入。本 Vault では以下を併用する。
 
 - Base ファイル（`.base`）は対象フォルダ直下に置く（例 `Wiki/`, `Maps/`）。
-- フィルタ・グルーピングに使うプロパティ名は [[.claude/rules/vault-metadata.md]] のスキーマ（`status` / `type` / `theme` 等）と一致させる。
+- フィルタ・グルーピングに使うプロパティ名は [[.codex/rules/vault-metadata.md]] のスキーマ（`status` / `type` / `theme` 等）と一致させる。
 - パスは Vault ルートからの相対で記述する。

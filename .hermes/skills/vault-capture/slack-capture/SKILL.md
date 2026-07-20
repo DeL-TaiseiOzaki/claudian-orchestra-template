@@ -1,6 +1,6 @@
 ---
 name: slack-capture
-description: "Capture Slack messages visible to the user into the your-vault or produce ad-hoc Slack message reports. Covers bot-token channel/DM history capture and user-token search.messages capture for cross-channel my-messages-today queries. Writes RAW per-channel daily digests to Inbox/{YYYY-MM-DD}/slack/{channel}.md — capture only, no routing, no DM-based sorting. Curation happens later in Claude Code. Intended to be invoked on-demand when the user issues a 取り込み instruction (typically from the Daily-note ジョブリスト). May also run from a cron if registered, but on-demand is the primary mode."
+description: "Capture raw Slack channel or DM digests into Inbox for later core-agent curation. Use for on-demand Slack capture or ad-hoc Slack reports."
 version: 2.0.0
 author: Hermes Agent
 license: MIT
@@ -15,7 +15,7 @@ metadata:
 
 Use this when the user asks to retrieve Slack messages, capture daily Slack logs, or answer queries like "今日の私の発言を取得して".
 
-This is a **capture-only** skill: it writes RAW Slack material into `Inbox/{YYYY-MM-DD}/slack/{channel}.md` (one dated parent folder per day, one file per channel) or returns an ad-hoc report. There is **no routing, no channel→destination mapping, and no DM-based sorting** — every relevant channel's daily digest lands in `Inbox/{date}/slack/`. Distilling/distributing these into Wiki is Claude Code's later curate step (via the `Daily/{date}.md` hub). Do not curate or rewrite note bodies here.
+This is a **capture-only** skill: it writes RAW Slack material into `Inbox/{YYYY-MM-DD}/slack/{channel}.md` or returns an ad-hoc report. There is no routing or DM-based sorting. Distilling into Wiki is the core agent's later curate step.
 
 ## Token modes
 
@@ -90,60 +90,50 @@ When this skill is invoked with wording like "run it for yesterday" (either by a
 1. Resolve the target date explicitly from the live clock and record it in output/logs.
 2. Use user-token search (`SLACK_USER_TOKEN`) for cross-channel authored messages and @mentions visible to the user.
 3. Use bot-token channel/DM history (`SLACK_BOT_TOKEN`) only as a supplement for channels/DMs the bot can read. `not_in_channel` is expected; rate limits are partial-coverage warnings, not a reason to rewrite good captures with poorer data.
-4. Dedupe by `channel.id + ts`, then group by channel and write one raw daily digest per channel to `Inbox/{YYYY-MM-DD}/slack/{channel}.md`. No routing, no channel→destination lookup — every relevant channel lands in the day's `slack/` folder.
-5. If digest files for the target date already exist, verify counts/content before overwriting. Preserve richer existing fields such as attachments, original mention display text, thread permalinks, and valid `mentions: []` frontmatter. Do not replace a richer existing digest with a simplified ad-hoc reconstruction.
-6. If existing digest bodies are good but their frontmatter is stale (for example `source: "slack:daily:..."`, timestamp-valued `created`, or missing required fields), perform a **frontmatter-only repair** to the current Output spec. Preserve the message body byte-for-byte except for unavoidable newline normalization; do not re-fetch/rewrite content just to satisfy metadata.
-7. Before finalizing, check that no temporary scripts/files remain and that final filesystem changes are either intentional new/updated captures or none.
-8. For same-day captures ("today 00:00 to now", whether on-demand or via cron), use the same preservation/merge rules as yesterday re-runs: if today's digest already exists, repair frontmatter or append missing message entries without replacing richer existing bodies. If there are zero qualifying messages and no filesystem changes, report silence only when the invoking job explicitly requested a silent sentinel.
+4. Dedupe by `channel.id + ts`, then group by channel and resolve each target `Inbox/{YYYY-MM-DD}/slack/{channel}.md`.
+5. Before any write or rerun mutation, search `Daily/{date}.md` for the target's exact wikilink. A linked digest has handed off to the core and MUST be skipped without repair, append, overwrite, or recreation.
+6. Write a new raw digest when the target is absent. For an existing **unlinked pre-aggregation** digest, verify counts/content and preserve richer fields rather than replacing it with a simplified reconstruction.
+7. If an unlinked digest body is good but frontmatter is stale, perform a frontmatter-only repair to the current Output spec and preserve the body.
+8. Before finalizing, check that no temporary scripts/files remain. If there are zero qualifying messages and no changes, report silence only when explicitly requested.
 9. When the reusable script is insufficient and a one-off helper is needed, write it under a temporary path such as `.tmp/`, run it, then remove it and verify removal before finalizing. Never print Slack token values in script output or logs.
 
 See `references/yesterday-cron-capture.md` for the preservation safeguards, `references/frontmatter-repair.md` for the frontmatter-only repair pattern, and `references/same-day-cron-capture.md` for same-day digest-writing capture details, bot-supplement rate-limit handling, and cleanup/reporting checks.
 
-## 起動方法（on-demand 既定 / cron は任意）
+## 起動方法（on-demand）
 
-**既定 = on-demand**：ユーザーが Daily ノートの `## 🤖 ジョブリスト` を見て「<該当 job> やって」と Claude に指示 → Claude が hermes に CLI で委譲（[[.claude/skills/hermes-query/SKILL.md]]）。
+**既定 = on-demand**：ユーザーが Daily のジョブリストからコアエージェントに指示し、コアが Hermes に委譲する。
 
 ### 手動 invoke コマンド
 
-> `hermes chat -q` のスキル指定は `-s <skill>`（`--skill` / `--workdir` というフラグは無い）。vault ルートに cd してから呼ぶ。日本語 Windows では呼び出し前に `PYTHONUTF8=1` を設定する（cp932 デコード起因の出力欠落防止 → [[.claude/skills/hermes-query/SKILL.md]]）。
+> `hermes chat -q` のスキル指定は `-s <skill>`（`--skill` / `--workdir` というフラグは無い）。vault ルートに cd してから呼ぶ。日本語 Windows では呼び出し前に `PYTHONUTF8=1` を設定する（cp932 デコード起因の出力欠落防止 → [[.codex/skills/hermes-query/SKILL.md]]）。
 
 ```bash
 cd "<vault root>"
 
 # 当日分の Slack 取り込み（今日 00:00 から now まで）
-hermes chat -q "Load the slack-capture skill and run it for today: capture Slack messages visible to the user (authored / mentioned / DM / private), grouped by channel, into Inbox/<today>/slack/{channel}.md. Capture only — no routing, no curated edits." -s slack-capture -Q --source claude-code
+hermes chat -q "Load the slack-capture skill and run it for today: capture Slack messages visible to the user (authored / mentioned / DM / private), grouped by channel, into Inbox/<today>/slack/{channel}.md. Capture only — no routing, no curated edits." -s slack-capture -Q --source core-agent
 
 # 昨日分の Slack 取り込み（catch-all）
-hermes chat -q "Load the slack-capture skill and run it for yesterday: capture Slack messages visible to the user (authored / mentioned / DM / private), grouped by channel, into Inbox/<yesterday>/slack/{channel}.md. Preserve richer existing digests; frontmatter-only repair if needed." -s slack-capture -Q --source claude-code
+hermes chat -q "Load the slack-capture skill and run it for yesterday: capture Slack messages visible to the user, grouped by channel, into Inbox/<yesterday>/slack/{channel}.md. Before changing an existing digest, check Daily/<yesterday>.md for its exact source wikilink; skip linked files. Preserve/repair only unlinked pre-aggregation digests." -s slack-capture -Q --source core-agent
 ```
 
-### Cron 登録（任意）
-
-> cron による定期起動は**任意**（on-demand が既定）。定時 capture したい場合の典型は「21:00 same-day capture + 翌朝 07:00 catch-all」の 2 本立て。
-
-```bash
-# same-day capture（21:00）
-hermes cron create "0 21 * * *" "Load the slack-capture skill and run it for today: capture Slack messages visible to the user (authored / mentioned / DM / private), grouped by channel, into Inbox/<today>/slack/{channel}.md. Capture only — no routing." --name slack-capture-today --skill slack-capture --workdir "<vault root>"
-
-# 翌朝 catch-all（07:00）
-hermes cron create "0 7 * * *" "Load the slack-capture skill and run it for yesterday: capture Slack messages visible to the user (authored / mentioned / DM / private), grouped by channel, into Inbox/<yesterday>/slack/{channel}.md. Preserve richer existing digests." --name slack-capture-yesterday --skill slack-capture --workdir "<vault root>"
-```
+> 既存環境の same-day / next-morning cron は過渡期ジョブとして現状維持する。新規登録・変更はせず、Daily ジョブリストから on-demand で実行する。
 
 ## Self-edit boundary
 
-> このスキルは **自分の SKILL.md / references / config を autonomous に編集しない**。実行中に drift / empirical finding を検知した場合（CLI 挙動変化、Slack API スキーマ drift、cron mode 運用学習など）は、対象 file を直接編集せず `Inbox/{YYYY-MM-DD}/clippings/hermes-obs-slack-capture.md` に observation/proposal note を新規作成する。frontmatter 必須：`affected_path` / `observed_at` / `evidence` / `proposed_change` / `source: "hermes:observation:slack-capture:<ISO8601>"`。詳細は [[.claude/rules/inbox-routing.md]] §7。
+> このスキルは **自分の SKILL.md / references / config を autonomous に編集しない**。drift を検知した場合は `Inbox/{YYYY-MM-DD}/clippings/hermes-obs-slack-capture.md` に observation note を新規作成する。frontmatter は共通 6 fields（`title`, `type: capture`, `status: inbox`, `tags`, `created`, `updated`）に加え、`affected_path` / `observed_at` / `evidence` / `proposed_change` / `source: "hermes:observation:slack-capture:<ISO8601>"` を必須とする。
 
 ## Vault boundaries
 
 - Raw capture target: `Inbox/{YYYY-MM-DD}/slack/` (one dated parent folder per day; create it only on a day Slack actually produces messages).
 - One digest file per channel: `Inbox/{YYYY-MM-DD}/slack/{channel}.md`. No routing, no `slack-channel-map.yaml`, no `_unsorted/` — capture only.
-- Do not write curated Wiki/Daily notes from this skill. Distilling/distributing digests is Claude Code's later curate step.
-- Do not edit Slack note bodies; this skill only writes/repairs digest files inside `Inbox/{date}/slack/`.
+- Do not write curated Wiki/Daily notes from this skill. Distilling/distributing is the core agent's later step.
+- Before touching an existing digest, search `Daily/{date}.md` for its exact source wikilink. If linked, ownership has handed off to the core: skip it unchanged. Only an unlinked pre-aggregation digest may be repaired or appended.
 
 ## Output spec (REQUIRED — single source of truth for digest files)
 
 This section is the authoritative format every digest file written by this skill MUST conform to.
-Mirrors `.claude/rules/inbox-routing.md` §5.3.
+Mirrors `.codex/rules/inbox-routing.md` §5.3.
 
 ### Digest path & filename
 
@@ -156,6 +146,10 @@ Parent folder: `Inbox/{YYYY-MM-DD}/slack/` (the dated parent folder owns the dat
 
 ```yaml
 ---
+title: "Slack digest - #{channel} - {YYYY-MM-DD}"
+type: "capture"
+status: "inbox"
+tags: ["slack", "capture"]
 source: "slack:digest:{channel}:{YYYY-MM-DD}"     # MUST start with "slack:digest:" (NOT "slack:daily:")
                                                    # Use channel slug (e.g. "times_yourname"), NOT channel_id
 channel: "#{channel}"                              # with "#" prefix

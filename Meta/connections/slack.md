@@ -4,7 +4,7 @@ type: "reference"
 status: "completed"
 tags: ["setup", "connections", "slack"]
 created: 2026-07-19
-updated: 2026-07-19
+updated: 2026-07-20
 ---
 
 # 接続ガイド: Slack(難易度 ★★★・約30–60分)
@@ -19,7 +19,7 @@ updated: 2026-07-19
 - **pull(検索)**:「#general で先週の『納期』を含む発言探して」のようなその場の検索
 - (任意)Hermes の Slack app を通じて **Slack から Hermes に話しかける**双方向 IF
 
-> **正本は Slack のまま**です。vault に落ちるのはログの写し。会話の続きは Slack でやります([[.claude/rules/agent-boundaries.md]] §2)。
+> **正本は Slack のまま**です。vault に落ちるのはログの写し。会話の続きは Slack でやります([[.codex/rules/agent-boundaries.md]] §2)。
 
 ## 2. 前提
 
@@ -90,10 +90,10 @@ Slack 取り込みやって
 | `not_in_channel` | bot がそのチャンネルに未参加。`/invite` する。なお public チャンネルは一覧には出るが、参加するまで履歴は読めない(仕様) |
 | スコープを追加したのに反映されない | スコープ変更後は **Reinstall to Workspace** が必要。さらにトークンが再発行される場合があるので `.env` を貼り直し、**Hermes を再起動** |
 | DM が取れない | Bot Token Scopes に `im:history` / `im:read` が無い、または User トークン検索のみで運用している(DM 本文は bot 経路) |
-| 前日分を取り直したい | 「昨日の Slack 取り込みやって」(翌朝 catch-all)。既存ファイルはより情報量の多い方を保持するマージ仕様 |
+| 前日分を取り直したい | 「昨日の Slack 取り込みやって」。Daily に exact source link が無い pre-aggregation file だけ preserve/merge 可能。リンク済みならコアへ handoff 済みなので Hermes は変更しない |
 
 ## 6. 深掘り
 
 - [[.hermes/skills/vault-capture/slack-capture/SKILL.md]] — capture skill 本体(Bot / User トークンの使い分け・検索クエリの組み方)
 - 複数 workspace を情報源にしたい → [[.hermes/skills/vault-capture/slack-capture/references/multi-workspace-user-token-capture.md]]
-- [[.claude/rules/inbox-routing.md]] §5 — Slack capture の設計(なぜ channel ごとの自動振り分けをしないか)
+- [[.codex/rules/inbox-routing.md]] §5 — Slack capture の設計(なぜ channel ごとの自動振り分けをしないか)

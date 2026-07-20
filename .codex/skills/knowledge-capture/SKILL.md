@@ -1,0 +1,115 @@
+---
+name: knowledge-capture
+description: Capture durable agent-operation learnings under .codex/docs/knowledges. Use for root causes, recurring gotchas, postmortems, or 「knowledge 化して」.
+---
+
+# knowledge-capture
+
+Curates the vault's **persistent learnings layer** at `.codex/docs/knowledges/`.
+
+This skill exists because the vault accumulates valuable debugging knowledge (`status.md #38` MCP env passthrough, `#33` cron durability, `#15` argparse quirks, etc.) that risks dispersal across status notes, commit messages, and skill SKILL.md headers. Knowledge here is meant to be **re-readable later, when the same symptom recurs**.
+
+## When to invoke
+
+### Explicit invocation (always)
+- the user says "これ knowledge 化して" / "学びをまとめて" / "今回の learning を残して"
+- Skill name `/knowledge-capture` in chat
+- Reference an existing knowledge note → triggers a review/update
+
+### Core-agent proactive hints (suggest, never force)
+When any of these patterns occur in a session, the core agent **proposes** capture and waits for the user's approval:
+
+1. **Root cause confirmed after >=2 failed hypotheses** — e.g. #38 ran through PAT scope → SSO authorization → fine-grained owner → Classic PAT regen → finally found `_build_safe_env()` filtering. Hypothesis chain that ends in a non-obvious cause is the strongest signal.
+2. **調査で行き詰まりが解けた時** — 行き詰まっていた問題が調査で解決したとき、その過程には immediate fix を超えた再利用可能な insight が含まれることが多い。
+3. **A specific harness / tool / API quirk is identified** — argparse positional ordering, env passthrough rules, cron expression edge cases.
+4. **A policy fails in production** — e.g. #37 markdown callout not enforced. The non-effectiveness itself is the learning.
+5. **同じ調査を繰り返しそうな時** — knowledge note prevents re-spending tokens on the same investigation.
+
+Phrasing for proactive hint (always offer "skip" option):
+
+> 💡 今回の発見（`<one-line summary>`）は knowledge note 化するとよさそうです。`.codex/docs/knowledges/<category>/<slug>.md` に記録しますか？（skip / proceed / template だけ見せて）
+
+### Do NOT invoke for
+- Daily journaling (`Daily/`)
+- Human-facing topic notes — learning / literature / idea notes (`Wiki/`; knowledges/ は agent 運用知のみ)
+- Raw investigation results (use `.codex/docs/research/`)
+- Decision log entries that belong in `status.md`
+- One-off task tracking
+
+## Structure
+
+```
+.codex/docs/knowledges/
+├── README.md             ← MOC (entry point; categories + recent notes)
+├── hermes/               ← hermes 固有の挙動・落とし穴
+├── claude-cli/           ← Claude Code harness (CronCreate / TaskCreate / MCP loading)
+├── mcp/                  ← MCP 全般 (env passthrough, transport, auth)
+├── git/                  ← git workflow / commit / branch patterns
+├── vault/                ← Obsidian / vault structure / single-writer
+├── architecture/         ← agent orchestration / policy enforcement
+├── codex/                ← Codex CLI 固有挙動 (sandbox / config / skills 連携)
+└── python/               ← Python / uv / dependency idioms
+```
+
+Categories are extensible — add a new dir if a learning doesn't fit. See `references/categories.md` for definitions and examples.
+
+## Note format
+
+Every knowledge note follows the template at `references/template.md`. Required sections:
+
+- **症状 (Symptom)** — concrete observable, 1–3 lines
+- **文脈 (Context)** — when / where / what configuration
+- **根本原因 (Root cause)** — final cause with code/spec citation
+- **修正 (Fix)** — concrete diff / command / setting
+- **再発防止チェック (Future-proof check)** — 1-line command or indicator to detect recurrence
+- **関連 (Related)** — `status.md` issue#, commits, sibling knowledge notes
+
+Required frontmatter。これは [[.codex/rules/vault-metadata.md]] §5 の knowledge-note path override を実装する：
+
+```yaml
+---
+title: "..."
+type: "knowledge"
+status: "active"       # active | superseded | deprecated
+tags: ["category", "subdomain", ...]
+created: "YYYY-MM-DD"
+updated: "YYYY-MM-DD"
+source: "incident:#NN" or "session:YYYY-MM-DD" or "consult:<topic>"
+applies_to: ["hermes/cron", "mcp/stdio"]
+related_commit: "<short-hash>"   # optional
+severity: low | medium | high
+---
+```
+
+## Naming convention
+
+- Path: `.codex/docs/knowledges/{category}/{slug}.md`
+- Slug: kebab-case English, descriptive of the cause not the symptom. Examples:
+  - ✅ `hermes/mcp-env-passthrough.md` — names the cause
+  - ❌ `hermes/github-mcp-404.md` — names a symptom that has many causes
+- Avoid date prefixes; recency belongs in `updated:` frontmatter and `git log`
+
+## Lifecycle
+
+| status | Meaning |
+|---|---|
+| `active` | Current. Reflects today's truth |
+| `superseded` | A newer note replaces this one. Add `superseded_by: [[...]]` frontmatter |
+| `deprecated` | Cause no longer applies (e.g. hermes upgrade fixed it). Add `deprecated_at: YYYY-MM-DD` and 1-line reason in body |
+
+Never delete a knowledge note. Even deprecated entries help future readers verify "yes, this used to happen, and here's why it doesn't anymore."
+
+## Linking & discoverability
+
+- tracked issue が source の場合は、実在する issue URL または project status note へ link する。未展開 placeholder を wikilink にしない
+- The MOC (`README.md`) lists the 5 most-recently-updated notes per category at the top
+- Reference from skills: a Hermes or core skill's SKILL.md may link to specific knowledges from its "Pitfalls" or "Known issues" section
+- `vault-consistency-check` は knowledge-note path override に従って frontmatter を検証する
+
+## 関連
+
+- 入口: [[.codex/docs/knowledges/README.md]]
+- テンプレート: [[.codex/skills/knowledge-capture/references/template.md]]
+- カテゴリ定義: [[.codex/skills/knowledge-capture/references/categories.md]]
+- 隣接 skill: [[.codex/skills/vault-archive/SKILL.md]]（archived knowledge は deprecated に残し移動しない）。調査の生データは `.codex/docs/research/` へ、durable learning は knowledges/ へ
+- 親ルール: [[AGENTS.md]] §4 動作モデル / [[.codex/rules/agent-boundaries.md]]

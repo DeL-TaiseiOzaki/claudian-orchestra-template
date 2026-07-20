@@ -13,10 +13,8 @@
 # the `.hermes/.env` file (gitignored). See `.gitignore` for the full secret-pattern list.
 
 model:
-  # Pick whatever Hermes backend you prefer. Examples:
-  #   default: gpt-5.4-mini
-  #   provider: openai-codex
-  default: gpt-5.4-mini
+  # Codex-backed Hermes is the template default. Select the concrete model with
+  # `hermes model`; do not pin a model in this shared template.
   provider: openai-codex
 
 mcp_servers:
@@ -43,24 +41,32 @@ plugins:
     - obsidian-context-bridge
   disabled: []
 
-# Approval gate — destructive ops (file deletes / cron mutations) require user OK.
+# Approval gate — destructive ops require user OK; new cron jobs are disabled.
 approvals:
   mode: manual
   cron_mode: deny
   destructive_slash_confirm: true
 
 # ============================================================================
-# Connections owned by Hermes (NOT directly by Claude Code / Codex)
+# Connections owned by Hermes (not directly by the core agent)
 # ============================================================================
 #
 # - Slack (your-org Slack app) — configure via `hermes slack add-workspace`
-# - Google Workspace (Calendar + Tasks) — via the bundled `gws` CLI
-#   (alternatively the `gsk` CLI for accounts that don't have GWS provisioned)
+# - Google Calendar — private ICS fetch by default; optional per-account `gws`
+#   config only when an organization does not expose private ICS URLs
+# - Google Tasks — tracked `list_tasks.py` using the shared Hermes OAuth token
+#   (not `gws`); set `HERMES_PYTHON` if the runtime venv is non-standard
+# - Genspark meeting notes — optional `gsk` capture adapter only
 # - Web fetch / clipper — `firecrawl` backend (see `web.backend` upstream default)
 #
 # Set up:
-#   1. Copy `.hermes/config.yaml` into your `${HERMES_HOME}` (default `~/.hermes/`).
-#   2. Run `hermes auth` for each external integration.
+#   1. Prefer `export HERMES_HOME="$PWD/.hermes"` from the vault root so this
+#      config and `skills/vault-capture/` are both inside the active profile.
+#      With a global profile, merge this config and mirror that whole skill tree;
+#      copying this file alone is insufficient.
+#   2. Follow each service guide in `Meta/connections/`: private ICS needs no
+#      auth, Google Tasks uses the tracked shared-OAuth helper, and Slack uses
+#      `hermes slack add-workspace`. There is no generic auth command for all of them.
 #   3. Verify with `hermes chat -q "list my Google Tasks"` — that exercises the pull path.
 #
 # Capture skills (push path: external → Inbox/{date}/{source}/) live under

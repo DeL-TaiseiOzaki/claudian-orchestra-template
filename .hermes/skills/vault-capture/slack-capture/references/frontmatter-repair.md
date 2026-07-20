@@ -6,6 +6,7 @@ Use this when a target-date Slack digest already exists and the body is richer t
 
 Repair metadata only when:
 
+- The exact source wikilink is absent from `Daily/{YYYY-MM-DD}.md`; a linked digest has handed off to the core and must not be changed.
 - Existing digest body already contains the qualifying messages for the target date.
 - Body includes richer material worth preserving: attachment placeholders, original mention display text, thread permalinks, or manually validated counts.
 - The only known defect is frontmatter shape, such as:
@@ -23,6 +24,7 @@ Do **not** overwrite the body with a simplified search reconstruction just to fi
    - body line `- Qualifying messages: N`
    - number of timestamped message sections if needed
 3. Replace only the YAML frontmatter with the current required fields:
+   - `title`, `type: "capture"`, `status: "inbox"`, `tags`
    - `source: "slack:digest:{channel_slug}:{YYYY-MM-DD}"`
    - `channel`, `channel_id`, `is_dm`, `is_private`
    - `participants`

@@ -1,47 +1,45 @@
 ---
 name: genspark-mtg
-description: Use to capture Genspark AI meeting transcripts into the vault. Hermes lists recent meetings via `gsk meeting list`, keeps only COMPLETED ones inside a short recency window (today + yesterday JST), fetches each full transcript via `gsk meeting get`, and writes RAW transcript markdown to `Inbox/{YYYY-MM-DD}/mtgs/genspark-{slug}.md` without any summarization, body edits, or destination judgment. Always lands in Inbox; allocation to Wiki/meetings/ is done later by Claude Code + user (curate). Idempotency is filename-only — no sidecar state file, so frequent polling is safe. Intended to be invoked on-demand when the user issues a 取り込み instruction (typically from the Daily-note ジョブリスト). May also run from a cron if registered (daytime polling + evening safety-net), but on-demand is the primary mode. Single-meeting fetch via `--task_id` is handled by the same skill (Claude invokes it via `hermes chat -q`).
+description: Capture completed Genspark meeting transcripts as raw Inbox files for later core-agent curation. Supports recent-window and task-id modes.
 version: 3.0.0
 author: your-org
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [vault, capture, genspark, meeting, cron, vault-capture]
+    tags: [vault, capture, genspark, meeting, vault-capture]
     related_skills: [obsidian]
 ---
 
 # genspark-mtg
 
-your-vault の **Genspark 議事録 capture 係**（Hermes 側）。the user が指示したタイミングで実行（既定）／日中 polling・夕方 safety-net の recurring cron で時間起動も可（任意）。
+your-vault の **任意 Genspark 議事録アダプタ**（Hermes 側）。ユーザーが指示したタイミングで実行する。
 MTG 終了＆Genspark 側の整理が済んだ会議を**できるだけ早く**取得して、
-**1 会議 = 1 ファイル**で **`Inbox/{YYYY-MM-DD}/mtgs/`**（日付つき親フォルダ配下）に書き出す。
+**1 会議 = 1 ファイル**で **`Inbox/{capture-date}/mtgs/`** に書き出す。
 
 対象は **直近窓（today + yesterday・JST）の `COMPLETED` 会議**に絞る。
 **join 可否（＝文字起こし対象の選択）は Genspark Web UI 側で完結**しており（CLI からは切り替え不可・後述）、
 **参加した会議だけが `gsk meeting list` に出る**。本 skill は出てきたものを取り込むだけで、
 「どれを文字起こすか」「どこへ置くか」の判定はしない（＝「全部は文字起こさない」は Web UI の join 選択で自動的に満たされる）。
 
-> **on-demand での 2 モード**：本 skill は (a) **直近窓（today + yesterday）の一括取り込み**（既定）と (b) **`--task_id` での単一会議手動取得** の両方を担う。どちらも Claude が hermes-query 経由で kick する。
+> **on-demand での 2 モード**：本 skill は (a) **直近窓（today + yesterday）の一括取り込み**（既定）と (b) **`--task_id` での単一会議手動取得** の両方を担う。どちらも コアエージェントが hermes-query 経由で kick する。
 
-> **役割境界（重要）**：このスキルは **`Inbox/{YYYY-MM-DD}/mtgs/` にのみ書き込む**。
+> **役割境界（重要）**：このスキルは **`Inbox/{capture-date}/mtgs/` にのみ書き込む**。
 > `Daily/` / `Wiki/` / `Templates/` / `Archive/` / 既存 curated ノート本文は触らない（single-writer）。
 >
-> **no-LLM-judgment**：本 skill は [[.claude/rules/inbox-routing.md]] §7 の
-> no-LLM-judgment 原則に完全準拠する。宛先は固定（`Inbox/{YYYY-MM-DD}/mtgs/`）であり、判定そのものが存在しない
+> **no-LLM-judgment**：本 skill は [[.codex/rules/inbox-routing.md]] §7 の
+> no-LLM-judgment 原則に完全準拠する。宛先は固定（`Inbox/{capture-date}/mtgs/`）であり、判定そのものが存在しない
 > （「宛先判定のみ LLM judgment 可」のような例外も設けない）。
-> meetings/ への割り振りは **Step 6（夜の振り返り）等で Claude Code + ユーザーが curate** する。
+> meetings/ への割り振りは **Step 6（夜の振り返り）等で コアエージェント + ユーザーが curate** する。
 > 本文の要約・タグ推論・話者整形・編集も従来どおり全面禁止。transcript は必ず取得・保存し、
 > Genspark 側から `summary` / `user_notes` が返る場合のみ、その raw summary/notes も保存する
 > （Hermes 生成 summary で代替しない）。
 >
-> **Self-edit boundary**：**自己領域でも** `.hermes/skills/vault-capture/genspark-mtg/SKILL.md` / `references/` / `config` を autonomous に編集してはならない。Hermes 自身の運用学習や仕様改訂提案も `Inbox/{YYYY-MM-DD}/clippings/hermes-obs-genspark-mtg.md` に observation/proposal note を作成する（必須 frontmatter は cross-territory と同じ、`source: "hermes:observation:genspark-mtg:<ISO8601>"`）。データ／学習 file 追記は例外（このスキルでは該当なし、`sidecar state file は持たない`方針）。詳細は [[.claude/rules/inbox-routing.md]] §7。
+> **Self-edit boundary**：自己領域の spec/doc/config を autonomous に編集しない。drift は `Inbox/{YYYY-MM-DD}/clippings/hermes-obs-genspark-mtg.md` に、共通 6 fields + `affected_path` / `observed_at` / `evidence` / `proposed_change` / `source: "hermes:observation:genspark-mtg:<ISO8601>"` を持つ observation note として新規作成する。
 >
-> **single-writer / 冪等性**：宛先に **同名ファイルがあれば skip**（上書きしない）。
-> 既存ファイルは the user / Claude Code が curate した可能性があるため、Hermes は再書き込みしない。
-> sidecar state file（`.hermes/state/genspark-captured.json` 等）は持たない方針。
-> **polling 安全性**：冪等性が filename ベースなので、30 分ごとの polling で同じ会議を何度なめても既存は skip され、
-> 二重取得・上書きは起きない（durable cursor 不要）。
+> **single-writer / 冪等性**：既存 meeting capture の `source` または宛先 filename、Daily の正確な source wikilink が見つかれば skip（上書きしない）。
+> 既存ファイルはユーザー / コアエージェントが curate した可能性があるため、Hermes は再書き込みしない。
+> sidecar state file は持たず、raw capture の frontmatter `source: genspark:meeting:<task_id>` を provenance / dedupe key にする。
 > 設計の正本：このファイル。
 
 ## 前提・パス解決
@@ -53,7 +51,7 @@ MTG 終了＆Genspark 側の整理が済んだ会議を**できるだけ早く**
 - `gsk` は PATH 上にある前提（CLI 仕様は [[.hermes/skills/vault-capture/genspark-slide/SKILL.md]]）。
 - Python を使う場合は `uv` を使う（`pip` 直接実行は禁止）。
 - Windows / WSL どちらでも forward slash 表記で OK。
-- **Windows cron / Git Bash pitfall**: Python `subprocess.run(["gsk", ...])` may not resolve the shell shim, and invoking the POSIX `gsk` shim via `bash -lc` from a non-ASCII vault path can fail before reaching the Node CLI. In Windows-hosted Hermes cron, prefer the Windows command shim when scripting: `C:/Users/<your-user>/AppData/Local/hermes/node/gsk.cmd meeting ...` (or a discovered `gsk.cmd` from PATH), while keeping output parsing unchanged. Also tolerate leading log lines such as `[INFO] Calling /meeting...` by scanning for the first valid JSON object, not the first `[` character.
+- **Windows / legacy cron pitfall**: Python `subprocess.run(["gsk", ...])` may not resolve the shell shim. Prefer the Windows command shim when scripting: `C:/Users/<your-user>/AppData/Local/hermes/node/gsk.cmd meeting ...`. Existing transitional cron uses the same rule; do not create a new job. Tolerate leading log lines by scanning for the first valid JSON object.
 
 ## GSK の予定取得と会議録取得の切り分け
 
@@ -76,16 +74,16 @@ gsk calendar list --time_min "YYYY-MM-DDT00:00:00+09:00" --time_max "YYYY-MM-DDT
 gsk meeting list --output json --page_size 50
 ```
 
-- **直近 50 件を毎回なめる**方式（durable cursor は持たない）。polling でも evening でも同じ。
+- **直近 50 件を毎回なめる**方式（durable cursor は持たない）。
 - そこから **取得対象＝「直近窓（today + yesterday・JST）の `COMPLETED` 会議」** に絞る：
   - `status` が `COMPLETED` 以外（処理中・失敗等）→ skip（次回 poll で再評価される）
-  - 会議日が直近窓より古い → skip（その日のうちに取得済みのはず。filename 冪等性でも二重取得は防がれる）
+  - 会議日が直近窓より古い → skip（通常 window 外。直近分の重複は `source` ID で防ぐ）
   - 直近窓に残った会議だけ §2 で本体取得する
 - **窓を 2 日（today + yesterday）にする理由**：当日夜遅くに Genspark の処理が完了した会議を、翌日の最初の poll で取りこぼさず拾うため（filename 冪等性があるので重複は出ない）。1 日に締めたい場合は窓を today のみへ。
 - 返却 JSON の各要素から最低限取り出す：
   - `task_id` — 一意 ID（idempotency と source URI の元）
   - `title` — 会議タイトル（slug の元）
-  - `created_at` または会議日相当 — 保存ファイル名の日付・窓判定に使う
+  - `created_at` または会議日相当 — 窓判定と `meeting_date` に使う（Inbox 親日付には使わない）
   - `status` — 上記フィルタに使う
 - list が空／窓内に `COMPLETED` が無い → 何も書かずに正常終了。
 
@@ -108,9 +106,9 @@ gsk meeting get --task_id "<task_id>" --detail_level full --output json
 
 ### 3. 保存先解決
 
-宛先は**固定**：`Inbox/{YYYY-MM-DD}/mtgs/genspark-{slug}.md`（日付つき親フォルダが日付を持ち、ファイル名に日付 prefix は付けない）。判定は行わない。
+宛先は**固定**：`Inbox/{capture_date_jst}/mtgs/genspark-{slug}.md`（日付つき親フォルダは capture-event date、ファイル名は provider prefix 付き）。判定は行わない。
 
-- **日付**：会議メタデータを Asia/Tokyo に正規化して `YYYY-MM-DD`（＝親フォルダ名）。
+- **親日付**：実行時刻を Asia/Tokyo に正規化した capture-event date。会議日は frontmatter `meeting_date` に別保持する。
 - **slug**（meeting title から生成・タイトルはそのまま slug 化する）：
   1. 元タイトルを取る
   2. 小文字化
@@ -122,9 +120,9 @@ gsk meeting get --task_id "<task_id>" --detail_level full --output json
 
 ### 4. 冪等性
 
-- 宛先に同名ファイルが存在 → **skip**（既存ファイルを開かない、本文比較しない、上書きしない）。
+- `Inbox/*/mtgs/*.md` の frontmatter に同じ `source: "genspark:meeting:{task_id}"` が存在 → **skip**（本文は読まない）。
+- 宛先に同名ファイルが存在、または `Daily/{capture_date}.md` に宛先の正確な wikilink が存在 → **skip**。Daily link は ownership handoff を意味するため、raw が移動済みでも再作成しない。
 - sidecar state file は持たない。
-- `source: genspark:meeting:<task_id>` の全体 grep もしない。
 - 同 run 内で別 meeting が同じ宛先 filename に衝突 → 先に書けた 1 件のみ残し、後続は skip + 完了報告に記録。
 
 ### 5. 書き出し
@@ -134,7 +132,7 @@ Hermes は summary を生成しない。Genspark 側の `summary` / `user_notes`
 
 #### Frontmatter テンプレート
 
-宛先は Inbox なので **Inbox-source 拡張**（[[.claude/rules/vault-metadata.md]] "Inbox-source 拡張" セクション）に固定：
+宛先は Inbox なので **raw-capture path override**（[[.codex/rules/vault-metadata.md]] §4）に固定：
 
 ```yaml
 ---
@@ -155,7 +153,7 @@ genspark_user_notes_present: {true|false}
 ---
 ```
 
-- `type` / `status` は Inbox-source 拡張のまま（curate 時に Claude + ユーザーが `Wiki/meetings/` へ移す際、標準 enum へ書き換える）。
+- raw transcript の `type: capture` / `status: inbox` は不変。コアが別途作る compiled meeting note だけが標準 enum を使う。
 - `created` / `updated` は **capture 実行日**。`meeting_date` は **会議日**（別物）。
 - `participants` は表示名の配列。空なら `[]`。
 
@@ -188,59 +186,34 @@ meeting 単位の失敗は集計して続行（partial success OK）。
 
 ## あとからの割り振り（curate — Hermes の仕事ではない）
 
-`Inbox/{YYYY-MM-DD}/mtgs/` は未割り振りキュー。Step 6（夜の振り返り）や随時の curate で、
-Claude Code + ユーザーが内容を見て `Daily/{YYYY-MM-DD}.md` に集約しつつ `Wiki/meetings/{YYYY-MM-DD}-{slug}.md` へ移動し、
-その際に frontmatter を標準 enum（`type: note` / `status: draft` 等）へ書き換える
-（[[.claude/rules/vault-metadata.md]] 移行ルール）。
+`Inbox/{capture_date}/mtgs/` は未割り振りキュー。Step 6（夜の振り返り）や随時の curate で、
+コアエージェント + ユーザーが内容を見て `Daily/{capture_date}.md` に集約しつつ `Wiki/meetings/{meeting_date}-{slug}.md` へ標準 enum の compiled note を作る。raw transcript 自体は compiled note に変換せず、meeting 例外の扱いに従う。
 
-## 起動方法（on-demand 既定 / cron は任意）
+## 起動方法（on-demand）
 
-**既定 = on-demand**：ユーザーが Daily ノートの `## 🤖 ジョブリスト` を見て「<該当 job> やって」と Claude に指示 → Claude が hermes に CLI で委譲（[[.claude/skills/hermes-query/SKILL.md]]）。filename 冪等性があるので何度走っても二重取得しない。
+**既定 = on-demand**：ユーザーが Daily ジョブリストからコアエージェントに指示し、コアが Hermes に委譲する。filename 冪等性があるので二重取得しない。
 
 ### 手動 invoke コマンド
 
-> `hermes chat -q` のスキル指定は `-s <skill>`（`--skill` / `--workdir` というフラグは無い）。vault ルートに cd してから呼ぶ。日本語 Windows では呼び出し前に `PYTHONUTF8=1` を設定する（cp932 デコード起因の出力欠落防止 → [[.claude/skills/hermes-query/SKILL.md]]）。
+> `hermes chat -q` のスキル指定は `-s <skill>`（`--skill` / `--workdir` というフラグは無い）。vault ルートに cd してから呼ぶ。日本語 Windows では呼び出し前に `PYTHONUTF8=1` を設定する（cp932 デコード起因の出力欠落防止 → [[.codex/skills/hermes-query/SKILL.md]]）。
 
 ```bash
 cd "<vault root>"
-hermes chat -q "Load genspark-mtg and run it for the vault. List recent meetings via gsk meeting list, keep only COMPLETED ones whose meeting date is today or yesterday (JST), fetch each full transcript via gsk meeting get, and write each as RAW transcript markdown to Inbox/{YYYY-MM-DD}/mtgs/genspark-{slug}.md (dated parent folder owns the date; no date prefix in the filename). Skip existing filenames (idempotent). No destination judgment, no writes outside Inbox/{date}/mtgs/, no summarization or body edits. Report counts." -s genspark-mtg -Q --source claude-code
+hermes chat -q "Load genspark-mtg and run it for the vault. List recent meetings via gsk meeting list, keep only COMPLETED ones whose meeting date is today or yesterday (JST), fetch each full transcript via gsk meeting get, and write each as RAW transcript markdown to Inbox/<capture-date>/mtgs/genspark-{slug}.md. Preserve meeting_date separately. Skip an existing source ID, filename, or Daily handoff link. No destination judgment, no summarization or body edits. Report counts." -s genspark-mtg -Q --source core-agent
 ```
 
 - 手動・任意タイミングの「**この会議だけ**」取得は本 skill に `--task_id <ID>` を渡して同じく hermes 経由で kick する。本 skill は直近窓の一括取り込みと task_id 指定単一取得の両方を担う。
 
-### Cron 登録（任意）
-
-> cron による定期起動は**任意**（on-demand が既定）。定時運用したい場合の典型は「日中 polling + 夕方 safety-net」の 2 本立て。
-
-**任意で 2 本立てに登録できる**。どちらも同じ skill・同じ today-window catch-up 挙動で、違いは発火頻度と意図だけ。
-
-| cron | schedule（JST） | 役割 |
-|---|---|---|
-| `genspark-capture-poll` | `*/30 9-20 * * *`（09:00〜20:30 を 30 分間隔） | **near-real-time**。MTG 終了＆Genspark 整理後、最大 30 分で取り込む |
-| `genspark-capture-evening` | `0 21 * * *`（21:00） | **safety-net**。今日分の取りこぼしが無いか最終確認。夜の EOD distill の前に `Inbox/{YYYY-MM-DD}/mtgs/` を埋め終える |
-
-**注意：positional `prompt` 引数は schedule の直後に置く必要がある**（`hermes cron create` の argparse 仕様で flag より前に置かないと「unrecognized arguments」エラー）。
-
-```bash
-# near-real-time polling（日中 30 分間隔）
-hermes cron create "*/30 9-20 * * *" "Load genspark-mtg and run it for the vault. List recent meetings via gsk meeting list, keep only COMPLETED ones whose meeting date is today or yesterday (JST), fetch each full transcript via gsk meeting get, and write each as RAW transcript markdown to Inbox/{YYYY-MM-DD}/mtgs/genspark-{slug}.md (dated parent folder owns the date; no date prefix in the filename). Skip existing filenames (idempotent). No destination judgment, no writes outside Inbox/{date}/mtgs/, no summarization or body edits. Report counts." --name genspark-capture-poll --skill genspark-mtg --workdir "<vault root>"
-
-# evening safety-net（今日分の取りこぼし最終確認）
-hermes cron create "0 21 * * *" "Load genspark-mtg and run it for the vault as the evening safety-net: check whether any of today's COMPLETED Genspark meetings are still missing from Inbox/{YYYY-MM-DD}/mtgs/ and capture them. Same behavior as the daytime poll (today+yesterday JST window, RAW transcript only, skip existing filenames, no judgment/summarization). Report counts." --name genspark-capture-evening --skill genspark-mtg --workdir "<vault root>"
-```
-
-- **実行機の制約**：cron の**自動発火**には「`gsk` 導入＋認証済み **かつ** hermes **gateway** 常駐」の機が必要（登録自体は gateway 停止中でも通るが、発火しない＝`hermes cron status` が警告）。運用上は **gateway を置くメイン機に登録**する。`gsk` はあっても gateway を持たない機（＝ on-demand 専用機）には**登録しない**。そちらでの逐次取得は本 skill に `--task_id` を渡して on-demand 実行する（hermes-query 経由）。
-- **頻度は調整可**：`できるだけすぐ` を強めたいなら `*/20` や `*/15` に。invocation を減らすなら `0,30` のまま hour 範囲を狭める。
-- timezone は `.hermes/config.yaml` の `timezone` を使う（global 設定）。
+> 既存環境の日中 polling / evening safety-net cron は過渡期ジョブとして現状維持する。新規登録・変更はせず、Daily ジョブリストから on-demand で実行する。
 
 ## 関連
 
-- [[.claude/rules/inbox-routing.md]] — Inbox 経路の正本（本 skill は §7 に完全準拠）
-- [[.claude/rules/agent-boundaries.md]] — エージェント分担・single-writer 原則
-- [[.claude/rules/vault-metadata.md]] — frontmatter schema 単一の正（Inbox-source 拡張・移行ルール）
-- [[.claude/rules/vault-tagging.md]] — tag 体系（`genspark` vendor tag は本 skill で初登場）
-- [[.claude/rules/wiki-management.md]] — 割り振り先 `Wiki/meetings/` の標準命名
-- [[.claude/rules/language.md]] — 言語規約
+- [[.codex/rules/inbox-routing.md]] — Inbox 経路の正本（本 skill は §7 に完全準拠）
+- [[.codex/rules/agent-boundaries.md]] — エージェント分担・single-writer 原則
+- [[.codex/rules/vault-metadata.md]] — frontmatter schema 単一の正（raw-capture path override・curate 時の enum 規則）
+- [[.codex/rules/vault-tagging.md]] — tag 体系（`genspark` vendor tag は本 skill で初登場）
+- [[.codex/rules/wiki-management.md]] — 割り振り先 `Wiki/meetings/` の標準命名
+- [[.codex/rules/language.md]] — 言語規約
 - [[.hermes/skills/vault-capture/genspark-slide/SKILL.md]] — `gsk` CLI リファレンス
 - [[.hermes/skills/vault-capture/slack-capture/SKILL.md]] — capture skill の structural 参照
 - [[Inbox/README.md]]

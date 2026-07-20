@@ -4,8 +4,8 @@ type: "idea"
 status: "draft"
 related: []
 tags: ["idea", "seed"]
-created: {{DATE:YYYY-MM-DD}}
-updated: {{DATE:YYYY-MM-DD}}
+created: "{{DATE:YYYY-MM-DD}}"
+updated: "{{DATE:YYYY-MM-DD}}"
 ---
 
 # 💡 Idea - タイトル
@@ -29,7 +29,7 @@ updated: {{DATE:YYYY-MM-DD}}
 
 ## 🔗 関連
 
-- 関連ノート: [[ ]]
+- 関連ノート: （実在する note への wikilink）
 - 参考: 
 
 ## 🚀 次の一歩（育てるなら）

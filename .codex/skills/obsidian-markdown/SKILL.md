@@ -1,6 +1,6 @@
 ---
 name: obsidian-markdown
-description: Create and edit Obsidian Flavored Markdown with wikilinks, embeds, callouts, properties, and other Obsidian-specific syntax. Use when working with .md files in Obsidian, or when the user mentions wikilinks, callouts, frontmatter, tags, embeds, or Obsidian notes.
+description: Create and edit Obsidian Markdown with frontmatter, wikilinks, embeds, and callouts. Use for Markdown notes in this vault.
 ---
 
 # Obsidian Flavored Markdown Skill
@@ -201,8 +201,8 @@ Reviewed in [[Meeting Notes 2024-01-10#Decisions]].
 
 このスキルは kepano/obsidian-skills から導入。本 Vault では以下のローカルルールを必ず併用する。
 
-- **frontmatter スキーマ**: `title` / `type` / `status` / `tags` / `created` / `updated` を必須とする。ドメイン別の追加フィールドを含め [[.claude/rules/vault-metadata.md]] に従う。
-- **タグ体系**: 小文字・ハイフン区切り。語彙は [[.claude/rules/vault-tagging.md]] に従う（例 `#fine-tuning`, `#llm`）。
-- **ノート言語**: Daily=日本語、Wiki=内容に応じて（文献・実験ノートは英語）。frontmatter の enum 値・キーは英語。詳細は [[.claude/rules/language.md]]。
+- **frontmatter スキーマ**: `title` / `type` / `status` / `tags` / `created` / `updated` を必須とする。ドメイン別の追加フィールドを含め [[.codex/rules/vault-metadata.md]] に従う。
+- **タグ体系**: 小文字・ハイフン区切り。語彙は [[.codex/rules/vault-tagging.md]] に従う（例 `#fine-tuning`, `#llm`）。
+- **ノート言語**: Daily=日本語、Wiki=内容に応じて（文献・実験ノートは英語）。frontmatter の enum 値・キーは英語。詳細は [[.codex/rules/language.md]]。
 - **パス**: wikilink・embed・画像/PDF はすべて Vault ルートからの相対パスで参照する（先頭スラッシュや絶対パスは使わない）。
 - **リンク方針**: Vault 内ノートは `[[wikilink]]`、外部URLのみ `[text](url)`。

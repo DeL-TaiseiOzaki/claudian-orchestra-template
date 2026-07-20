@@ -1,10 +1,13 @@
 ---
 title: "MTG {{DATE:YYYY-MM-DD}} - [TOPIC]"
 type: "note"
-status: "completed"
+status: "draft"
 tags: ["meeting"]
-created: {{DATE:YYYY-MM-DD}}
-updated: {{DATE:YYYY-MM-DD}}
+created: "{{DATE:YYYY-MM-DD}}"
+updated: "{{DATE:YYYY-MM-DD}}"
+meeting_date: "{{DATE:YYYY-MM-DD}}"
+meeting_title: "[TOPIC]"
+participants: []
 ---
 
 # {{DATE:YYYY-MM-DD}} [TOPIC]
@@ -37,4 +40,4 @@ updated: {{DATE:YYYY-MM-DD}}
 
 ---
 
-*配置は `Wiki/meetings/{YYYY-MM-DD}-{topic}.md`（[[.claude/rules/wiki-management.md]]）*
+*配置は `Wiki/meetings/{YYYY-MM-DD}-{topic}.md`（[[.codex/rules/wiki-management.md]]）*

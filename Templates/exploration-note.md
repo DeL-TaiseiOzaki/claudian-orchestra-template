@@ -4,8 +4,8 @@ type: "exploration"
 status: "in-progress"
 related: []
 tags: ["exploration", "exploring"]
-created: {{DATE:YYYY-MM-DD}}
-updated: {{DATE:YYYY-MM-DD}}
+created: "{{DATE:YYYY-MM-DD}}"
+updated: "{{DATE:YYYY-MM-DD}}"
 ---
 
 # 🧪 Exploration - シード名
@@ -37,7 +37,7 @@ updated: {{DATE:YYYY-MM-DD}}
 
 ## 🔗 関連
 
-- 関連ノート: [[ ]]
+- 関連ノート: （実在する note への wikilink）
 
 ## 🚦 判定（昇格 / 継続 / アーカイブ）
 

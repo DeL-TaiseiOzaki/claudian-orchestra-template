@@ -4,7 +4,7 @@ type: "reference"
 status: "completed"
 tags: ["setup", "connections", "github"]
 created: 2026-07-19
-updated: 2026-07-19
+updated: 2026-07-20
 ---
 
 # 接続ガイド: GitHub(難易度 ★☆☆・約10分)
@@ -68,10 +68,10 @@ GitHub EOD 取り込みやって
 | MCP が認証エラー | `GITHUB_PERSONAL_ACCESS_TOKEN` が Hermes 起動シェルに渡っていない。`.hermes/.env` に書いたら **Hermes を再起動** |
 | private リポが 404 | PAT にそのリポの権限がない。Fine-grained token の対象リポ選択を確認 |
 | capture が空ファイルに近い | `Maps/Code-Map.md` にリポが列挙されていない、または当日にコミットがない(正常) |
-| 同日 2 回目の capture が走らない | 仕様(冪等性)。`Inbox/{date}/code/code.md` が既にあると skip します。再生成したい場合はファイルを消してから |
+| 同日 2 回目の capture が走らない | 仕様(冪等性)。`Inbox/{date}/code/code.md` が既にあると skip します。Daily に正確な source wikilink が入った後は handoff 済みなので、ファイルを削除・再生成しません。誤 capture はコア + ユーザーが Daily に監査記録を残して訂正します |
 
 ## 6. 深掘り
 
 - [[.hermes/skills/vault-capture/github-eod-capture/SKILL.md]] — capture skill 本体(取得ロジック・冪等性・MCP tool 名のフォールバック)
-- [[.claude/skills/hermes-query/SKILL.md]] — pull 経路の呼び出し方
-- [[.claude/rules/agent-boundaries.md]] §6 — なぜ PAT は Hermes だけが持つのか
+- [[.codex/skills/hermes-query/SKILL.md]] — pull 経路の呼び出し方
+- [[.codex/rules/agent-boundaries.md]] §6 — なぜ PAT は Hermes だけが持つのか

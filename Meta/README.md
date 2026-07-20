@@ -28,4 +28,4 @@ vault「について」のものはすべてここに集約する（vault の「
 ## 関連
 
 - [[GETTING-STARTED.md]] / [[Meta/connections/README.md]]
-- [[.claude/skills/vault-archive/SKILL.md]] — 完了プロジェクトの Archive 退避
+- [[.codex/skills/vault-archive/SKILL.md]] — 完了プロジェクトの Archive 退避

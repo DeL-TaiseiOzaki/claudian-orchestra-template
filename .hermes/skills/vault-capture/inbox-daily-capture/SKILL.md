@@ -1,24 +1,24 @@
 ---
 name: inbox-daily-capture
-description: Use when capturing the day's Google Calendar (today + tomorrow) and Google Tasks into the vault. Writes RAW markdown to Inbox/{YYYY-MM-DD}/daily/daily.md so the Claude Code daily-briefing step can curate it into the root Daily note. Intended to be invoked on-demand when the user issues a 取り込み instruction (typically from the Daily-note ジョブリスト). May also run from a cron if registered, but on-demand is the primary mode.
+description: Capture today's and tomorrow's calendar plus Google Tasks into Inbox for the core-agent daily briefing.
 version: 1.0.0
 author: your-org
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [vault, capture, calendar, google-tasks, cron, vault-capture]
+    tags: [vault, capture, calendar, google-tasks, vault-capture]
     related_skills: [google-workspace, google-tasks, obsidian]
 ---
 
 # inbox-daily-capture
 
-vault の **capture 係**(Hermes 側)。ユーザーが指示したタイミングで実行(既定)/cron で時間起動も可(任意)。今日と明日の Google Calendar 予定と
+vault の **capture 係**(Hermes 側)。ユーザーが指示したタイミングで実行する。今日と明日の Google Calendar 予定と
 Google Tasks の未完了タスクを取得し、**生のまま** `Inbox/{YYYY-MM-DD}/daily/daily.md` に書き出す。
 
 > **役割境界(重要)**:このスキルは **`Inbox/` 内にのみ書き込む**。root `Daily/` や
 > curated(Wiki)には**絶対に触れない**。整理(curate)と root Daily への
-> 集約は Claude Code 側の `daily-briefing` が行う(single-writer 原則)。
+> 集約は コア側の `daily-briefing` が行う(single-writer 原則)。
 > ToDo の正本は **Google Tasks**。ここは読み取りの写しを置くだけで、タスクを起票しない。
 
 ## 前提・パス解決
@@ -34,19 +34,20 @@ Google Tasks の未完了タスクを取得し、**生のまま** `Inbox/{YYYY-M
 ## 手順
 
 ### 1. 既存チェック(冪等)
+- `Daily/{today}.md` に `[[Inbox/{today}/daily/daily.md]]` または拡張子なしの同等 link があれば、**handoff 済みなので何も書かず終了**する。raw file が移動済みまたは不在でも再作成しない。
 - `{vault}/Inbox/{today}/daily/daily.md` が既にあれば**上書きせず終了**(同日多重実行の防止)。
-  更新したい場合のみ明示再生成。
+- handoff 前後を問わず Hermes は同じパスを明示再生成しない。誤 capture の訂正は、handoff 後の owner であるコア + ユーザーが Daily に監査記録を残して行う。
 
 ### 2. Calendar 取得(ics 直 fetch・OAuth 不要)
 
-Calendar の基本経路は **限定公開 ics URL の直 fetch** に一本化している(OAuth 不要・依存が少なく壊れにくい。hermes-owned HTTP source として [[.claude/rules/agent-boundaries.md]] §1.1 push 表に整合)。
+Calendar の基本経路は **限定公開 ics URL の直 fetch** に一本化している(OAuth 不要・依存が少なく壊れにくい。hermes-owned HTTP source として [[.codex/rules/agent-boundaries.md]] §1.1 push 表に整合)。
 
 ```bash
 uv run "${HERMES_HOME:-$HOME/.hermes}/skills/vault-capture/inbox-daily-capture/scripts/fetch_calendar_ics.py" --format md
 ```
 
 - 設定ファイル `scripts/calendars.local.json`(**`.gitignore` 済み**・限定公開 ics URL を格納)に取得したいカレンダーを列挙する(複数可。書式は [[Meta/connections/google-calendar-tasks.md]] 経路 A 参照)。
-- 出力フォーマット:`### 📅 今日の予定` / `### 📅 明日の予定` の md(そのまま Step 4 に流せる)。構造化が要れば `--format json`、別日基準は `--date YYYY-MM-DD`。
+- 出力フォーマット:`### 📅 今日の予定` / `### 📅 明日の予定` の md(そのまま Step 4 に流せる)。各予定は `uid` 由来の `Source: gcal:event:<id>` を保持する。構造化が要れば `--format json`、別日基準は `--date YYYY-MM-DD`。
 - 繰り返し予定 (RRULE) 展開・ローカルタイムゾーン変換・複数カレンダー横断 dedup 済み。OAuth 不要(ics URL に token 内包)。
 - **失敗時**(ネット不通・config 不在等):`<!-- ics calendar unavailable: {message} -->` を残してスキップ。**briefing 全体は止めない**。
 
@@ -67,6 +68,7 @@ gws calendar events list --params '{"calendarId":"primary","timeMin":"'"${TODAY}
 - `attendees[].displayName`(無ければ `.email`、ただし**domain は剥がさない**)
 - `location`
 - 会議URL = `hangoutLink`(Meet)または `conferenceData.entryPoints[]` の `entryPointType == "video"` の `uri`
+- `id`（`Source: gcal:event:<id>` の provenance）
 
 **フィルタ**:
 
@@ -83,21 +85,30 @@ gws calendar events list --params '{"calendarId":"primary","timeMin":"'"${TODAY}
 - OAuth アプリが Testing 公開ステータスのままだと refresh token が**約 7 日で失効**する(Google の仕様)。無人運用するなら Production 公開にするか、定期再認証で割り切る([[Meta/connections/google-calendar-tasks.md]] §5)。
 - 失敗時(未 provision / 失効 / 401 等)はエラーから secret を mask(`oauth2_token=...` / `access_token=...` / `bearer ...` / `authorization: ...`)した上で `<!-- secondary calendar unavailable: {message} -->` を該当セクションに残してスキップ。**briefing 全体は止めない**。
 
-> **境界**:gws は「外部接続の hermes 経由 capture」として呼ぶ([[.claude/rules/agent-boundaries.md]] §6 に整合)。Claude 側 `daily-briefing` skill は直接叩かない(drift 防止)。CLI 挙動 drift(field rename / null 化など)を検知しても本 SKILL.md を hermes 自身は編集せず、`Inbox/{YYYY-MM-DD}/clippings/hermes-obs-inbox-daily-capture.md` に observation note を残す([[.claude/rules/inbox-routing.md]] §7)。
+> **境界**:gws は hermes 経由 capture として呼び、コア側 `daily-briefing` は直接叩かない。drift は control-plane を編集せず `Inbox/{YYYY-MM-DD}/clippings/hermes-obs-inbox-daily-capture.md` に、共通 6 fields + `affected_path` / `observed_at` / `evidence` / `proposed_change` / `source` を持つ observation note として残す。
 
 ### 3. Google Tasks 取得(list_tasks.py・library 直叩き)
 
-`list_tasks.py` は必ず **hermes venv の python をフルパスで**呼ぶ(システム側の python に google package が入っているとは限らないため。PATH 先頭の python 任せにしない)。
+`list_tasks.py` は Google library が入った **Hermes runtime の Python** を明示して呼ぶ。これは通常の repo Python (`uv`) とは別で、Hermes の共有 OAuth/runtime package を再利用するための限定例外。`command -v hermes` の隣に Python があるとは限らないので推測しない。
 
 ```bash
-HERMES_VENV_PY="$(dirname "$(command -v hermes 2>/dev/null || echo)")/python"
-[ -x "$HERMES_VENV_PY" ] || HERMES_VENV_PY="$HOME/AppData/Local/hermes/hermes-agent/venv/Scripts/python.exe"  # Windows fallback
-GTASKS="$HERMES_VENV_PY ${HERMES_HOME:-$HOME/.hermes}/skills/vault-capture/google-tasks/scripts/list_tasks.py"
-$GTASKS   # 未完了タスクを JSON [{title, due, list, status}] で取得
+HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
+if [ -n "${HERMES_PYTHON:-}" ] && [ -x "$HERMES_PYTHON" ]; then
+  HERMES_RUNTIME_PY="$HERMES_PYTHON"
+elif [ -x "$HERMES_HOME/hermes-agent/venv/bin/python" ]; then
+  HERMES_RUNTIME_PY="$HERMES_HOME/hermes-agent/venv/bin/python"
+elif [ -x "$HERMES_HOME/hermes-agent/venv/Scripts/python.exe" ]; then
+  HERMES_RUNTIME_PY="$HERMES_HOME/hermes-agent/venv/Scripts/python.exe"
+else
+  echo "Hermes runtime Python not found; set HERMES_PYTHON to its absolute path" >&2
+  exit 1
+fi
+GTASKS="$HERMES_RUNTIME_PY $HERMES_HOME/skills/vault-capture/google-tasks/scripts/list_tasks.py"
+$GTASKS   # 未完了タスクを JSON [{id, title, due, list_id, list, status}] で取得
 ```
 
 - `list_tasks.py` は **hermes 共有 OAuth token(`${HERMES_HOME}/google_token.json`)を library で直叩き**する設計(`gws` npm CLI には依存しない)。認可済みアカウントの Tasks(複数リスト横断)を返す。
-- 出力 JSON を「✅ Google Tasks」節に写す(**読み取りのみ**・vault で新規起票しない)。
+- 出力 JSON を「✅ Google Tasks」節に写す(**読み取りのみ**・vault で新規起票しない)。各 task の `id` は `Source: gtasks:task:<id>` として保持する。
 - **非ゼロ終了**(スコープ未付与・未認証等)なら、stderr の 1 行を使って
   `<!-- google-tasks unavailable: {message} -->` を残してスキップ(briefing 全体は止めない)。
 - 初回は **tasks.readonly スコープ追加+再認証**が必要:手順は [[.hermes/skills/vault-capture/google-tasks/SKILL.md]]。
@@ -107,10 +118,16 @@ $GTASKS   # 未完了タスクを JSON [{title, due, list, status}] で取得
 
 ```markdown
 ---
-source: hermes-capture
+title: "Daily capture - {YYYY-MM-DD}"
+type: "capture"
+status: "inbox"
+tags: ["daily", "calendar", "google-tasks"]
 created: {YYYY-MM-DD}
+updated: {YYYY-MM-DD}
+source: "hermes:daily:{YYYY-MM-DD}"
 calendar: primary
-status: inbox
+calendar_sources: ["gcal:event:{id}", ...]
+task_sources: ["gtasks:task:{id}", ...]
 ---
 
 # {YYYY-MM-DD} 取り込み(raw / Hermes capture)
@@ -119,6 +136,7 @@ status: inbox
 - HH:MM-HH:MM **{summary}** ({attendees数}名){ @location }
   - 参加者: {名前を , 区切り}
   - 会議URL: {conferenceUrl があれば(Zoom/Meet 等)。空なら行ごと省略}
+  - Source: gcal:event:{id}
 <!-- 予定なしなら「- なし」 -->
 <!-- Step 2(ics)と Step 2.5(gws 追加アカウント)の event を start 昇順で merge、(start,end) で dedup -->
 
@@ -127,47 +145,31 @@ status: inbox
 
 ## ✅ Google Tasks(未完了・写し)
 - [ ] {タスク名}{ (〜MM-DD)}
+  - Source: gtasks:task:{id}
 <!-- 未対応時: <!-- google-tasks unavailable ... --> -->
 ```
 
 ### 5. 完了
 - 書き込んだファイルパスを 1 行で報告。**他のファイルは触らない。**
 
-## 起動方法(on-demand 既定 / cron は任意)
+## 起動方法(on-demand)
 
-**既定 = on-demand**:ユーザーが Daily ノートの `## 🤖 ジョブリスト` を見て「<該当 job> やって」と Claude に指示 → Claude が hermes に CLI で委譲([[.claude/skills/hermes-query/SKILL.md]])。
+**既定 = on-demand**:ユーザーが Daily ジョブリストからコアエージェントに指示し、コアが Hermes に委譲する。
 
 ### 手動 invoke コマンド
 
-> `hermes chat -q` のスキル指定は `-s <skill>`(`--skill` / `--workdir` というフラグは無い)。vault ルートに cd してから呼ぶ。日本語 Windows では呼び出し前に `PYTHONUTF8=1` を設定する(cp932 デコード起因の出力欠落防止 → [[.claude/skills/hermes-query/SKILL.md]])。
+> `hermes chat -q` のスキル指定は `-s <skill>`(`--skill` / `--workdir` というフラグは無い)。vault ルートに cd してから呼ぶ。日本語 Windows では呼び出し前に `PYTHONUTF8=1` を設定する(cp932 デコード起因の出力欠落防止 → [[.codex/skills/hermes-query/SKILL.md]])。
 
 ```bash
 cd "<vault root>"
-hermes chat -q "Load the inbox-daily-capture skill and run it for today: fetch today's and tomorrow's Google Calendar events and (if available) Google Tasks, then write the raw markdown to Inbox/<today>/daily/daily.md in the vault. Write only inside Inbox/ — never touch root Daily/ or curated notes." -s inbox-daily-capture -Q --source claude-code
+hermes chat -q "Load the inbox-daily-capture skill and run it for today: fetch today's and tomorrow's Google Calendar events and (if available) Google Tasks, then write the raw markdown to Inbox/<today>/daily/daily.md in the vault. Write only inside Inbox/ — never touch root Daily/ or curated notes." -s inbox-daily-capture -Q --source core-agent
 ```
 
-### Cron 登録(任意)
-
-> cron による定期起動は**任意**(on-demand が既定)。毎朝決まった時刻に自動 capture したい場合のみ登録する。
-
-state.db に保存されるジョブを次のコマンドで作成(ゲートウェイ側で実行):
-
-```bash
-hermes cron create "0 7 * * *"
-# プロンプト入力(自然言語・このskillを起動):
-#   Load the inbox-daily-capture skill and run it for today: fetch today's and
-#   tomorrow's Google Calendar events and (if available) Google Tasks, then write
-#   the raw markdown to Inbox/<today>/daily/daily.md in the vault. Write
-#   only inside Inbox/ — never touch root Daily/ or curated notes.
-```
-
-- スケジュール例:平日のみなら `"0 7 * * 1-5"`、時刻は好みで調整。
-- タイムゾーンは Hermes 設定(`config.yaml` の `timezone`)に従う。未設定なら TZ を確認。
-- 動作確認:`hermes cron run <id>`(次tickで即時実行)→ `Inbox/{today}/daily/daily.md` 生成を確認。
+> 既存環境の旧 cron は過渡期ジョブとして現状維持する。新規登録・変更はせず、Daily ジョブリストから on-demand で実行する。
 
 ## 関連
 
-- 整理側(Claude Code):`[[.claude/skills/daily-briefing/SKILL.md]]`(Inbox/{date}/daily → root Daily)
+- 整理側（core）:`[[.codex/skills/daily-briefing/SKILL.md]]`（Inbox/{date}/daily → root Daily）
 - セットアップ:[[Meta/connections/google-calendar-tasks.md]](ics 経路 / OAuth 経路の作り方・トラブルシューティング)
-- 規約:`[[.claude/rules/agent-boundaries.md]]`(capture/curate 境界・single-writer)/ `[[Inbox/README.md]]`
+- 規約:`[[.codex/rules/agent-boundaries.md]]`(capture/curate 境界・single-writer)/ `[[Inbox/README.md]]`
 - 依存:`google-workspace`(Calendar)/ `obsidian`(vault 書き込み)

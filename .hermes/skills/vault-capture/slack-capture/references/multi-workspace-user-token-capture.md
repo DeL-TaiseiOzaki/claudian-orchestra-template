@@ -66,10 +66,10 @@ workspaces:
 ## Verification commands
 
 ```bash
-python .hermes/scripts/slack_multi_capture.py auth-test --workspace workspace_b
-python .hermes/scripts/slack_multi_capture.py search --workspace workspace_b --query 'on:06/13/2026' --max-pages 1 --print-limit 5
-python .hermes/scripts/slack_multi_capture.py capture --workspace workspace_b --date today --mode all-day
-python -m py_compile .hermes/scripts/slack_multi_capture.py
+uv run --no-project python .hermes/scripts/slack_multi_capture.py auth-test --workspace workspace_b
+uv run --no-project python .hermes/scripts/slack_multi_capture.py search --workspace workspace_b --query 'on:06/13/2026' --max-pages 1 --print-limit 5
+uv run --no-project python .hermes/scripts/slack_multi_capture.py capture --workspace workspace_b --date today --mode all-day
+uv run --no-project python -m py_compile .hermes/scripts/slack_multi_capture.py
 ```
 
 Expected capture summary fields: `search_matches`, `history_channels_with_messages`, `files_written`, `messages_captured`, `attachments_downloaded`, `history_error_count`, and `output_dir`.

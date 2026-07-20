@@ -2,7 +2,7 @@
 """Google Tasks (read-only) listing CLI for the Hermes Agent.
 
 Reuses the SAME OAuth credentials/token managed by the bundled
-``google-workspace`` skill (``~/.hermes/google_token.json``). No separate
+``google-workspace`` skill (``${HERMES_HOME}/google_token.json``). No separate
 authentication is required — but the existing token must include the
 ``tasks.readonly`` scope. If it does not, re-run the tracked
 ``vault-capture/google-auth/scripts/authorize.py`` flow (see SKILL.md).
@@ -10,11 +10,12 @@ authentication is required — but the existing token must include the
 Read-only: this script never creates, updates, or deletes tasks.
 
 Usage:
-  python list_tasks.py [--due-before YYYY-MM-DD] [--list "<tasklist title>"]
+  "$HERMES_PYTHON" list_tasks.py [--due-before YYYY-MM-DD] [--list "<tasklist title>"]
 
 Output:
   A JSON array on stdout:
-    [{"title": str, "due": "YYYY-MM-DD"|null, "list": str, "status": str}, ...]
+    [{"id": str, "title": str, "due": "YYYY-MM-DD"|null,
+      "list_id": str, "list": str, "status": str}, ...]
 
 On any auth/scope/API error, exits non-zero and prints a single clear line
 to stderr so callers can show a graceful "tasks unavailable" marker.
@@ -123,7 +124,8 @@ def build_service():
     except ImportError:
         _fail(
             "Google API client libraries are not installed — install via uv: "
-            "uv pip install google-api-python-client google-auth-oauthlib "
+            "uv pip install --python \"$HERMES_RUNTIME_PY\" "
+            "google-api-python-client google-auth-oauthlib "
             "google-auth-httplib2"
         )
 
@@ -193,8 +195,10 @@ def list_tasks(args) -> None:
                             continue
                     output.append(
                         {
+                            "id": task.get("id", ""),
                             "title": task.get("title", ""),
                             "due": due,
+                            "list_id": tl.get("id", ""),
                             "list": list_title,
                             "status": task.get("status", ""),
                         }

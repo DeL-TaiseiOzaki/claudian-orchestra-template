@@ -4,25 +4,25 @@ type: "reference"
 status: "completed"
 tags: ["setup", "connections", "hermes"]
 created: 2026-07-19
-updated: 2026-07-19
+updated: 2026-07-20
 ---
 
 # 外部接続セットアップガイド
 
 personal knowledge base の**一番の躓きポイントは外部ツールとの繋ぎ込み**です。このディレクトリは、接続を 1 本ずつ・動作確認しながら繋ぐためのガイド集です。
 
-> **まずは対話式がおすすめ**:コアエージェントに「**接続セットアップして**」と言うと、[[.claude/skills/connection-setup/SKILL.md]] がユースケースを質問して**あなたの使うツールだけ**を選ばせ、このガイド群を台本に 1 本ずつセットアップしてくれます。選択は [[.claude/connections.yaml]] に記録され、使わないツールはジョブリスト・診断から消えます。以下は手動で進めたい人・個別に調べたい人向けです。
+> **まずは対話式がおすすめ**:コアエージェントに「**接続セットアップして**」と言うと、[[.codex/skills/connection-setup/SKILL.md]] がユースケースを質問して**あなたの使うツールだけ**を選ばせ、このガイド群を台本に 1 本ずつセットアップしてくれます。選択は [[.codex/connections.yaml]] に記録され、使わないツールはジョブリスト・診断から消えます。以下は手動で進めたい人・個別に調べたい人向けです。
 >
-> 前提:Hermes 本体のセットアップ(= [[GETTING-STARTED.md]] Level 2)が済んでいること(`web-clippings` の拡張直書き経路のみ Hermes 不要)。
+> 前提:Hermes 本体のセットアップ(= [[GETTING-STARTED.md]] Level 1)が済んでいること(`web-clippings` の拡張直書き経路のみ Hermes 不要)。
 
 ## 共通原則(全接続に共通)
 
-1. **認証はすべて Hermes が持つ**。Claude Code / Codex は外部 API を直接叩かない([[.claude/rules/agent-boundaries.md]] §6)。トークンの置き場は Hermes 側(`.hermes/.env` や `~/.hermes/` 配下)で、**git には絶対に commit されない**(`.gitignore` 設定済み)。
+1. **外部 write / durable capture の認証は Hermes が持つ**。例外は vault 自身の local git、コアの Web 調査 read、browser capture extension。Hermes token は active な `${HERMES_HOME}` 配下に置き、**git には絶対に commit しない**([[.codex/rules/agent-boundaries.md]] §6)。
 2. **接続ごとに独立**。1 本ずつ繋いで、動作確認してから次へ。全部繋がなくても他は動く。
 3. **データの流れは 2 経路**:
    - **push(capture)**:Hermes が生データを `Inbox/{YYYY-MM-DD}/{source}/` に書く。Daily ジョブリストから「○○取り込みやって」で発火(on-demand 既定)
-   - **pull(query)**:Claude Code が `hermes chat -q "..."` でその場の確認をする([[.claude/skills/hermes-query/SKILL.md]])
-4. **困ったら診断**:コアエージェントに「**接続チェックして**」と言えば [[.claude/skills/connection-doctor/SKILL.md]] が全接続の状態と次アクションを報告する。
+   - **pull(query)**:コアエージェントが `hermes chat -q "..."` でその場の確認をする([[.codex/skills/hermes-query/SKILL.md]])
+4. **困ったら診断**:コアエージェントに「**接続チェックして**」と言えば [[.codex/skills/connection-doctor/SKILL.md]] が全接続の状態と次アクションを報告する。
 
 ## 接続一覧
 
@@ -31,12 +31,12 @@ personal knowledge base の**一番の躓きポイントは外部ツールとの
 | **GitHub** | ★☆☆ | 10分 | 当日の commits / PRs / issues の EOD capture + 他リポの pull 参照 | `Inbox/{date}/code/code.md` | [github.md](./github.md) |
 | **Google カレンダー + Tasks** | ★★☆ | 30–60分 | 朝の briefing(予定 + タスク)自動 capture。registry 上は `google-calendar` / `google-tasks` で別々に選べる(Calendar のみなら ics 経路 10 分) | `Inbox/{date}/daily/daily.md` | [google-calendar-tasks.md](./google-calendar-tasks.md) |
 | **Gmail** | ★☆☆ | 10分 | pull 検索・参照(定常 capture なし)。**他メールは Gmail 転送で一本化** | `Inbox/{date}/mail/`(on-demand のみ) | [gmail.md](./gmail.md) |
-| **Google Drive / Docs** | ★☆☆ | 10分 | 共有資料の read(claude.ai コネクタ or Hermes 経由) | (取り込みなし・read のみ) | [google-drive.md](./google-drive.md) |
+| **Google Drive / Docs** | ★★☆ | 10分 | 共有資料の read(Hermes 経由) | (取り込みなし・read のみ) | [google-drive.md](./google-drive.md) |
 | **Slack** | ★★★ | 30–60分 | 自分の発言 / mention の日次ダイジェスト | `Inbox/{date}/slack/{channel}.md` | [slack.md](./slack.md) |
 | **Discord** | ★★☆ | 30分 | コミュニティ会話のダイジェスト(**bot 方式のみ**・skill は生成) | `Inbox/{date}/discord/{channel}.md` | [discord.md](./discord.md) |
 | **RSS / ニュースレター** | ★☆☆ | 10分 | 購読フィードの新着(**認証不要・最も手軽**) | `Inbox/{date}/clippings/` | [rss.md](./rss.md) |
 | **Web クリッピング** | ★★☆ | 15–30分 | 記事・AI 壁打ちログの取り込み | `Inbox/{date}/clippings/` `chat-logs/` | [web-clippings.md](./web-clippings.md) |
-| **AI 議事録** | ★☆☆〜★★☆ | 15–30分 | 会議文字起こし(Genspark は自動アダプタ同梱、他サービスはエクスポート投入) | `Inbox/{date}/mtgs/{slug}.md` | [meeting-notes.md](./meeting-notes.md) |
+| **AI 議事録** | ★☆☆〜★★☆ | 15–30分 | 会議文字起こし(Genspark は任意 adapter、他サービスはエクスポート投入) | `Inbox/{capture-date}/mtgs/{provider}-{slug}.md` | [meeting-notes.md](./meeting-notes.md) |
 | **Zotero** | ★☆☆ | 15分 | 文献管理の pull 参照・Wiki 文献ノート起票(文献管理ユーザー向け) | (取り込みなし・pull のみ) | [zotero.md](./zotero.md) |
 | **Notion** | ★☆☆ | 15分 | vault → Notion への一方向 publish | (取り込みなし・出力のみ) | [notion.md](./notion.md) |
 
@@ -44,15 +44,15 @@ personal knowledge base の**一番の躓きポイントは外部ツールとの
 
 ## カタログ外ツールの対応方針
 
-カタログに無いツールは「**類似接続の代替**」として扱います。多くは (a) 手動で `Inbox/{date}/{source}/` に置く、(b) 同梱 skill をひな形に capture skill を自作する、のどちらかで同じパイプラインに乗ります:
+カタログに無いツールは「**類似接続の代替**」として扱います。多くは (a) capture extension / Hermes の on-demand capture で `Inbox/{date}/{source}/` に新規作成する、(b) 同梱 skill をひな形に capture skill を自作する、のどちらかで同じパイプラインに乗ります。ユーザーとコアは Inbox へ直接書きません:
 
 | 使っているツール | 対応 |
 |---|---|
 | Outlook / 会社メール | **Gmail へ自動転送で一本化**([gmail.md](./gmail.md)) — 個別接続は作らない |
-| Microsoft Teams | 会話 capture は現実的でない(API・組織制限)。必要な決定事項だけ手動で Daily / Inbox へ |
+| Microsoft Teams | 会話 capture は現実的でない(API・組織制限)。必要な決定事項はコアが Daily へ直接記録するか、capture extension / Hermes 経由で Inbox へ |
 | Todoist / TickTick 等の ToDo | Google Tasks の位置に相当。`hermes-query` から API を叩く運用 + 必要なら自作 skill(正本はツール側・vault に写しのみ、の原則は同じ) |
 | Linear / Jira | GitHub(issues)の位置に相当。[github-eod-capture](../../.hermes/skills/vault-capture/github-eod-capture/SKILL.md) をひな形に自作 |
-| Readwise / Kindle ハイライト | エクスポートを `Inbox/{date}/clippings/` へ(手動 or 自作 skill) |
+| Readwise / Kindle ハイライト | エクスポートを capture extension / Hermes / 自作 skill で `Inbox/{date}/clippings/` へ |
 | Otter / tl;dv / Notta / Zoom AI | [meeting-notes.md](./meeting-notes.md) 経路 B(エクスポート投入)でそのまま乗る |
 
 ## 各ガイドの構成

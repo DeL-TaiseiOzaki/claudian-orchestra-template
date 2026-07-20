@@ -21,7 +21,7 @@ Lists the user's **incomplete** Google Tasks across all task lists.
 Two backends are supported:
 
 1. **Tracked <your-vault> script**: `scripts/list_tasks.py`, using the shared Hermes
-   token at `~/.hermes/google_token.json` with `tasks.readonly`.
+   token at `${HERMES_HOME}/google_token.json` with `tasks.readonly`.
 2. **Google Workspace CLI (`gws`)**: the upstream `@googleworkspace/cli` package
    now exposes the Google Tasks Discovery surface directly (`gws tasks ...`).
    Prefer `gws` when the user explicitly asks to use https://github.com/googleworkspace/cli
@@ -32,7 +32,7 @@ Default to read-only scopes unless the user explicitly asks to create/update/del
 ## Credentials (no separate auth)
 
 This skill **reuses the google-workspace OAuth token** at
-`~/.hermes/google_token.json` (resolved via `HERMES_HOME`). There is no
+`${HERMES_HOME}/google_token.json`. There is no
 separate setup or token for Tasks. You only need the existing
 google-workspace credentials, **plus the `tasks.readonly` scope** granted on
 that token.
@@ -58,12 +58,12 @@ includes `tasks.readonly` in its scope union and writes the SAME shared token:
 
 1. In Google Cloud Console, enable the **Google Tasks API** for the OAuth
    client's project (https://console.cloud.google.com/apis/library).
-2. (One-time, if not already done) store the client secret via the bundled
-   skill: `python .../productivity/google-workspace/scripts/setup.py --client-secret <path>`.
+2. Resolve the Hermes runtime Python as shown below. Then, if needed, store the
+   client secret via the bundled skill: `"$HERMES_RUNTIME_PY" "$HERMES_HOME/skills/productivity/google-workspace/scripts/setup.py" --client-secret <path>`.
 3. Authorize with the full scope union (base + tasks) in one consent:
 
    ```bash
-   GAUTH="python ${HERMES_HOME:-$HOME/.hermes}/skills/vault-capture/google-auth/scripts/authorize.py"
+   GAUTH="$HERMES_RUNTIME_PY ${HERMES_HOME:-$HOME/.hermes}/skills/vault-capture/google-auth/scripts/authorize.py"
    $GAUTH --auth-url      # open URL, authorize, copy the redirect URL (or code)
    $GAUTH --auth-code "<code-or-redirect-url>"
    $GAUTH --check         # AUTHENTICATED + lists granted scopes incl. tasks.readonly
@@ -75,12 +75,30 @@ the one superset token. Future scopes: add them to `google-auth` (its
 
 ## Usage
 
-## Usage
+The Google libraries live in the Hermes runtime. Resolve its interpreter
+explicitly; do not derive it from `command -v hermes`:
+
+```bash
+HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
+if [ -n "${HERMES_PYTHON:-}" ] && [ -x "$HERMES_PYTHON" ]; then
+  HERMES_RUNTIME_PY="$HERMES_PYTHON"
+elif [ -x "$HERMES_HOME/hermes-agent/venv/bin/python" ]; then
+  HERMES_RUNTIME_PY="$HERMES_HOME/hermes-agent/venv/bin/python"
+elif [ -x "$HERMES_HOME/hermes-agent/venv/Scripts/python.exe" ]; then
+  HERMES_RUNTIME_PY="$HERMES_HOME/hermes-agent/venv/Scripts/python.exe"
+else
+  echo "Hermes runtime Python not found; set HERMES_PYTHON to its absolute path" >&2
+  exit 1
+fi
+```
+
+This explicit runtime call is the narrow exception to the vault's normal `uv`
+rule because these helpers reuse Hermes-installed Google packages and tokens.
 
 ### Bundled read-only helper
 
 ```bash
-GTASKS="python ${HERMES_HOME:-$HOME/.hermes}/skills/vault-capture/google-tasks/scripts/list_tasks.py"
+GTASKS="$HERMES_RUNTIME_PY ${HERMES_HOME:-$HOME/.hermes}/skills/vault-capture/google-tasks/scripts/list_tasks.py"
 
 # All incomplete tasks across every list
 $GTASKS
@@ -95,84 +113,21 @@ $GTASKS --list "Work"
 $GTASKS --list "Work" --due-before 2026-06-10
 ```
 
-### Direct `gws` CLI usage
+### Optional direct `gws` query
 
-When `gws` is authenticated with `https://www.googleapis.com/auth/tasks.readonly`, you can query Tasks directly:
-
-```bash
-# List task lists
-gws tasks tasklists list --params '{"maxResults":10}'
-
-# List incomplete tasks for a specific list
-# Use an id returned by tasklists.list.
-gws tasks tasks list --params '{"tasklist":"TASKLIST_ID","showCompleted":false,"maxResults":100}'
-```
-
-PowerShell users must escape JSON's inner double quotes when calling native `gws.exe`:
-
-```powershell
-gws tasks tasklists list --params '{\"maxResults\":10}'
-gws tasks tasks list --params '{\"tasklist\":\"TASKLIST_ID\",\"showCompleted\":false,\"maxResults\":100}'
-```
-
-See `../google-auth/references/gws-cli-calendar-tasks.md` for the broader GWS CLI Calendar/Tasks workflow and pitfalls.
-
-### `gws` CLI backend
-
-Install if missing:
+`inbox-daily-capture` uses `list_tasks.py`; `gws` is not its Tasks backend. Use
+the direct CLI only when the user explicitly selects it for a live read or
+diagnostic and has authenticated the read-only Tasks scope:
 
 ```bash
-npm install -g @googleworkspace/cli
-```
-
-Place a Google OAuth **Desktop app** client JSON at:
-
-```bash
-mkdir -p "$HOME/.config/gws"
-cp /path/to/client_secret.json "$HOME/.config/gws/client_secret.json"
-```
-
-Authenticate read-only Calendar + Tasks together:
-
-```bash
-gws auth login --scopes 'https://www.googleapis.com/auth/calendar.readonly,https://www.googleapis.com/auth/tasks.readonly'
-```
-
-Read task lists and tasks:
-
-```bash
-gws tasks tasklists list --params '{"maxResults":10}'
-gws tasks tasks list --params '{"tasklist":"@default","showCompleted":false}'
-```
-
-Use `--dry-run` to verify URL/query construction without making API calls:
-
-```bash
-gws tasks tasklists list --dry-run --params '{"maxResults":10}'
-gws tasks tasks list --dry-run --params '{"tasklist":"@default","showCompleted":false}'
-```
-
-### Direct `googleworkspace/cli` (`gws`) path
-
-If the user asks specifically to use GWS CLI, the upstream `gws` command has
-native Tasks support:
-
-```bash
-npm install -g @googleworkspace/cli
 gws auth status
-
-# Prefer narrow auth scopes for Tasks-only read access
-gws auth login --scopes 'https://www.googleapis.com/auth/tasks.readonly'
-
-# List task lists
 gws tasks tasklists list --params '{"maxResults":10}'
-
-# List incomplete tasks in the default task list
-gws tasks tasks list --params '{"tasklist":"@default","showCompleted":false}'
+gws tasks tasks list --params '{"tasklist":"@default","showCompleted":false,"maxResults":100}'
 ```
 
-For Calendar + Tasks together, see
-`vault-capture/google-auth/references/gws-cli-calendar-tasks.md`.
+PowerShell users must escape JSON's inner double quotes when calling `gws.exe`.
+Installation, OAuth, multi-account handling, and `--dry-run` probes are kept in
+`../google-auth/references/gws-cli-calendar-tasks.md`.
 
 
 ### Arguments
@@ -188,13 +143,15 @@ A JSON array on stdout:
 
 ```json
 [
-  {"title": "Send report", "due": "2026-06-09", "list": "Work", "status": "needsAction"},
-  {"title": "Buy groceries", "due": null, "list": "Personal", "status": "needsAction"}
+  {"id": "task-1", "title": "Send report", "due": "2026-06-09", "list_id": "list-1", "list": "Work", "status": "needsAction"},
+  {"id": "task-2", "title": "Buy groceries", "due": null, "list_id": "list-2", "list": "Personal", "status": "needsAction"}
 ]
 ```
 
+- `id` — task ID used for `source: gtasks:task:<id>` provenance
 - `title` — task title (string)
 - `due` — due date as `YYYY-MM-DD`, or `null` if the task has no due date
+- `list_id` — owning task-list ID
 - `list` — title of the task list the task belongs to
 - `status` — Google Tasks status (always `needsAction` here, since completed
   tasks are excluded)
@@ -220,5 +177,5 @@ Same libraries as `google-workspace` — `google-api-python-client`,
 install them with **uv** in the Hermes Python environment:
 
 ```bash
-uv pip install google-api-python-client google-auth-oauthlib google-auth-httplib2
+uv pip install --python "$HERMES_RUNTIME_PY" google-api-python-client google-auth-oauthlib google-auth-httplib2
 ```

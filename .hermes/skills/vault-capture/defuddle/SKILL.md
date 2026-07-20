@@ -1,6 +1,6 @@
 ---
 name: defuddle
-description: Extract clean markdown content from a URL via the Defuddle CLI (`defuddle parse <url> --md`), stripping navigation/ads/clutter. Used internally by clippings-capture when only a URL is provided (no body), and on-demand when Claude Code requests a clean fetch via `hermes chat -q`. Returns markdown to stdout for the caller; never writes directly to curated paths.
+description: Extract clean Markdown from a URL via Defuddle CLI for clippings capture or a core-agent pull request.
 version: 1.0.0
 author: your-org
 license: MIT
@@ -22,7 +22,7 @@ metadata:
 | 経路 | 呼び出し方 | 説明 |
 |---|---|---|
 | 内部 | [[.hermes/skills/vault-capture/clippings-capture/SKILL.md]] が `content` 欠落ペイロードを受けたとき | URL → markdown 抽出 → `write_clipping.py` の `content` に詰める |
-| Claude → hermes pull | `hermes chat -q "... defuddle ..." -s defuddle` | on-demand で 1 URL を clean fetch して stdout で返す |
+| Core → Hermes pull | `hermes chat -q "... defuddle ..." -s defuddle` | on-demand で 1 URL を clean fetch して stdout で返す |
 | 単独 capture | clippings-capture 経由（本スキルは抽出だけ担う） | `Inbox/{YYYY-MM-DD}/clippings/{slug}.md` に書く |
 
 ## 前提
@@ -63,16 +63,16 @@ defuddle parse <url> -p domain
 | (none) | HTML |
 | `-p <name>` | Specific metadata property |
 
-## Claude Code からの on-demand 呼び出し
+## コアエージェントからの on-demand 呼び出し
 
 ```bash
 # 日本語 Windows のみ PYTHONUTF8=1 を前置（cp932 デコード起因の出力欠落防止）
 cd "<vault root>"
 
-hermes chat -q "Fetch <URL> as clean markdown via 'defuddle parse <URL> --md' and return the markdown on stdout. Do not write to any file." -s defuddle -Q --source claude-code
+hermes chat -q "Fetch <URL> as clean markdown via 'defuddle parse <URL> --md' and return the markdown on stdout. Do not write to any file." -s defuddle -Q --source core-agent
 ```
 
-得られた markdown は Claude が直接 vault に書き込む（curated 領域への配置判断は Claude の責務）。Inbox に着地させたい場合は `clippings-capture` 経由を選ぶ。
+得られた markdown は コアエージェントが直接 vault に書き込む（curated 領域への配置判断は コアエージェントの責務）。Inbox に着地させたい場合は `clippings-capture` 経由を選ぶ。
 
 ## 注意
 
@@ -83,5 +83,5 @@ hermes chat -q "Fetch <URL> as clean markdown via 'defuddle parse <URL> --md' an
 ## 関連
 
 - [[.hermes/skills/vault-capture/clippings-capture/SKILL.md]]（内部呼び出し元）
-- [[.claude/rules/agent-boundaries.md]] §6 接続所有
-- [[.claude/rules/inbox-routing.md]]（clippings 取り込みの全体像）
+- [[.codex/rules/agent-boundaries.md]] §6 接続所有
+- [[.codex/rules/inbox-routing.md]]（clippings 取り込みの全体像）

@@ -4,7 +4,7 @@ type: "reference"
 status: "completed"
 tags: ["setup", "connections", "genspark", "meetings"]
 created: 2026-07-19
-updated: 2026-07-19
+updated: 2026-07-20
 ---
 
 # 接続ガイド: Genspark AI 議事録(難易度 ★★☆・約15–30分)
@@ -15,8 +15,8 @@ Genspark の AI ミーティングノート(会議の自動文字起こし)を v
 
 ## 1. 何ができるようになるか
 
-- **push(on-demand capture)**:「Genspark 議事録取り込みやって」で、今日+前日の完了済み(`COMPLETED`)会議の transcript が **1 会議 = 1 ファイル**で `Inbox/{date}/mtgs/genspark-{slug}.md` に落ちる
-- EOD distill 時に**要約されて** `Wiki/meetings/{date}-{topic}.md` に配置される(生 transcript を Main DB に持ち込まない、この vault で唯一の例外運用)
+- **push(on-demand capture)**:「Genspark 議事録取り込みやって」で、今日+前日の完了済み(`COMPLETED`)会議の transcript が **1 会議 = 1 ファイル**で `Inbox/{capture-date}/mtgs/genspark-{slug}.md` に落ちる。会議日は frontmatter `meeting_date` に別保持する
+- EOD distill 時に**要約されて** `Wiki/meetings/{meeting-date}-{topic}.md` に配置される。raw transcript を `Wiki/sources/` に移さず、commit 済み確認後の git 履歴へ残すのは provider 共通の meeting 例外。未 commit なら Inbox に保持する
 - 朝の briefing に「今日の会議一覧 + どれに Genspark を join させるか」のリマインダーが出る
 
 ## 2. 前提
@@ -44,7 +44,7 @@ Genspark の AI ミーティングノート(会議の自動文字起こし)を v
 Genspark 議事録取り込みやって
 ```
 
-→ `Inbox/{今日の日付}/mtgs/genspark-{会議名slug}.md` ができれば完了。「MTG 集約やって」で Daily への集約まで確認できます。
+→ `Inbox/{今日の日付}/mtgs/genspark-{会議名slug}.md` ができれば完了。過去日の会議でも親は capture 実行日です。「MTG 集約やって」で Daily への集約まで確認できます。
 
 特定の会議だけ取りたい場合は task_id 指定もできます(「task_id XXX の議事録取って」)。
 
@@ -54,11 +54,11 @@ Genspark 議事録取り込みやって
 |---|---|
 | `gsk meeting list` に会議が出ない | その会議に bot を join させていない(Web UI で join 選択)。**join した会議しか一覧に出ません** |
 | 取り込みが走ったのにファイルが増えない | 会議がまだ `COMPLETED` になっていない(Genspark 側の処理待ち)、または既に同名ファイルがあり skip された(冪等性・正常) |
-| 同じ会議を二重取得しそうで不安 | ファイル名ベースの冪等性なので、何度実行しても既存は skip されます。polling 的に叩いても安全 |
+| 同じ会議を二重取得しそうで不安 | `source: genspark:meeting:<task_id>`、既存 filename、Daily handoff link で skip します |
 | 話者名が微妙に間違っている | AI 文字起こしの同音異字は仕様。EOD distill 時に `Maps/People-Map.md` で名寄せする運用です |
 
 ## 6. 深掘り
 
 - [[.hermes/skills/vault-capture/genspark-mtg/SKILL.md]] — capture skill 本体(recency 窓・冪等性・task_id 指定)
-- [[.claude/skills/mtg-prep/SKILL.md]] — 会議前の叩き台準備(こちらは Claude 側)
-- [[.claude/rules/inbox-routing.md]] §3.3 — genspark 議事録だけ「要約して meetings/ へ」の例外である理由
+- [[.codex/skills/mtg-prep/SKILL.md]] — 会議前の叩き台準備(こちらは コア側)
+- [[.codex/rules/inbox-routing.md]] §3.3 — provider を問わず meeting transcript を compiled note にする例外

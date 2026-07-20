@@ -4,14 +4,14 @@ type: "reference"
 status: "completed"
 tags: ["setup", "connections", "zotero", "wiki"]
 created: 2026-07-19
-updated: 2026-07-19
+updated: 2026-07-20
 ---
 
 # 接続ガイド: Zotero(難易度 ★☆☆・約15分・文献管理ユーザー向け)
 
 文献管理を Zotero でやっている人向けの接続です。**文献メタデータの正本は Zotero のまま**、vault 側(`Wiki/` ドメイン)には文献ノート・読書メモを置く、という分担にします。
 
-> **設計**:pull(参照)既定です。Zotero ライブラリを vault に同期・複製することはしません(split-brain 防止・[[.claude/rules/agent-boundaries.md]] §4)。
+> **設計**:pull(参照)既定です。Zotero ライブラリを vault に同期・複製することはしません(split-brain 防止・[[.codex/rules/agent-boundaries.md]] §4)。
 
 ## 1. 何ができるようになるか
 
@@ -22,7 +22,7 @@ updated: 2026-07-19
 ## 2. 前提
 
 - Zotero アカウント(ライブラリが Zotero サーバに同期されていること — ローカルのみの運用では Web API が使えません)
-- 文献ノートの置き場([[.claude/rules/wiki-management.md]] — `Wiki/` に `type: paper` で置く)
+- 文献ノートの置き場([[.codex/rules/wiki-management.md]] — `Wiki/` に `type: paper` で置く)
 
 ## 3. 手順
 
@@ -51,10 +51,10 @@ hermes chat -q "Zotero Web API (https://api.zotero.org/users/$ZOTERO_USER_ID/ite
 |---|---|
 | API が空を返す | ライブラリが Zotero サーバに未同期(Zotero アプリの Sync 設定を確認)。ローカル専用運用なら Web API は使えません |
 | 403 エラー | API キーの権限不足 / userID の取り違え(グループライブラリは `groups/{groupID}` が別途必要) |
-| vault に文献 PDF を置きたくなる | 原則置かない。PDF の正本は Zotero(または外部ストレージ)、vault はノートとポインタ(`resource:`)。[[.claude/rules/wiki-management.md]] 参照 |
+| vault に文献 PDF を置きたくなる | 原則置かない。PDF の正本は Zotero(または外部ストレージ)、vault はノートとポインタ(`resource:`)。[[.codex/rules/wiki-management.md]] 参照 |
 
 ## 6. 関連
 
-- [[.claude/rules/wiki-management.md]] — Wiki ドメインの構造(文献ノート `type: paper` の置き方)
-- [[.claude/rules/vault-metadata.md]] — 論文ノートの frontmatter スキーマ(`arxiv_id` / `paper_url` 等)・`resource:` ポインタ
-- [[.claude/rules/agent-boundaries.md]] §2 — 正本の所在を決め切る原則
+- [[.codex/rules/wiki-management.md]] — Wiki ドメインの構造(文献ノート `type: paper` の置き方)
+- [[.codex/rules/vault-metadata.md]] — 論文ノートの frontmatter スキーマ(`arxiv_id` / `paper_url` 等)・`resource:` ポインタ
+- [[.codex/rules/agent-boundaries.md]] §2 — 正本の所在を決め切る原則

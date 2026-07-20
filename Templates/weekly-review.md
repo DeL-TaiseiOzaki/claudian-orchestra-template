@@ -4,8 +4,8 @@ type: "log"
 status: "completed"
 period: "week"
 tags: ["weekly-review"]
-created: {{DATE:YYYY-MM-DD}}
-updated: {{DATE:YYYY-MM-DD}}
+created: "{{DATE:YYYY-MM-DD}}"
+updated: "{{DATE:YYYY-MM-DD}}"
 ---
 
 # Weekly Review - W{{DATE:WXX}}

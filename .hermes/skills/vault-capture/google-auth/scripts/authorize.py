@@ -3,7 +3,8 @@
 
 WHY THIS EXISTS
 ---------------
-The bundled ``google-workspace`` skill (``.hermes/skills/productivity/...``)
+The bundled ``google-workspace`` skill
+(``${HERMES_HOME}/skills/productivity/...``)
 hardcodes its own ``SCOPES`` and is gitignored / re-installable, so any edit
 there is lost on reinstall. Google Tasks (and future features) need scopes
 beyond those defaults. Editing the bundled ``setup.py`` is therefore NOT an
@@ -12,7 +13,7 @@ option.
 Instead, this script is a TRACKED, custom authorization entry point. It
 consents to the UNION of (bundled base scopes + our extras) in a single
 consent screen and writes the SAME shared token file
-(``~/.hermes/google_token.json``) in the SAME ``authorized_user`` JSON shape.
+(``${HERMES_HOME}/google_token.json``) in the SAME ``authorized_user`` JSON shape.
 As a result:
 
   * The bundled calendar/gmail/drive code (``google_api.py``) keeps working,
@@ -34,8 +35,9 @@ CLI (mirrors the bundled setup.py UX):
   authorize.py --check              # Print AUTHENTICATED/NOT + granted scopes
 
 NOTE: This script does NOT store the client secret. Reuse the bundled skill's
-``--client-secret`` step once (it writes ``~/.hermes/google_client_secret.json``),
-or place that file yourself. This script only reads it.
+``--client-secret`` step once (it writes
+``${HERMES_HOME}/google_client_secret.json``), or place that file yourself.
+This script only reads it.
 """
 
 from __future__ import annotations  # allow PEP 604 `X | None` on Python 3.9+
@@ -144,7 +146,8 @@ def _ensure_deps() -> None:
         print(
             "ERROR: Google auth libraries not installed. Install them via uv "
             "in the Hermes Python environment, e.g. "
-            "uv pip install google-api-python-client google-auth-oauthlib "
+            "uv pip install --python \"$HERMES_RUNTIME_PY\" "
+            "google-api-python-client google-auth-oauthlib "
             "google-auth-httplib2.",
             file=sys.stderr,
         )

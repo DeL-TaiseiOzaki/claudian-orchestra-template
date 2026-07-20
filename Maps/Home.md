@@ -4,12 +4,12 @@ type: "note"
 status: "in-progress"
 tags: ["moc"]
 created: 2026-01-01
-updated: 2026-01-01
+updated: 2026-07-20
 ---
 
 # 🏠 Home — your vault
 
-vault 全体の入口（MOC）。アーキテクチャ全景は [[README.md]]、運用契約は [[CLAUDE.md]]。
+vault 全体の入口（MOC）。アーキテクチャ全景は [[README.md]]、運用契約は [[AGENTS.md]]。
 
 ## 📅 今日
 
@@ -21,7 +21,7 @@ vault 全体の入口（MOC）。アーキテクチャ全景は [[README.md]]、
 | 領域 | 入口 |
 |---|---|
 | Inbox（capture） | [[Inbox/README.md]] |
-| Daily（ジャーナル） | [[.claude/rules/daily-operations.md]] |
+| Daily（ジャーナル） | [[.codex/rules/daily-operations.md]] |
 | Wiki（汎用ナレッジ — アイデア / 学習・読書 / 文献・実験 / 活動記録） | [[Wiki/AGENTS.md]] |
 | Persona（著者プロフィール・全体共通） | [[Persona/AGENTS.md]] |
 | Maps（横断 MOC） | [[Maps/Code-Map.md]]（コード知識） / [[Maps/People-Map.md]]（関わる人・名寄せ） |

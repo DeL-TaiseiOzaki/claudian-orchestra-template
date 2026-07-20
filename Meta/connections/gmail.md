@@ -4,7 +4,7 @@ type: "reference"
 status: "completed"
 tags: ["setup", "connections", "gmail", "google"]
 created: 2026-07-19
-updated: 2026-07-19
+updated: 2026-07-20
 ---
 
 # 接続ガイド: Gmail(難易度 ★☆☆・約10分 ※Google OAuth 済みなら)
@@ -19,7 +19,7 @@ Gmail を vault の会話から**検索・参照**できるようにする接続
 
 - **pull(既定)**:「先週の◯◯さんからのメール探して」「この件の最新のやり取り要約して」をコアエージェントから Hermes 経由で実行
 - **on-demand capture(任意)**:「このメール vault に残して」で `Inbox/{date}/mail/{slug}.md` に保存 → 通常の Daily 集約 / EOD distill パイプラインに乗る
-- **下書き作成(任意・承認制)**:「◯◯への返信を下書きして」— 外部への write なので実行前に必ず承認を求めます([[.claude/rules/agent-boundaries.md]] §5)。**自動送信はしません**
+- **下書き作成(任意・承認制)**:「◯◯への返信を下書きして」— 外部への write なので実行前に必ず承認を求めます([[.codex/rules/agent-boundaries.md]] §5)。**自動送信はしません**
 
 ## 2. 前提
 
@@ -28,10 +28,10 @@ Gmail を vault の会話から**検索・参照**できるようにする接続
 ## 3. 手順
 
 1. **Gmail API を有効化**:GCP コンソール → 「API とサービス」→ ライブラリ → **Gmail API** を有効化
-2. **スコープを確認**:`google-auth` skill の基本スコープに Gmail(readonly / send / modify)は**最初から含まれています**。経路 B の認可を Gmail API 有効化**後**に行っていれば追加作業なし。有効化が後だった場合や同意画面で外した場合は再認可:
+2. **スコープを確認**:`google-auth` skill の基本スコープに Gmail(readonly / send / modify)は含まれています。経路 B の認可を Gmail API 有効化**後**に行っていれば追加作業なし。有効化が後だった場合や同意画面で外した場合は再認可。`HERMES_RUNTIME_PY` は [google-calendar-tasks.md](./google-calendar-tasks.md) 経路 B の resolver を使います:
 
    ```bash
-   python .hermes/skills/vault-capture/google-auth/scripts/authorize.py --auth-url
+   "$HERMES_RUNTIME_PY" "$HERMES_HOME/skills/vault-capture/google-auth/scripts/authorize.py" --auth-url
    # ブラウザで同意 → リダイレクト URL を --auth-code に渡す → --check で AUTHENTICATED
    ```
 
@@ -58,5 +58,5 @@ hermes chat -q "Gmail の未読メールを 3 件、件名だけ教えて" -Q
 
 - [[.hermes/skills/vault-capture/google-auth/SKILL.md]] — スコープ設計(Gmail は基本スコープに含まれる)
 - [[Meta/connections/google-calendar-tasks.md]] — 同じ OAuth 基盤のセットアップ本体
-- [[.claude/rules/agent-boundaries.md]] §5 — 外部への write が承認制である理由
-- [[.claude/rules/inbox-routing.md]] §2 — `Inbox/{date}/mail/` の着地規約(on-demand のみ)
+- [[.codex/rules/agent-boundaries.md]] §5 — 外部への write が承認制である理由
+- [[.codex/rules/inbox-routing.md]] §2 — `Inbox/{date}/mail/` の着地規約(on-demand のみ)

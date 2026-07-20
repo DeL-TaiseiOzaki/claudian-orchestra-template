@@ -1,10 +1,10 @@
-﻿---
+---
 title: "{{date:YYYY-MM-DD}} デイリー"
 type: "log"
 status: "in-progress"
 tags: []
-created: {{date:YYYY-MM-DD}}
-updated: {{date:YYYY-MM-DD}}
+created: "{{date:YYYY-MM-DD}}"
+updated: "{{date:YYYY-MM-DD}}"
 ---
 
 # {{date:YYYY-MM-DD}} デイリー
@@ -14,10 +14,10 @@ updated: {{date:YYYY-MM-DD}}
 ## 🌅 朝のbriefing
 
 ### 📅 今日の予定
-<!-- daily-briefing skill が Inbox/daily（or Calendar）から自動挿入 -->
+<!-- daily-briefing が capture 済みの Inbox/{date}/daily/daily.md から on-demand で反映 -->
 
 ### 📅 明日の予定
-<!-- daily-briefing skill が Inbox/daily（or Calendar）から自動挿入 -->
+<!-- daily-briefing が capture 済みの Inbox/{date}/daily/daily.md から on-demand で反映 -->
 
 ### ✅ 今日のタスク（Google Tasks）
 <!-- 正本は Google Tasks。読み取りの写し。ここで新規タスクを起票しない -->
@@ -36,12 +36,13 @@ updated: {{date:YYYY-MM-DD}}
 ## 🤖 ジョブリスト（on-demand）
 
 <!--
-  cron は廃止。ユーザーがこのセクションを見て「○○やって」「全部回して」と指示
-  → コアエージェントが hermes に CLI 委譲（[[.claude/skills/hermes-query/SKILL.md]]）または直接実行。
+  on-demand が既定。ユーザーがこのセクションを見て「○○やって」「全部回して」と指示
+  → capture はコアエージェントが対応する Hermes capture skill へ CLI 委譲し、aggregate / distill / check はコアが直接実行。`hermes-query` は live pull に限る。
+  既存 cron は過渡期に限って維持できるが、新規登録しない。
   チェックは daily-briefing が `Inbox/{date}/{source}/...` の存在を見て自動付与（取得済→[x]）。手動チェックも可。
-  詳細は [[.claude/rules/daily-operations.md]] §0 / 各 SKILL.md 「起動方法」節。
+  詳細は [[.codex/rules/daily-operations.md]] §0 / 各 SKILL.md 「起動方法」節。
 
-  各行末尾の `connection:` コメントは [[.claude/connections.yaml]] の registry キー。
+  各行末尾の `connection:` コメントは [[.codex/connections.yaml]] の registry キー。
   daily-briefing が Daily 生成時に enabled な接続の行だけを残す（未セットアップなら
   「接続セットアップして」= connection-setup の案内を 1 行入れる）。キーなしの行は常に残す。
 -->
@@ -51,23 +52,23 @@ updated: {{date:YYYY-MM-DD}}
 - [ ] **Slack**（今日 ＋ 前日 catch-all）→ `slack-capture` <!-- connection: slack -->
 - [ ] **Discord**（bot 参加サーバの日次 digest → 自作 discord-capture・[[Meta/connections/discord.md]]） <!-- connection: discord -->
 - [ ] **GitHub EOD**（Code-Map 由来 repo の today 変化）→ `github-eod-capture` <!-- connection: github -->
-- [ ] **AI 議事録**（今日完了した MTG の transcript を取得。Genspark は `genspark-mtg` で一括／他サービスはエクスポート投入）→ `Inbox/{date}/mtgs/` <!-- connection: meeting-notes -->
+- [ ] **AI 議事録**（選択した provider または capture extension から transcript を取得）→ `Inbox/{date}/mtgs/{provider}-{slug}.md` <!-- connection: meeting-notes -->
 - [ ] **RSS 巡回**（購読フィードの新着 → clippings）→ hermes on-demand <!-- connection: rss -->
 - [ ] **Web 記事 / AI 壁打ち**（Inbox/{date}/clippings/・chat-logs/ に着地済か確認）→ `clippings-capture`（拡張経由・任意） <!-- connection: web-clippings -->
 
 ### 集約（aggregate → `Inbox/{date}/*` から Daily へ append）
 - [ ] **朝 briefing**（`Inbox/{date}/daily/daily.md` → root Daily ハブ・予定/タスク/ジョブ状態）→ `daily-briefing`（朝のみ）
-- [ ] **Slack 集約**（slack digests → Daily の ミーティング・メモ section）→ `aggregate-slack` <!-- connection: slack -->
-- [ ] **MTG 集約**（mtgs/ の transcripts → Daily の ミーティング section に要約 bullet）→ `aggregate-mtgs` <!-- connection: meeting-notes -->
-- [ ] **Code 集約**（github-eod code.md → Daily の Wiki section に per-repo 1-2 行）→ `aggregate-code` <!-- connection: github -->
-- [ ] **Clippings 集約**（web 記事 → Daily の Wiki / 該当 section）→ `aggregate-clippings` <!-- connection: web-clippings -->
-- [ ] **Chat logs 集約**（ChatGPT/Claude 会話 → Daily の Wiki / 該当 section）→ `aggregate-chat-logs` <!-- connection: web-clippings -->
+- [ ] **Slack 集約**（slack digests → Daily の ミーティング・メモ section）→ `inbox-aggregate`（Slack） <!-- connection: slack -->
+- [ ] **MTG 集約**（mtgs/ の transcripts → Daily の ミーティング section に要約 bullet）→ `inbox-aggregate`（Meetings） <!-- connection: meeting-notes -->
+- [ ] **Code 集約**（github-eod code.md → Daily の Wiki section に per-repo 1-2 行）→ `inbox-aggregate`（Code） <!-- connection: github -->
+- [ ] **Clippings 集約**（web 記事 → Daily の Wiki / 該当 section）→ `inbox-aggregate`（Clippings） <!-- connection: web-clippings -->
+- [ ] **Chat logs 集約**（ChatGPT/Claude 会話 → Daily の Wiki / 該当 section）→ `inbox-aggregate`（Chat logs） <!-- connection: web-clippings -->
 
-### MTG 準備（pre-meeting → 各 `meetings/` に議事録の叩き台）
-- [ ] **MTG 準備**（今日参加する MTG の議事録叩き台作成＋Daily リンク・目的等はヒアリング。Genspark 利用時は bot 準備ガイドも）→ `mtg-prep` <!-- connection: meeting-notes -->
+### MTG 準備（pre-meeting → `Wiki/meetings/` に議事録の叩き台）
+- [ ] **MTG 準備**（provider-neutral な議事録叩き台作成＋Daily リンク）→ `mtg-prep` <!-- connection: meeting-notes -->
 
 ### 配分（distill → Daily から Main DB へ蒸留）
-- [ ] **EOD distill**（Daily ログから durable な内容を Wiki / knowledges/ へ。話者名は [[Maps/People-Map.md]] で名寄せ。raw Inbox は `{area}/sources/` へ）→ `eod-distill`（夜 1 回・直列）
+- [ ] **EOD distill**（Daily ログから durable な内容を Wiki / `.codex/docs/knowledges/` へ。raw は `Wiki/sources/` へ移すが、meeting transcript は compiled note を作り、commit 済み確認まで Inbox に保持。話者名は [[Maps/People-Map.md]] で名寄せ）→ `eod-distill`（夜 1 回・直列）
 - [ ] **Tasks 反映**（完了・defer 提案 → ユーザー承認 → hermes 反映）→ `hermes-query` <!-- connection: google-tasks -->
 
 ### 検査・バックアップ（check / publish）

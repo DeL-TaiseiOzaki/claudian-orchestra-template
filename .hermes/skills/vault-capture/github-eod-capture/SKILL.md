@@ -1,30 +1,30 @@
 ---
 name: github-eod-capture
-description: "Use to capture same-day GitHub commits, pull requests, and issues for repositories listed in Maps/Code-Map.md into Inbox/{YYYY-MM-DD}/code/code.md as raw input for later Claude distillation (Step 6). Intended to be invoked on-demand when the user issues a 取り込み instruction (typically from the Daily-note ジョブリスト, e.g. after 21:30). May also run from a cron if registered, but on-demand is the primary mode."
+description: "Capture same-day GitHub commits, pull requests, and issues for Code-Map repositories into Inbox for later core-agent distillation."
 version: 1.0.0
 author: your-org
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [vault, capture, github, code, cron, vault-capture]
+    tags: [vault, capture, github, code, vault-capture]
     related_skills: [obsidian]
 ---
 
 # github-eod-capture
 
-Pipeline Step 5（[[.claude/rules/daily-operations.md]] §0）専用の Hermes capture skill。the user が指示したタイミングで実行（既定）／cron で時間起動も可（任意）。`Maps/Code-Map.md` に列挙された全 repo の **指定ブランチの当日（00:00 JST 〜 now）の commits / PRs / issues** を GitHub MCP で取得し、`Inbox/{YYYY-MM-DD}/code/code.md`（日付つき親フォルダ配下・ファイル名は固定 `code.md`）に raw capture として保存する。Claude は Step 6 で distill する。
+Pipeline Step 5 専用の Hermes capture skill。`Maps/Code-Map.md` の repo の当日 commits / PRs / issues を取得し、`Inbox/{YYYY-MM-DD}/code/code.md` に raw capture として保存する。コアエージェントが Step 6 で distill する。
 
 > [!important] 役割境界
 > - このスキルは Step 5 の **raw capture 専用**。LLM による要約・言い換え・タグ推定・本文再構成・auto-route は行わない。
-> - 書いてよいのは **`Inbox/{YYYY-MM-DD}/code/code.md` のみ**。`.claude/**`・`Daily/**`・`Wiki/**`・`Templates/**`・`Archive/**`・curated note body は変更しない（agent-boundaries.md §1 + inbox-routing.md §7）。
-> - GitHub からの取得は **configured GitHub MCP のみ**。cron 実行中に `terminal` / `execute_code` / `gh` / `git` / Python subprocess は使わない（cron context BLOCK と、vault path に非 ASCII 文字が含まれる場合のシェル解決問題の両方を回避）。
+> - 書いてよいのは **`Inbox/{YYYY-MM-DD}/code/code.md` のみ**。`.codex/**`・`Daily/**`・`Wiki/**`・`Templates/**`・`Archive/**`・curated note body は変更しない（agent-boundaries.md §1 + inbox-routing.md §7）。
+> - GitHub からの取得は **configured GitHub MCP のみ**。on-demand または既存 legacy cron の実行中に `terminal` / `execute_code` / `gh` / `git` / Python subprocess は使わない。
 > - `Maps/Code-Map.md` の読み取りと `Inbox/{YYYY-MM-DD}/code/...` の書き込みは Hermes の通常 file I/O で行う。外部 repo 取得だけを GitHub MCP に限定する。
 
 > [!important] Self-edit boundary (#37, 2026-06-07 確定)
 > - このスキルは **自分の SKILL.md / references / config を autonomous に編集しない**。GitHub API / MCP の drift / 仕様変化を発見した場合は、対象 file を直接編集せず `Inbox/{YYYY-MM-DD}/clippings/hermes-obs-github-eod-capture.md` に observation/proposal note を新規作成する。
-> - 必須 frontmatter：`affected_path` / `observed_at` / `evidence` / `proposed_change` / `source: "hermes:observation:github-eod-capture:<ISO8601>"`
-> - `.hermes/**` 配下のデータ／学習 file（cron / state JSON 等）の追記は例外（このスキルでは該当なし）。詳細は [[.claude/rules/inbox-routing.md]] §7。
+> - 必須 frontmatter：共通 6 fields（`title`, `type: capture`, `status: inbox`, `tags`, `created`, `updated`）+ `affected_path` / `observed_at` / `evidence` / `proposed_change` / `source: "hermes:observation:github-eod-capture:<ISO8601>"`
+> - `.hermes/**` 配下のデータ／学習 file（cron / state JSON 等）の追記は例外（このスキルでは該当なし）。詳細は [[.codex/rules/inbox-routing.md]] §7。
 
 ## 前提・パス解決
 
@@ -53,8 +53,9 @@ Pipeline Step 5（[[.claude/rules/daily-operations.md]] §0）専用の Hermes c
 
 ### 2. 既存ファイル検出（冪等性）
 
-`output_path` が既に存在するか確認。
+`Daily/{date_str}.md` の exact source wikilink と `output_path` の存在を、外部取得より前に確認。
 
+- **Daily に `[[Inbox/{date_str}/code/code.md]]` または拡張子なしの同等 link がある場合**：ownership handoff 済み。raw file が移動済みまたは不在でも、再作成・修復・追記せず `skipped: Daily handoff link preserved` で終了
 - **存在する場合**：上書きも merge もせず、そのまま終了。報告に `skipped: existing file preserved` を含める
 - 存在しない場合：手順 3 以降に進む
 
@@ -146,6 +147,7 @@ Pipeline Step 5（[[.claude/rules/daily-operations.md]] §0）専用の Hermes c
 
 ```yaml
 ---
+title: "GitHub EOD capture - {YYYY-MM-DD}"
 source: "github:eod:{YYYY-MM-DD}"
 type: "capture"
 status: "inbox"
@@ -157,7 +159,7 @@ tags: ["github", "capture", "code"]
 ---
 ```
 
-> `type: capture` / `status: inbox` は [[.claude/rules/vault-metadata.md]] の標準 enum 外。本 skill が `Inbox/{YYYY-MM-DD}/code/` 専用 owner として override する（slack-capture / genspark-mtg と同様の Inbox-source 命名規則）。vault-metadata.md に正式登録するかは Claude 側で判断。
+> `type: capture` / `status: inbox` は [[.codex/rules/vault-metadata.md]] §4 の raw-capture path override。
 
 ## Body template
 
@@ -189,37 +191,29 @@ tags: ["github", "capture", "code"]
 
 ## Cross-territory observation 規約
 
-GitHub API / MCP 仕様 drift（field rename・新フィールド出現・rate limit ポリシー変化など）を発見しても、**`.claude/skills/` / `.claude/rules/` / `Maps/Code-Map.md` を直接編集してはならない**。代わりに `Inbox/{date}/clippings/hermes-obs-github-mcp.md` に observation/proposal note を新規作成し、必須 frontmatter（`affected_path` / `observed_at` / `evidence` / `proposed_change` / `source: hermes:observation:github-mcp:<ISO8601>`）を入れる。
+GitHub API / MCP 仕様 drift を発見しても control-plane を直接編集しない。代わりに `Inbox/{date}/clippings/hermes-obs-github-mcp.md` に observation note を新規作成し、共通 6 fields + `affected_path` / `observed_at` / `evidence` / `proposed_change` / `source` を入れる。
 
-## 起動方法（on-demand 既定 / cron は任意）
+## 起動方法（on-demand）
 
-**既定 = on-demand**：ユーザーが Daily ノートの `## 🤖 ジョブリスト` を見て「<該当 job> やって」と Claude に指示 → Claude が hermes に CLI で委譲（[[.claude/skills/hermes-query/SKILL.md]]）。
+**既定 = on-demand**：ユーザーが Daily ジョブリストからコアエージェントに指示し、コアが Hermes に委譲する。
 
 ### 手動 invoke コマンド
 
-> `hermes chat -q` のスキル指定は `-s <skill>`（`--skill` / `--workdir` というフラグは無い）。vault ルートに cd してから呼ぶ。日本語 Windows では呼び出し前に `PYTHONUTF8=1` を設定する（cp932 デコード起因の出力欠落防止 → [[.claude/skills/hermes-query/SKILL.md]]）。
+> `hermes chat -q` のスキル指定は `-s <skill>`（`--skill` / `--workdir` というフラグは無い）。vault ルートに cd してから呼ぶ。日本語 Windows では呼び出し前に `PYTHONUTF8=1` を設定する（cp932 デコード起因の出力欠落防止 → [[.codex/skills/hermes-query/SKILL.md]]）。
 
 ```bash
 cd "<vault root>"
-hermes chat -q "Maps/Code-Map.md に載っている GitHub リポジトリについて、当日 00:00 JST から現在までの commits / PRs / issues を GitHub MCP で取得し、Inbox/{YYYY-MM-DD}/code/code.md に raw capture として保存する（日付つき親フォルダがあり、ファイル名は固定 code.md）。既存ファイルがあれば上書きしない。" -s github-eod-capture -Q --source claude-code
+hermes chat -q "Maps/Code-Map.md に載っている GitHub リポジトリについて、当日 00:00 JST から現在までの commits / PRs / issues を GitHub MCP で取得し、Inbox/{YYYY-MM-DD}/code/code.md に raw capture として保存する（日付つき親フォルダがあり、ファイル名は固定 code.md）。外部取得前に Daily の exact source wikilink と既存ファイルを確認し、どちらかがあれば再作成・修復・上書きしない。" -s github-eod-capture -Q --source core-agent
 ```
 
-### Cron 登録（任意）
-
-> cron による定期起動は**任意**（on-demand が既定）。定時運用したい場合の典型は終業後 21:30 の 1 本。
-
-```bash
-hermes cron create "30 21 * * *" "Maps/Code-Map.md に載っている GitHub リポジトリについて、当日 00:00 JST から現在までの commits / PRs / issues を GitHub MCP で取得し、Inbox/{YYYY-MM-DD}/code/code.md に raw capture として保存する（日付つき親フォルダがあり、ファイル名は固定 code.md）。既存ファイルがあれば上書きしない。" --name github-eod-evening --skill github-eod-capture --workdir "<vault root>"
-```
-
-> argparse quirk：positional `prompt` は schedule の直後、flag より前に置く（後ろに置くと `unrecognized arguments` エラー）。
+> 既存環境の旧 GitHub EOD cron は過渡期ジョブとして現状維持する。新規登録・変更はせず、Daily ジョブリストから on-demand で実行する。
 
 ## 関連
 
-- [[.claude/rules/daily-operations.md]] §0 Step 5
-- [[.claude/rules/inbox-routing.md]] §2（GitHub MCP source 行）
-- [[.claude/rules/agent-boundaries.md]] §1（control-plane boundary）
-- [[.claude/rules/vault-metadata.md]]
+- [[.codex/rules/daily-operations.md]] §0 Step 5
+- [[.codex/rules/inbox-routing.md]] §2（GitHub MCP source 行）
+- [[.codex/rules/agent-boundaries.md]] §1（control-plane boundary）
+- [[.codex/rules/vault-metadata.md]]
 - [[Maps/Code-Map.md]] 追跡ブランチ規則
 - [[.hermes/skills/vault-capture/genspark-mtg/SKILL.md]] / [[.hermes/skills/vault-capture/slack-capture/SKILL.md]]（idiom 参考）
 - `references/code-map-parsing.md`

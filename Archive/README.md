@@ -4,7 +4,7 @@ type: "note"
 status: "in-progress"
 tags: ["moc", "archive"]
 created: 2026-01-01
-updated: 2026-01-01
+updated: 2026-07-20
 ---
 
 # Archive — inactive content sink
@@ -24,5 +24,5 @@ updated: 2026-01-01
 
 ## 関連
 
-- [[.claude/skills/vault-archive/SKILL.md]] — 退避判定 + 移動の skill
-- [[.claude/rules/vault-metadata.md]] §Archive 用フィールド
+- [[.codex/skills/vault-archive/SKILL.md]] — 退避判定 + 移動の skill
+- [[.codex/rules/vault-metadata.md]] §Archive 用フィールド

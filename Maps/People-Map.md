@@ -6,7 +6,7 @@ tags:
   - moc
   - reconciliation
 created: 2026-01-01
-updated: 2026-01-01
+updated: 2026-07-20
 ---
 
 # 👥 People Map
@@ -35,5 +35,5 @@ vault 横断で参照される **人物の名寄せ表**。Genspark などの AI
 
 ## 関連
 
-- [[.claude/skills/eod-distill/SKILL.md]] — 話者名の名寄せ機構
-- [[.claude/skills/aggregate-mtgs/SKILL.md]] — 会議メモへの aggregate 時にも本ファイルを参照
+- [[.codex/skills/eod-distill/SKILL.md]] — 話者名の名寄せ機構
+- [[.codex/skills/inbox-aggregate/SKILL.md]] — 会議メモへの aggregate 時にも本ファイルを参照

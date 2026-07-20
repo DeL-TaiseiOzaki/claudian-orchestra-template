@@ -1,6 +1,6 @@
 ---
 name: context-loader
-description: ALWAYS activate this skill at the start of every task. Load shared project context (AGENTS.md core contract, .claude/rules/, prior subagent findings) so the core agent has the full vault knowledge before executing any task.
+description: Always load the root contract, shared vault rules, and relevant prior findings at the start of every task.
 ---
 
 # Context Loader Skill
@@ -26,11 +26,11 @@ note-operation principles, routing, language protocol, repository conventions.
 
 ### Step 2: Load vault rules
 
-Read the relevant files in `.claude/rules/` (highest priority). Always load the
+Read the relevant files in `.codex/rules/` (highest priority). Always load the
 cross-cutting four, then domain rules on demand:
 
 ```
-.claude/rules/
+.codex/rules/
 ├── vault-metadata.md       # frontmatter schema (type/status/tags/created/updated)  ← always
 ├── vault-tagging.md        # tag taxonomy                                           ← always
 ├── language.md             # think in English, respond in Japanese                  ← always
@@ -45,8 +45,8 @@ cross-cutting four, then domain rules on demand:
 If the task touches a topic that may have been investigated, check:
 
 ```
-.claude/docs/research/      # research findings
-.claude/docs/libraries/     # library investigations
+.codex/docs/research/      # research findings
+.codex/docs/libraries/     # library investigations
 ```
 
 These may be empty until a subagent has run.
@@ -57,7 +57,7 @@ With the loaded context, follow the contract and rules. Key points:
 
 1. **Notes (`.md`) are edited directly** — no extra delegation for note work.
 2. **Use `uv`** for Python — never use `pip` directly.
-3. **`.claude/rules/` takes highest priority.**
+3. **`.codex/rules/` takes highest priority.**
 4. Follow the existing style and naming conventions; avoid unnecessary abstractions.
 
 ## Language Protocol

@@ -2,7 +2,7 @@
 title: "[ArxivID] Paper Title"
 theme: "your-research-theme"
 type: "paper"
-status: "reading"
+status: "draft"
 arxiv_id: "YYMM.xxxxx"
 paper_authors: "Author1, Author2, ..."
 paper_date: "YYYY-MM-DD"
@@ -10,8 +10,8 @@ paper_url: "https://arxiv.org/abs/YYMM.xxxxx"
 related_papers: []
 key_methods: []
 tags: ["llm", "to-read"]
-created: {{DATE:YYYY-MM-DD}}
-updated: {{DATE:YYYY-MM-DD}}
+created: "{{DATE:YYYY-MM-DD}}"
+updated: "{{DATE:YYYY-MM-DD}}"
 ---
 
 # [ArxivID] Paper Title
@@ -84,11 +84,10 @@ updated: {{DATE:YYYY-MM-DD}}
 ## 🔗 Related Work
 
 ### Cited Papers
-- [[ArxivID1 Paper Name]]
-- [[ArxivID2 Paper Name]]
+- （実在する cited paper note への wikilink）
 
 ### This Paper is Related to
-- [[ArxivID3 Paper Name]]
+- （実在する related paper note への wikilink）
 
 ---
 
@@ -115,7 +114,7 @@ updated: {{DATE:YYYY-MM-DD}}
 
 ## 🏷️ Tags
 
-#llm #to-read #key-paper
+#llm #to-read
 
 ---
 

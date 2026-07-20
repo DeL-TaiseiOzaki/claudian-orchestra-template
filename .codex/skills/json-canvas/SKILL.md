@@ -1,6 +1,6 @@
 ---
 name: json-canvas
-description: Create and edit JSON Canvas files (.canvas) with nodes, edges, groups, and connections. Use when working with .canvas files, creating visual canvases, mind maps, flowcharts, or when the user mentions Canvas files in Obsidian.
+description: Create and edit Obsidian JSON Canvas files, including nodes, edges, and groups. Use for .canvas files, mind maps, or flowcharts.
 ---
 
 # JSON Canvas Skill
@@ -250,5 +250,5 @@ See [references/EXAMPLES.md](references/EXAMPLES.md) for full canvas examples in
 このスキルは kepano/obsidian-skills から導入。本 Vault では以下を併用する。
 
 - Canvas（`.canvas`）の `file` ノードは Vault ルートからの相対パスで参照する。
-- リンク対象ノートには frontmatter を付ける（[[.claude/rules/vault-metadata.md]]）。
+- リンク対象ノートには frontmatter を付ける（[[.codex/rules/vault-metadata.md]]）。
 - 構想・関係整理での利用を想定（例 `Wiki/` のノート相関図・テーマ間の関係整理）。

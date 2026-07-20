@@ -26,9 +26,6 @@ access_token.txt
 *~
 .DS_Store
 
-# Staging (apply to .claude then delete)
-_staging_claude/
-
 # Python
 __pycache__/
 *.py[cod]
@@ -77,8 +74,8 @@ Thumbs.db
 *_token.json
 
 # Calendar iCal secret feeds (private bearer token in URL — never commit; rotate if exposed)
-# Migrated 2026-06-16: was under .claude/skills/daily-briefing/_assets/ — moved to hermes side per
-# external-access-must-go-through-hermes principle ([[.claude/rules/agent-boundaries.md]] §6).
+# Migrated 2026-06-16: was under .codex/skills/daily-briefing/_assets/ — moved to Hermes per
+# external-access-must-go-through-hermes principle ([[.codex/rules/agent-boundaries.md]] §6).
 .hermes/skills/vault-capture/inbox-daily-capture/scripts/calendars.local.json
 *.local.json
 *.local.yaml

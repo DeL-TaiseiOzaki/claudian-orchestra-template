@@ -20,13 +20,9 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
-import recurring_ical_events
-import requests
-from icalendar import Calendar
-
-
 DEFAULT_CONFIG = Path(__file__).with_name("calendars.local.json")
 SECRET_RE = re.compile(r"private-[0-9a-f]+", re.IGNORECASE)
+URL_RE = re.compile(r"https?://[^\s<>\]\[()]+", re.IGNORECASE)
 
 
 Event = dict[str, Any]
@@ -104,6 +100,21 @@ def event_optional_text(component: Any, name: str) -> str | None:
     return text if text else None
 
 
+def conference_url(component: Any) -> str | None:
+    """Extract a usable conference URL from common iCalendar fields."""
+    candidates: list[str] = []
+    for name in ("url", "conference", "location", "description"):
+        value = component.get(name)
+        for item in as_list(value):
+            candidates.extend(URL_RE.findall(str(item)))
+
+    preferred_hosts = ("meet.google.com", "zoom.us", "teams.microsoft.com", "webex.com")
+    for candidate in candidates:
+        if any(host in candidate.lower() for host in preferred_hosts):
+            return candidate.rstrip(".,;:")
+    return candidates[0].rstrip(".,;:") if candidates else None
+
+
 def normalize_datetime(value: datetime, tz: ZoneInfo) -> datetime:
     """Convert a datetime to the configured timezone."""
     if value.tzinfo is None:
@@ -142,6 +153,7 @@ def normalize_event(component: Any, label: str, tz: ZoneInfo) -> Event:
         "attendees": attendees,
         "attendees_count": len(attendees),
         "location": event_optional_text(component, "location"),
+        "conference_url": conference_url(component),
         "calendar": label,
         "uid": event_text(component, "uid"),
     }
@@ -174,6 +186,10 @@ def fetch_calendar_events(
     tz: ZoneInfo,
 ) -> list[Event]:
     """Fetch, parse, and expand one calendar feed."""
+    import recurring_ical_events
+    import requests
+    from icalendar import Calendar
+
     label = str(calendar_config.get("label", ""))
     url = str(calendar_config.get("url", ""))
     response = requests.get(url, timeout=30)
@@ -258,6 +274,12 @@ def render_md_event(event: Event) -> list[str]:
     attendees = event["attendees"]
     if attendees:
         lines.append(f"  - 参加者: {', '.join(str(item) for item in attendees)}")
+    if event.get("location"):
+        lines.append(f"  - 場所: {event['location']}")
+    if event.get("conference_url"):
+        lines.append(f"  - 会議URL: {event['conference_url']}")
+    if event.get("uid"):
+        lines.append(f"  - Source: gcal:event:{event['uid']}")
     return lines
 
 
@@ -278,6 +300,13 @@ def render_md(result: dict[str, Any]) -> str:
     lines = render_md_day("### 📅 今日の予定", result["today"])
     lines.append("")
     lines.extend(render_md_day("### 📅 明日の予定", result["tomorrow"]))
+    errors = result.get("errors", [])
+    if errors:
+        lines.append("")
+        lines.extend(
+            f"<!-- ics calendar unavailable: {mask_secret(error)} -->"
+            for error in errors
+        )
     return "\n".join(lines)
 
 
@@ -306,9 +335,9 @@ def main() -> int:
     timezone = str(config.get("timezone", "Asia/Tokyo"))
     tz = ZoneInfo(timezone)
     anchor = args.date or datetime.now(tz).date()
-    result, success_count = build_result(config, anchor)
+    result, _success_count = build_result(config, anchor)
 
-    if args.format == "json" or success_count == 0:
+    if args.format == "json":
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
         print(render_md(result))

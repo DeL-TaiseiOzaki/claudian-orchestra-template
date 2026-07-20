@@ -1,0 +1,162 @@
+{
+  "common_required": [
+    "title",
+    "type",
+    "status",
+    "tags",
+    "created",
+    "updated"
+  ],
+  "optional_known_fields": [
+    "resource"
+  ],
+  "type_enum": [
+    "note",
+    "log",
+    "deliverable",
+    "paper",
+    "experiment",
+    "reference",
+    "idea",
+    "exploration"
+  ],
+  "status_enum": [
+    "draft",
+    "in-progress",
+    "completed",
+    "archived"
+  ],
+  "daily_required": {
+    "type": "log"
+  },
+  "archive_required": [
+    "archived",
+    "archived_from"
+  ],
+  "paper_required": [
+    "theme",
+    "arxiv_id",
+    "paper_authors",
+    "paper_date",
+    "paper_url"
+  ],
+  "experiment_required": [
+    "theme",
+    "experiment_id",
+    "objective",
+    "hypothesis",
+    "reproducible"
+  ],
+  "raw_capture_paths": [
+    "^Inbox/\\d{4}-\\d{2}-\\d{2}/[^/]+/.+\\.md$",
+    "^Wiki/sources/.*\\.md$"
+  ],
+  "raw_capture_type_enum": [
+    "capture"
+  ],
+  "raw_capture_status_enum": [
+    "inbox"
+  ],
+  "raw_capture_common_required": [
+    "title",
+    "type",
+    "status",
+    "tags",
+    "created",
+    "updated",
+    "source"
+  ],
+  "knowledge_note_paths": [
+    "^\\.codex/docs/knowledges/(?!README\\.md$).+\\.md$"
+  ],
+  "knowledge_common_required": [
+    "title",
+    "type",
+    "status",
+    "tags",
+    "created",
+    "updated",
+    "source",
+    "applies_to",
+    "severity"
+  ],
+  "knowledge_type_enum": [
+    "knowledge"
+  ],
+  "knowledge_status_enum": [
+    "active",
+    "superseded",
+    "deprecated"
+  ],
+  "knowledge_severity_enum": [
+    "low",
+    "medium",
+    "high"
+  ],
+  "knowledge_superseded_required": [
+    "superseded_by"
+  ],
+  "knowledge_deprecated_required": [
+    "deprecated_at"
+  ],
+  "structure_expected_root_dirs": [
+    "Inbox",
+    "Daily",
+    "Wiki",
+    "Maps",
+    "Persona",
+    "Meta",
+    "Archive",
+    "Templates"
+  ],
+  "structure_system_root_prefixes": [
+    ".git",
+    ".claude",
+    ".codex",
+    ".hermes",
+    ".claudian",
+    ".trash",
+    ".tmp",
+    ".uv-cache",
+    ".obsidian*"
+  ],
+  "structure_required_dirs": [
+    "Wiki",
+    "Maps/views",
+    "Daily",
+    "Meta",
+    "Archive",
+    "Templates"
+  ],
+  "structure_scan_roots": [
+    "Inbox",
+    "Daily",
+    "Wiki",
+    "Maps",
+    "Meta",
+    "Archive"
+  ],
+  "structure_submodule_excludes": [],
+  "structure_nonmd_allowed": {
+    "allowed_path_prefixes": [
+      "Meta/assets"
+    ],
+    "allowed_dir_names": [
+      "_assets",
+      "sources",
+      "attachments"
+    ],
+    "allowed_filenames": [
+      ".gitkeep"
+    ],
+    "allowed_ext_under_root": [
+      {
+        "ext": ".base",
+        "root": "Maps"
+      }
+    ],
+    "allowed_ext_anywhere": [
+      ".canvas"
+    ]
+  }
+}

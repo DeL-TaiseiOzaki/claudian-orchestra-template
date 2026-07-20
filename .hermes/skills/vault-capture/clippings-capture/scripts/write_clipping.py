@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Write a captured web clipping (e.g. a ChatGPT / Claude chat, or any web
-page) into the your-vault under ``Inbox/{YYYY-MM-DD}/clippings/`` as raw markdown.
+"""Write a captured web page or LLM chat into the correct raw Inbox queue.
 
 Reads ONE JSON object on stdin:
     {
@@ -12,13 +11,13 @@ Reads ONE JSON object on stdin:
       "tags": ["..."]                                        # optional
     }
 
-Writes ``Inbox/{YYYY-MM-DD}/clippings/{slug}.md`` with frontmatter (the dated
-parent folder owns the date, so the filename carries no date prefix), never
-overwriting (adds ``-2``, ``-3`` ... on collision), and prints the path.
+Web/manual content lands in ``clippings/{slug}.md``. ChatGPT/Claude content
+lands in ``chat-logs/{provider}-{slug}.md``. The dated parent folder is the
+capture-event date in Asia/Tokyo. Existing files are never overwritten.
 
-Capture single-writer: writes ONLY inside ``Inbox/{YYYY-MM-DD}/clippings/`` — it
-never touches root ``Daily/`` or curated notes. Curation is a separate Claude
-Code step (see Inbox/README.md).
+Capture single-writer: writes only inside ``Inbox/{YYYY-MM-DD}/clippings/`` or
+``Inbox/{YYYY-MM-DD}/chat-logs/``. It never touches root ``Daily/`` or curated
+notes. Curation is a separate core-agent step (see Inbox/README.md).
 """
 
 from __future__ import annotations
@@ -27,10 +26,12 @@ import json
 import os
 import re
 import sys
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 VALID_SOURCES = {"chatgpt", "claude", "web", "manual"}
+JST = ZoneInfo("Asia/Tokyo")
 
 
 def _configure_stdio() -> None:
@@ -94,13 +95,25 @@ def _slug(title: str) -> str:
     return s[:60].strip("-") or "clip"
 
 
-def _parse_date(raw) -> date:
+def _tag(value: object) -> str:
+    """Normalize optional payload tags to the vault's lowercase-hyphen form."""
+    tag = str(value).strip().lower().replace("_", "-")
+    tag = re.sub(r"\s+", "-", tag)
+    tag = re.sub(r"[^a-z0-9/-]", "", tag)
+    return re.sub(r"-+", "-", tag).strip("-/")
+
+
+def _parse_captured_at(raw: object) -> datetime:
+    """Return the capture timestamp normalized to Asia/Tokyo."""
     if not raw:
-        return date.today()
+        return datetime.now(JST)
     try:
-        return datetime.fromisoformat(str(raw).replace("Z", "+00:00")).date()
-    except Exception:
-        return date.today()
+        value = datetime.fromisoformat(str(raw).replace("Z", "+00:00"))
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=JST)
+        return value.astimezone(JST)
+    except (TypeError, ValueError):
+        return datetime.now(JST)
 
 
 def main() -> None:
@@ -120,34 +133,40 @@ def main() -> None:
         source = "web"
     url = str(payload.get("url", "") or "")
     title = str(payload.get("title", "") or "").strip()
-    d = _parse_date(payload.get("captured_at"))
+    captured_at = _parse_captured_at(payload.get("captured_at"))
+    capture_date = captured_at.date()
 
     raw_tags = payload.get("tags") or []
     if not isinstance(raw_tags, list):
         raw_tags = [str(raw_tags)]
-    tagset = ["clipping", source] + [str(t) for t in raw_tags]
+    is_chat = source in {"chatgpt", "claude"}
+    tagset = (["chat-log", source] if is_chat else ["clipping", source]) + [
+        tag for item in raw_tags if (tag := _tag(item))
+    ]
     seen: set[str] = set()
     tags_final = [t for t in tagset if not (t in seen or seen.add(t))]
 
-    # Date-first layout: the dated parent folder owns the date, so the
-    # filename carries NO date prefix (Inbox/{YYYY-MM-DD}/clippings/{slug}.md).
-    out_dir = _vault_root() / "Inbox" / d.isoformat() / "clippings"
+    queue = "chat-logs" if is_chat else "clippings"
+    out_dir = _vault_root() / "Inbox" / capture_date.isoformat() / queue
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    base = _slug(title or source)
-    fm_title = title or f"{source} clip {d.isoformat()}"
+    slug = _slug(title or ("chat" if is_chat else source))
+    base = f"{source}-{slug}" if is_chat else slug
+    fm_title = title or f"{source} capture {capture_date.isoformat()}"
+    source_id = source if is_chat else (f"web:url:{url}" if url else "manual")
     lines = [
         "---",
         f"title: {json.dumps(fm_title, ensure_ascii=False)}",
-        f"source: {json.dumps(source, ensure_ascii=False)}",
-        f"created: {d.isoformat()}",
+        'type: "capture"',
+        'status: "inbox"',
+        f"tags: [" + ", ".join(json.dumps(t, ensure_ascii=False) for t in tags_final) + "]",
+        f"created: {capture_date.isoformat()}",
+        f"updated: {capture_date.isoformat()}",
+        f"source: {json.dumps(source_id, ensure_ascii=False)}",
+        f"fetched_at: {json.dumps(captured_at.isoformat(timespec='seconds'))}",
     ]
     if url:
         lines.append(f"url: {json.dumps(url, ensure_ascii=False)}")
-    lines.append('status: "inbox"')
-    lines.append(
-        "tags: [" + ", ".join(json.dumps(t, ensure_ascii=False) for t in tags_final) + "]"
-    )
     lines.append("---")
 
     text = "\n".join(lines) + "\n\n" + str(content).rstrip() + "\n"

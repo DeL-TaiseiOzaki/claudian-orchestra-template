@@ -13,8 +13,8 @@ Use this when the user wants the primary workspace to remain the interactive Her
 1. Keep the primary workspace (key `primary`) as the Hermes gateway workspace for interaction and notifications.
 2. Register sub-workspaces as capture sources with workspace-keyed env vars.
 3. Implement or use a capture CLI/script that calls Slack Web API directly.
-4. Run it manually first, then via Hermes cron.
-5. Save raw output to `Inbox/{YYYY-MM-DD}/slack/<workspace>-{channel}.md` (capture only — no routing); curate later with Claude Code.
+4. Run it on-demand from the Daily job list. Existing legacy cron may remain transitional, but do not create a new job.
+5. Save raw output to `Inbox/{YYYY-MM-DD}/slack/<workspace>-{channel}.md` (capture only; no routing); curate later with the core agent.
 
 ## Env var naming pattern
 
@@ -42,7 +42,7 @@ The user should not paste token values into chat. Ask only for workspace keys an
 
 ## Workspace config shape
 
-A compact YAML config keeps scripts and cron prompts stable:
+A compact YAML config keeps scripts and on-demand prompts stable:
 
 ```yaml
 workspaces:
@@ -78,12 +78,12 @@ Suggested path: `.hermes/config/slack-workspaces.yaml` or another profile-local 
 Design the capture tool around explicit verbs:
 
 ```bash
-python .hermes/scripts/slack_multi_capture.py auth-test --all
-python .hermes/scripts/slack_multi_capture.py auth-test --workspace workspace_b
-python .hermes/scripts/slack_multi_capture.py capture --workspace workspace_b --date today --mode my-messages
-python .hermes/scripts/slack_multi_capture.py capture --workspace workspace_b --date today --mode mentions
-python .hermes/scripts/slack_multi_capture.py capture --all-workspaces --date yesterday --mode daily
-python .hermes/scripts/slack_multi_capture.py search --workspace primary 'in:#times_yourname from:me on:06/13/2026'
+uv run --no-project python .hermes/scripts/slack_multi_capture.py auth-test --all
+uv run --no-project python .hermes/scripts/slack_multi_capture.py auth-test --workspace workspace_b
+uv run --no-project python .hermes/scripts/slack_multi_capture.py capture --workspace workspace_b --date today --mode my-messages
+uv run --no-project python .hermes/scripts/slack_multi_capture.py capture --workspace workspace_b --date today --mode mentions
+uv run --no-project python .hermes/scripts/slack_multi_capture.py capture --all-workspaces --date yesterday --mode daily
+uv run --no-project python .hermes/scripts/slack_multi_capture.py search --workspace primary 'in:#times_yourname from:me on:06/13/2026'
 ```
 
 ## API preference
@@ -114,8 +114,8 @@ When explaining the user's work, keep it concise and action-oriented:
 6. Reinstall the app to the workspace.
 7. Store tokens in `.hermes/.env` using workspace-keyed env vars.
 8. Share only workspace keys and env var names, not secrets.
-9. Run `auth-test` and a one-workspace manual capture before enabling all-workspace cron.
-10. Add Hermes cron after manual verification.
+9. Run `auth-test` and a one-workspace on-demand capture before enabling all-workspace mode.
+10. Keep invocation on-demand from the Daily job list; do not add a new Hermes cron.
 
 ## Cron pattern
 

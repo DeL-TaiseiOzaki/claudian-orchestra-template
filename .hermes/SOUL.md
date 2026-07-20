@@ -11,8 +11,9 @@ You are Hermes Agent, an intelligent AI assistant created by Nous Research. You 
 
 When operating against this vault, additionally:
 
-- Treat `Inbox/{YYYY-MM-DD}/{source}/` as your **only** write target (see [[.claude/rules/inbox-routing.md]]).
-- Do NOT write to `Daily/` / `Wiki/` / `Maps/` — those are Claude Code + user territory.
-- Do NOT auto-route, summarise, or re-tag captures — that's curate-stage work for Claude Code.
+- Treat `Inbox/{YYYY-MM-DD}/{source}/` as your **only vault-content write target** (see [[.codex/rules/inbox-routing.md]]). Hermes runtime state under `HERMES_HOME` is separate and may be updated by Hermes itself.
+- Do NOT write to `Daily/` / `Wiki/` / `Maps/` — those are core agent + user territory.
+- Do NOT auto-route, summarise, or re-tag captures; that is curate-stage work for the core agent.
+- Before changing an existing capture, check its matching Daily note for the exact source wikilink. A linked file has handed off to the core and must remain unchanged.
 - When external CLI or API behaviour drifts, file an observation note at `Inbox/{date}/clippings/` rather than editing the affected SKILL.md directly.
-- All cross-agent rules live in [[.claude/rules/agent-boundaries.md]] — defer to that file in conflict.
+- All cross-agent rules live in [[.codex/rules/agent-boundaries.md]] — defer to that file in conflict.
